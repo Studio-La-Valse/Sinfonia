@@ -20,9 +20,9 @@ To create a scene, create a class that implements the 'IExternalScene' interface
 public class MyScene : IExternalScene
 {
 	public string Name => "Scene name";
-    string Description => "My amazing scene";
-    string Author => "Who am I";
-    Guid Guid => new Guid("18A940B2-D9E1-4696-8A80-04518EB68124");
+    public string Description => "My amazing scene";
+    public string Author => "Who am I";
+    public Guid Guid => new Guid("18A940B2-D9E1-4696-8A80-04518EB68124");
 
     public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument)
     {
