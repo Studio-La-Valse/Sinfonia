@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia", "Sinfonia\Sinfonia.csproj", "{70D12AFC-2C5B-409D-AFB4-CF2182482ADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.API", "Sinfonia.API\Sinfonia.API.csproj", "{EF5377AD-AE0E-4244-B5F6-6A8757ADD96A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Native.Scenes", "Sinfonia.Native.Scenes\Sinfonia.Native.Scenes.csproj", "{36B4A4A9-952C-4020-A2DC-A31229EA8ABA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Native", "Sinfonia.Native\Sinfonia.Native.csproj", "{C8E089E4-0733-4BE6-A875-F4DAE72298DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj", "{EB3EA232-E154-4992-8A9B-F26079A9B108}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Drawable", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj", "{271287A5-1FDE-441D-B1F6-B0FFAED40031}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70D12AFC-2C5B-409D-AFB4-CF2182482ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70D12AFC-2C5B-409D-AFB4-CF2182482ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70D12AFC-2C5B-409D-AFB4-CF2182482ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70D12AFC-2C5B-409D-AFB4-CF2182482ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF5377AD-AE0E-4244-B5F6-6A8757ADD96A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF5377AD-AE0E-4244-B5F6-6A8757ADD96A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF5377AD-AE0E-4244-B5F6-6A8757ADD96A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF5377AD-AE0E-4244-B5F6-6A8757ADD96A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36B4A4A9-952C-4020-A2DC-A31229EA8ABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36B4A4A9-952C-4020-A2DC-A31229EA8ABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36B4A4A9-952C-4020-A2DC-A31229EA8ABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36B4A4A9-952C-4020-A2DC-A31229EA8ABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {53CAA364-AACB-4DA7-A610-6DE5BC44E6A7}
+	EndGlobalSection
+EndGlobal

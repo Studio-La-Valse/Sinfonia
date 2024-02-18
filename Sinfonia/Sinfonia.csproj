@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Bravura.otf" />
+    <None Remove="Resources\BravuraText.otf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
+    <PackageReference Include="StudioLaValse.DependencyInjection.Microsoft" Version="1.0.0" />
+    <PackageReference Include="StudioLaValse.Drawable" Version="2.0.0" />
+    <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.0" />
+    <PackageReference Include="StudioLaValse.Drawable.WPF" Version="2.0.0" />
+    <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />
+    <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Bravura.otf" />
+    <Resource Include="Resources\BravuraText.otf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="External\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="External\Sinfonia.Native.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="External\Sinfonia.Native.Plugins.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="External\Sinfonia.Native.Scenes.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
