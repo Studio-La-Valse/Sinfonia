@@ -48,9 +48,11 @@ public class SinglePageScene : IExternalScene
         this.application = application;
     }
 
-    public override void RegisterSettings(IAddinSettingsManager animationSettingsManager)
+    public int Page { get; set; }
+
+    public void RegisterSettings(IAddinSettingsManager addinSettingsManager)
     {
-        animationSettingsManager.Register(
+        addinSettingsManager.Register(
             () => Page,
             (val) =>
             {
@@ -71,8 +73,8 @@ To inject your own services into the application, create a public class implemen
 Make sure the generic service container type is the IServiceCollection interface from the Microsoft.Extensions.DependencyInjection namespace. For example:
 
 
-```
-public class ExternalServiceRegistry : IExternalServiceProvider<IServiceCollection>
+```cs
+public class ServiceProvider : IExternalServiceProvider<IServiceCollection>
 {
     public void AddTo(IServiceCollection container)
     {
