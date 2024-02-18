@@ -19,7 +19,7 @@ To create a scene, create a class that implements the 'IExternalScene' interface
 ```cs
 public class MyScene : IExternalScene
 {
-	public string Name => "Scene name";
+    public string Name => "Scene name";
     public string Description => "My amazing scene";
     public string Author => "Who am I";
     public Guid Guid => new Guid("18A940B2-D9E1-4696-8A80-04518EB68124");
