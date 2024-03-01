@@ -1,5 +1,4 @@
 ﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -8,19 +7,17 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly List<MeasureBlock> blocks;
         private readonly IKeyGenerator<int> keyGenerator;
 
-
         public InstrumentMeasure RibbonMeasure { get; }
         public int Voice { get; }
-        public Guid Guid { get; }
 
 
 
-        public MeasureBlockChain(InstrumentMeasure ribbonMeasure, int voice, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator)
+        public MeasureBlockChain(InstrumentMeasure ribbonMeasure, int voice, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.keyGenerator = keyGenerator;
 
-            Guid = guid;
             blocks = [];
+
             RibbonMeasure = ribbonMeasure;
             Voice = voice;
         }
@@ -125,8 +122,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                 }
             }
 
-            var layout = new MeasureBlockLayout();
-            var newBlock = new MeasureBlock(duration, this, grace, layout, keyGenerator, Guid.NewGuid());
+            var newBlock = new MeasureBlock(duration, this, grace, keyGenerator, Guid.NewGuid());
             blocks.Insert(0, newBlock);
         }
         public void Append(RythmicDuration duration, bool grace)
@@ -140,8 +136,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                 }
             }
 
-            var layout = new MeasureBlockLayout();
-            var newBlock = new MeasureBlock(duration, this, grace, layout, keyGenerator, Guid.NewGuid());
+            var newBlock = new MeasureBlock(duration, this, grace, keyGenerator, Guid.NewGuid());
             blocks.Add(newBlock);
         }
         public void Insert(Position position, RythmicDuration duration, bool grace)
@@ -160,8 +155,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                 var block = blocks[i];
                 if (block.Position == position)
                 {
-                    var layout = new MeasureBlockLayout();
-                    var newBlock = new MeasureBlock(duration, this, grace, layout, keyGenerator, Guid.NewGuid());
+                    var newBlock = new MeasureBlock(duration, this, grace, keyGenerator, Guid.NewGuid());
                     blocks.Insert(i, newBlock);
                     return;
                 }
@@ -207,8 +201,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     }
                 }
 
-                var layout = new MeasureBlockLayout();
-                var newBlock = new MeasureBlock(duration, this, block.Grace, layout, keyGenerator, block.Guid);
+                var newBlock = new MeasureBlock(duration, this, block.Grace, keyGenerator, block.Guid);
                 blocks.Add(newBlock);
 
                 newBlock.ApplyMemento(block);

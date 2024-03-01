@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Native.Scenes.MultiPageView
+﻿using StudioLaValse.ScoreDocument.Layout;
+
+namespace Sinfonia.Native.Scenes.MultiPageView
 {
     public class MultiPageScene : BaseExternalAddin, IExternalScene
     {
@@ -16,18 +18,18 @@
         }
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary layoutDictionary)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;
 
-            var noteFactory = new VisualNoteFactory(selection);
+            var noteFactory = new VisualNoteFactory(selection, layoutDictionary);
             var restFactory = new VisualRestFactory(selection);
-            var noteGroupFactory = new VisualNoteGroupFactory(noteFactory, restFactory);
-            var staffMeasusureFactory = new VisualStaffMeasureFactory(selection, noteGroupFactory);
-            var systemMeasureFactory = new VisualSystemMeasureFactory(selection, staffMeasusureFactory);
-            var staffSystemFactory = new VisualStaffSystemFactory(systemMeasureFactory, selection);
-            var scene = new PageViewSceneFactory(staffSystemFactory, PageSize.A4, 20, 30, ColorARGB.Black, ColorARGB.White);
+            var noteGroupFactory = new VisualNoteGroupFactory(noteFactory, restFactory, layoutDictionary);
+            var staffMeasusureFactory = new VisualStaffMeasureFactory(selection, noteGroupFactory, layoutDictionary);
+            var systemMeasureFactory = new VisualSystemMeasureFactory(selection, staffMeasusureFactory, layoutDictionary);
+            var staffSystemFactory = new VisualStaffSystemFactory(systemMeasureFactory, selection, layoutDictionary);
+            var scene = new PageViewSceneFactory(staffSystemFactory, 20, 30, ColorARGB.Black, ColorARGB.White, layoutDictionary);
             return new VisualScoreDocumentScene(scene, scoreDocument);
         }
     }

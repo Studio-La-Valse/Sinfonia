@@ -4,9 +4,6 @@ namespace Sinfonia.ViewModels.Application
 {
     public class DocumentCollectionViewModel : BaseViewModel
     {
-        private readonly IShellMethods shellMethods;
-        private readonly ICommandFactory commandFactory;
-
         public ICommand SetActiveCommand { get; }
         public ICommand CloseCommand { get; }
         public ObservableCollection<DocumentViewModel> Documents { get; }
@@ -14,11 +11,8 @@ namespace Sinfonia.ViewModels.Application
 
 
 
-        public DocumentCollectionViewModel(IShellMethods shellMethods, ICommandFactory commandFactory)
+        public DocumentCollectionViewModel(ICommandFactory commandFactory)
         {
-            this.shellMethods = shellMethods;
-            this.commandFactory = commandFactory;
-
             Documents = [];
             SetActiveCommand = commandFactory.Create<DocumentViewModel>(SetActive, (d) => true);
             CloseCommand = commandFactory.Create<DocumentViewModel>(Close, (d) => true);

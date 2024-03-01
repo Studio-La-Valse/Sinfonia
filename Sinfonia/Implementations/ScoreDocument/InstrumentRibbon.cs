@@ -1,15 +1,10 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
-
-namespace Sinfonia.Implementations.ScoreDocument
+﻿namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class InstrumentRibbon : ScoreElement, IMementoElement<InstrumentRibbonMemento>
     {
         private readonly ScoreDocumentCore score;
         private readonly Instrument instrument;
-        private IInstrumentRibbonLayout layout;
 
-
-        public Guid Guid { get; }
 
 
 
@@ -18,43 +13,26 @@ namespace Sinfonia.Implementations.ScoreDocument
         public int IndexInScore =>
             score.contentTable.IndexOf(this);
 
-        public string AbbreviatedName { get => ReadLayout().AbbreviatedName; set => ReadLayout().AbbreviatedName = value; }
-        public bool Collapsed { get => ReadLayout().Collapsed; set => ReadLayout().Collapsed = value; }
-        public string DisplayName { get => ReadLayout().DisplayName; set => ReadLayout().DisplayName = value; }
-        public int NumberOfStaves { get => ReadLayout().NumberOfStaves; set => ReadLayout().NumberOfStaves = value; }
 
-        public InstrumentRibbon(ScoreDocumentCore score, Instrument instrument, IInstrumentRibbonLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator)
+
+        public InstrumentRibbon(ScoreDocumentCore score, Instrument instrument, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
             this.instrument = instrument;
-            this.layout = layout;
-
-            Guid = guid;
         }
 
 
         public InstrumentMeasure GetMeasureCore(int index)
         {
-            return score.contentTable.GetCell(index, IndexInScore);
+            return score.contentTable.GetInstrumentMeasure(index, IndexInScore);
         }
 
 
         public IEnumerable<InstrumentMeasure> EnumerateMeasuresCore()
         {
-            return score.contentTable.GetCellsRow(IndexInScore);
+            return score.contentTable.GetInstrumentMeasuresInInstrumentRibbon(IndexInScore);
         }
 
-
-
-
-        public void ApplyLayout(IInstrumentRibbonLayout layout)
-        {
-            this.layout = layout;
-        }
-        public IInstrumentRibbonLayout ReadLayout()
-        {
-            return layout;
-        }
 
 
 
@@ -62,7 +40,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return new InstrumentRibbonMemento
             {
-                Layout = ReadLayout().Copy(),
                 Measures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
                 Instrument = Instrument,
                 Guid = Guid,
@@ -70,8 +47,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void ApplyMemento(InstrumentRibbonMemento memento)
         {
-            ApplyLayout(memento.Layout);
-
             foreach (var measureMemento in memento.Measures)
             {
                 var measure = GetMeasureCore(measureMemento.MeasureIndex);

@@ -1,19 +1,16 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
+﻿using StudioLaValse.ScoreDocument.Core.Primitives.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordMemento>, ILayoutElement<IChordLayout>
+    internal sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordMemento>
     {
         private readonly List<Note> measureElements;
         private readonly MeasureBlock hostBlock;
         private readonly IKeyGenerator<int> keyGenerator;
-        private IChordLayout layout;
-
+        private readonly Dictionary<int, BeamType> beamTypes = [];
 
 
         public RythmicDuration RythmicDuration { get; }
-        public Guid Guid { get; }
 
 
         public Tuplet Tuplet =>
@@ -38,33 +35,29 @@ namespace Sinfonia.Implementations.ScoreDocument
                 return position;
             }
         }
+        public Position PositionEnd
+        {
+            get
+            {
+                return Position + this.ActualDuration();
+            }
+        }
         public bool Grace =>
             hostBlock.Grace;
         public int IndexInBlock =>
             hostBlock.IndexOfOrThrow(this);
-        public double XOffset
-        {
-            get
-            {
-                return layout.XOffset;
-            }
-            set
-            {
-                layout.XOffset = value;
-            }
-        }
 
 
 
-        public Chord(MeasureBlock hostBlock, RythmicDuration displayDuration, ChordLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator)
+
+        public Chord(MeasureBlock hostBlock, RythmicDuration displayDuration, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.hostBlock = hostBlock;
             this.keyGenerator = keyGenerator;
-            this.layout = layout;
+
+            RythmicDuration = displayDuration;
 
             measureElements = [];
-            RythmicDuration = displayDuration;
-            Guid = guid;
         }
 
 
@@ -86,8 +79,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     continue;
                 }
 
-                var layout = new MeasureElementLayout();
-                var noteInMeasure = new Note(pitch, this, layout, keyGenerator, Guid.NewGuid());
+                var noteInMeasure = new Note(pitch, this, keyGenerator, Guid.NewGuid());
                 measureElements.Add(noteInMeasure);
             }
         }
@@ -112,7 +104,6 @@ namespace Sinfonia.Implementations.ScoreDocument
             return new ChordMemento
             {
                 Notes = measureElements.Select(n => n.GetMemento()).ToList(),
-                Layout = ReadLayout(),
                 RythmicDuration = RythmicDuration,
                 Guid = Guid
             };
@@ -120,45 +111,49 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(ChordMemento memento)
         {
             Clear();
-            ApplyLayout(memento.Layout);
             foreach (var noteMemento in memento.Notes)
             {
-                var layout = noteMemento.Layout;
                 var pitch = noteMemento.Pitch;
-                var noteInMeasure = new Note(pitch, this, layout, keyGenerator, noteMemento.Guid);
+                var noteInMeasure = new Note(pitch, this, keyGenerator, noteMemento.Guid);
                 measureElements.Add(noteInMeasure);
+                noteInMeasure.ApplyMemento(noteMemento);
             }
         }
 
 
 
-        public IChordLayout ReadLayout()
+
+        public void ClearBeams()
         {
-            return layout;
+            beamTypes.Clear();
         }
-        public void ApplyLayout(IChordLayout memento)
-        {
-            layout = memento;
-        }
-
-
-
         public void SetBeamType(PowerOfTwo flag, BeamType beamType)
         {
-            layout.Beams[flag.Value] = beamType;
+            beamTypes[flag.Value] = beamType;
         }
-        public BeamType? GetBeamType(PowerOfTwo flag)
+        public bool TryGetBeamType(PowerOfTwo i, out BeamType? beamType)
         {
-            var value = layout.Beams.TryGetValue(flag, out var _value);
-            if (value)
+            beamType = null;
+
+            if (beamTypes.TryGetValue(i.Value, out var _beamType))
             {
-                return _value;
+                beamType = _beamType;
+                return true;
+            }
+
+            return false;
+        }
+        public BeamType? GetBeamType(PowerOfTwo i)
+        {
+            if (beamTypes.TryGetValue(i.Value, out var value))
+            {
+                return value;
             }
             return null;
         }
         public IEnumerable<(BeamType beam, PowerOfTwo duration)> GetBeamTypes()
         {
-            return layout.Beams.Select(e => (e.Value, e.Key));
+            return beamTypes.Select(e => (e.Value, new PowerOfTwo(e.Key)));
         }
 
 

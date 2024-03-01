@@ -34,7 +34,7 @@
         {
             foreach (var measure in scoreMeasure.ReadMeasures())
             {
-                foreach (var voice in measure.EnumerateVoices())
+                foreach (var voice in measure.ReadVoices())
                 {
                     var blockChain = measure.ReadBlockChainAt(voice);
                     foreach (var block in blockChain.ReadBlocks())

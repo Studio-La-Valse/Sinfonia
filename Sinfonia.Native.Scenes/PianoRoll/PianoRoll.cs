@@ -1,6 +1,7 @@
-﻿namespace Sinfonia.Native.Scenes.PianoRoll
-{
+﻿using StudioLaValse.ScoreDocument.Layout;
 
+namespace Sinfonia.Native.Scenes.PianoRoll
+{
     internal class PianoRoll : BaseVisualParent<IUniqueScoreElement>
     {
         private readonly Func<double> noteHeight;
@@ -9,11 +10,13 @@
 
         private readonly IScoreDocumentReader score;
         private readonly ISelection<IUniqueScoreElement> selection;
+        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
 
-        public PianoRoll(IScoreDocumentReader score, ISelection<IUniqueScoreElement> selection, Func<double> noteHeight) : base(score)
+        public PianoRoll(IScoreDocumentReader score, ISelection<IUniqueScoreElement> selection, IScoreLayoutDictionary scoreLayoutDictionary, Func<double> noteHeight) : base(score)
         {
             this.score = score;
             this.selection = selection;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.noteHeight = noteHeight;
         }
 
@@ -23,7 +26,8 @@
             var canvasLeft = 0d;
             foreach (var scoreMeasure in score.ReadScoreMeasures())
             {
-                var measureWidth = scoreMeasure.Width;
+                var layout = scoreLayoutDictionary.GetOrDefault(scoreMeasure);
+                var measureWidth = layout.Width;
                 var measure = new Measure(scoreMeasure, selection, canvasLeft, measureWidth, noteHeight(), generalSpacing, gridLineColor);
                 yield return measure;
 
@@ -36,7 +40,8 @@
             var canvasLeft = 0d;
             foreach (var scoreMeasure in score.ReadScoreMeasures())
             {
-                var measureWidth = scoreMeasure.Width;
+                var layout = scoreLayoutDictionary.GetOrDefault(scoreMeasure);
+                var measureWidth = layout.Width;
                 yield return new DrawableLineVertical(canvasLeft, 0, 88 * noteHeight(), 0.2, gridLineColor);
 
                 canvasLeft += measureWidth;

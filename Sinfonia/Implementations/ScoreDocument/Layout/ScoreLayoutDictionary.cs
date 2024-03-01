@@ -1,162 +1,185 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
+﻿using StudioLaValse.ScoreDocument.Layout.ScoreElements;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    internal class ScoreLayoutDictionary
+    public class ScoreLayoutDictionary : StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary, StudioLaValse.ScoreDocument.Builder.IScoreLayoutDictionary
     {
-        public IScoreDocumentLayout ScoreDocumentLayout { get; set; }
+        private readonly Dictionary<Guid, NoteLayout> measureElementLayoutDictionary = [];
+        private readonly Dictionary<Guid, ChordLayout> chordLayoutDictionary = [];
+        private readonly Dictionary<Guid, MeasureBlockLayout> measureBlockLayoutDictionary = [];
+
+        private readonly Dictionary<Guid, InstrumentMeasureLayout> instrumentMeasureLayoutDictionary = [];
+        private readonly Dictionary<Guid, ScoreMeasureLayout> scoreMeasureLayoutDictionary = [];
+        private readonly Dictionary<Guid, InstrumentRibbonLayout> instrumentRibbonLayoutDictionary = [];
+
+        private readonly Dictionary<Guid, StaffLayout> staffLayoutDictionary = [];
+        private readonly Dictionary<Guid, StaffGroupLayout> staffGroupLayoutDictionary = [];
+        private readonly Dictionary<Guid, StaffSystemLayout> staffSystemLayoutDictionary = [];
+        private readonly ScoreDocumentStyle documentStyle;
+        private readonly StaffSystemGenerator staffSystemGenerator;
+        private ScoreDocumentLayout? documentLayout;
 
 
-        private readonly Dictionary<Guid, INoteLayout> measureElementLayoutDictionary = [];
-        private readonly Dictionary<Guid, IChordLayout> chordLayoutDictionary = [];
-        private readonly Dictionary<Guid, IMeasureBlockLayout> chordGroupReaderDictionary = [];
-
-        private readonly Dictionary<Guid, IInstrumentMeasureLayout> instrumentMeasureLayoutDictionary = [];
-        private readonly Dictionary<Guid, IScoreMeasureLayout> scoreMeasureLayoutDictionary = [];
-        private readonly Dictionary<Guid, IInstrumentRibbonLayout> instrumentRibbonLayoutDictionary = [];
-
-        private readonly Dictionary<Guid, IStaffLayout> staffLayoutDictionary = [];
-        private readonly Dictionary<Guid, IStaffGroupLayout> staffGroupLayoutDictionary = [];
-        private readonly Dictionary<Guid, IStaffSystemLayout> staffSystemLayoutDictionary = [];
-
-
-
-        public ScoreLayoutDictionary(IScoreDocumentLayout scoreDocumentLayout)
+        public ScoreLayoutDictionary(ScoreDocumentStyle documentStyle, StaffSystemGenerator staffSystemGenerator)
         {
-            ScoreDocumentLayout = scoreDocumentLayout;
+            this.documentStyle = documentStyle;
+            this.staffSystemGenerator = staffSystemGenerator;
         }
 
 
-        public INoteLayout GetOrCreate(Note element)
+        public ScoreDocumentLayout GetOrDefault(IScoreDocument document)
         {
-            if (measureElementLayoutDictionary.TryGetValue(element.Guid, out var value))
+            if (documentLayout is null)
             {
-                return value;
+                return documentStyle.ScoreDocumentLayoutFactory(document);
             }
 
-            var layout = new MeasureElementLayout();
-            measureElementLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentLayout.Copy();
+        }
+        public void Apply(IScoreDocument scoreDocument, ScoreDocumentLayout layout)
+        {
+            documentLayout = layout;
         }
 
 
-        public IChordLayout GetOrCreate(Chord element)
+        public NoteLayout GetOrDefault(INote note)
         {
-            if (chordLayoutDictionary.TryGetValue(element.Guid, out var value))
+            if (measureElementLayoutDictionary.TryGetValue(note.Guid, out var value))
             {
-                return value;
+                return value.Copy();
             }
 
-            var layout = new ChordLayout();
-            chordLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.NoteLayoutFactory(note);
+        }
+        public void Apply(INote note, NoteLayout layout)
+        {
+            measureElementLayoutDictionary[note.Guid] = layout;
         }
 
 
-        public IMeasureBlockLayout GetOrCreate(MeasureBlock reader)
+        public ChordLayout GetOrDefault(IChord chord)
         {
-            if (chordGroupReaderDictionary.TryGetValue(reader.Guid, out var value))
+            if (chordLayoutDictionary.TryGetValue(chord.Guid, out var value))
             {
-                return value;
+                return value.Copy();
             }
 
-            var layout = new MeasureBlockLayout();
-            chordGroupReaderDictionary[reader.Guid] = layout;
-
-            return layout;
+            return documentStyle.ChordLayoutFactory(chord);
+        }
+        public void Apply(IChord chord, ChordLayout layout)
+        {
+            chordLayoutDictionary[chord.Guid] = layout;
         }
 
 
-
-        public IInstrumentMeasureLayout GetOrCreate(InstrumentMeasure element)
+        public MeasureBlockLayout GetOrDefault(IMeasureBlock chord)
         {
-            if (instrumentMeasureLayoutDictionary.TryGetValue(element.Guid, out var value))
+            if (measureBlockLayoutDictionary.TryGetValue(chord.Guid, out var value))
             {
-                return value;
+                return value.Copy();
             }
 
-            var layout = new InstrumentMeasureLayout();
-            instrumentMeasureLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.MeasureBlockStyle(chord);
+        }
+        public void Apply(IMeasureBlock measureBlock, MeasureBlockLayout layout)
+        {
+            measureBlockLayoutDictionary[measureBlock.Guid] = layout;
         }
 
 
-
-        public IScoreMeasureLayout GetOrCreate(ScoreMeasure element)
+        public InstrumentMeasureLayout GetOrDefault(IInstrumentMeasure instrumentMeasure)
         {
-            if (scoreMeasureLayoutDictionary.TryGetValue(element.Guid, out var value))
+            if (instrumentMeasureLayoutDictionary.TryGetValue(instrumentMeasure.Guid, out var value))
             {
-                return value;
+                return value.Copy();
             }
 
-            var layout = new ScoreMeasureLayout();
-            scoreMeasureLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.InstrumentMeasureLayoutFactory(instrumentMeasure);
+        }
+        public void Apply(IInstrumentMeasure instrumentMeasure, InstrumentMeasureLayout layout)
+        {
+            instrumentMeasureLayoutDictionary[instrumentMeasure.Guid] = layout;
         }
 
 
-
-        public IInstrumentRibbonLayout GetOrCreate(InstrumentRibbon element)
+        public ScoreMeasureLayout GetOrDefault(IScoreMeasure scoreMeasure)
         {
-            if (instrumentRibbonLayoutDictionary.TryGetValue(element.Guid, out var value))
+            if (scoreMeasureLayoutDictionary.TryGetValue(scoreMeasure.Guid, out var value))
             {
-                return value;
+                return value.Copy();
             }
 
-            var instrument = element.Instrument;
-            var layout = new InstrumentRibbonLayout(instrument);
-            instrumentRibbonLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.ScoreMeasureLayoutFactory(scoreMeasure);
+        }
+        public void Apply(IScoreMeasure scoreMeasure, ScoreMeasureLayout layout)
+        {
+            scoreMeasureLayoutDictionary[scoreMeasure.Guid] = layout;
         }
 
 
-
-        public IStaffLayout GetOrCreate(Staff element)
+        public InstrumentRibbonLayout GetOrDefault(IInstrumentRibbon instrumentRibbon)
         {
-            if (staffLayoutDictionary.TryGetValue(element.Guid, out var layout))
+            if (instrumentRibbonLayoutDictionary.TryGetValue(instrumentRibbon.Guid, out var value))
             {
-                return layout;
+                return value.Copy();
             }
 
-            layout = new StaffLayout();
-            staffLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.InstrumentRibbonLayoutFactory(instrumentRibbon);
+        }
+        public void Apply(IInstrumentRibbon instrumentRibbon, InstrumentRibbonLayout layout)
+        {
+            instrumentRibbonLayoutDictionary[instrumentRibbon.Guid] = layout;
         }
 
 
-
-        public IStaffGroupLayout GetOrCreate(StaffGroup element)
+        public StaffLayout GetOrDefault(IStaff staff)
         {
-            if (staffGroupLayoutDictionary.TryGetValue(element.Guid, out var layout))
+            if (staffLayoutDictionary.TryGetValue(staff.Guid, out var layout))
             {
-                return layout;
+                return layout.Copy();
             }
 
-            layout = new StaffGroupLayout(element.Instrument);
-            staffGroupLayoutDictionary.Add(element.Guid, layout);
-
-            return layout;
+            return documentStyle.StaffLayoutFactory(staff);
+        }
+        public void Apply(IStaff staff, StaffLayout layout)
+        {
+            staffLayoutDictionary[staff.Guid] = layout;
         }
 
 
-
-        public IStaffSystemLayout GetOrCreate(StaffSystem element)
+        public StaffGroupLayout GetOrDefault(IStaffGroup staffGroup)
         {
-            if (staffSystemLayoutDictionary.TryGetValue(element.Guid, out var layout))
+            if (staffGroupLayoutDictionary.TryGetValue(staffGroup.Guid, out var layout))
             {
-                return layout;
+                return layout.Copy();
             }
 
-            layout = new StaffSystemLayout();
-            staffSystemLayoutDictionary.Add(element.Guid, layout);
+            return documentStyle.StaffGroupLayoutFactory(staffGroup);
+        }
+        public void Apply(IStaffGroup staffGroup, StaffGroupLayout layout)
+        {
+            staffGroupLayoutDictionary[staffGroup.Guid] = layout;
+        }
 
-            return layout;
+
+        public StaffSystemLayout GetOrDefault(IStaffSystem staffSystem)
+        {
+            if (staffSystemLayoutDictionary.TryGetValue(staffSystem.Guid, out var layout))
+            {
+                return layout.Copy();
+            }
+
+            return documentStyle.StaffSystemLayoutFactory(staffSystem);
+        }
+        public void Apply(IStaffSystem staffSystem, StaffSystemLayout layout)
+        {
+            staffSystemLayoutDictionary[staffSystem.Guid] = layout;
+        }
+
+        public IEnumerable<IStaffSystem> EnumerateStaffSystems(IScoreDocumentReader scoreDocument)
+        {
+            var layout = GetOrDefault(scoreDocument);
+            return staffSystemGenerator.EnumerateStaffSystems(scoreDocument, layout);
         }
     }
 }

@@ -1,9 +1,13 @@
-﻿namespace Sinfonia.Native.Scenes.SinglePageView
+﻿using StudioLaValse.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.ScoreElements;
+
+namespace Sinfonia.Native.Scenes.SinglePageView
 {
     public class SinglePageDocumentScene : BaseVisualParent<IUniqueScoreElement>
     {
         private readonly VisualStaffSystemFactory sceneFactory;
         private readonly IScoreDocumentReader scoreDocumentReader;
+        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
         private readonly Func<int> page;
 
         /// <summary>
@@ -11,17 +15,18 @@
         /// </summary>
         /// <param name="sceneFactory"></param>
         /// <param name="scoreDocumentReader"></param>
-        public SinglePageDocumentScene(VisualStaffSystemFactory sceneFactory, IScoreDocumentReader scoreDocumentReader, Func<int> page) : base(scoreDocumentReader)
+        public SinglePageDocumentScene(VisualStaffSystemFactory sceneFactory, IScoreDocumentReader scoreDocumentReader, IScoreLayoutDictionary scoreLayoutDictionary, Func<int> page) : base(scoreDocumentReader)
         {
             this.sceneFactory = sceneFactory;
             this.scoreDocumentReader = scoreDocumentReader;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.page = page;
         }
 
         /// <inheritdoc/>
         public override IEnumerable<BaseContentWrapper> GetContentWrappers()
         {
-            var body = new SinglePageViewSceneFactory(page(), PageSize.A4, sceneFactory, ColorARGB.Black, ColorARGB.White);
+            var body = new SinglePageViewSceneFactory(page(), sceneFactory, ColorARGB.Black, ColorARGB.White, scoreLayoutDictionary);
             yield return body.CreateContent(scoreDocumentReader);
         }
 

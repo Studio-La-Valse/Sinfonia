@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Native.Scenes.PianoRoll
+﻿using StudioLaValse.ScoreDocument.Layout;
+
+namespace Sinfonia.Native.Scenes.PianoRoll
 {
     public sealed class PianoRollScene : BaseExternalAddin, IExternalScene
     {
@@ -16,12 +18,12 @@
         }
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary scoreLayoutDictionary)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;
 
-            return new PianoRoll(scoreDocument, selection, () => NoteHeight);
+            return new PianoRoll(scoreDocument, selection, scoreLayoutDictionary, () => NoteHeight);
         }
 
         public override void RegisterSettings(IAddinSettingsManager animationSettingsManager)

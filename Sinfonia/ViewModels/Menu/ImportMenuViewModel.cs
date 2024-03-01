@@ -1,22 +1,22 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Factories;
-using Sinfonia.ViewModels.Application;
+﻿using Sinfonia.ViewModels.Application;
 using System.IO;
 using System.Xml.Linq;
+using StudioLaValse.ScoreDocument.MusicXml;
 
 namespace Sinfonia.ViewModels.Menu
 {
     public class ImportMenuViewModel : MenuItemViewModel
     {
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
-        private readonly IDocumentViewModelFactory documentViewModelFactory;
         private readonly Interfaces.IBrowseToFile browseToFile;
+        private readonly IDocumentViewModelFactory documentViewModelFactory;
 
-        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, IDocumentViewModelFactory documentViewModelFactory, Interfaces.IBrowseToFile browseToFile) : base("Import")
+        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, Interfaces.IBrowseToFile browseToFile, IDocumentViewModelFactory documentViewModelFactory) : base("Import")
         {
             MenuItems.Add(new MenuItemViewModel("MusicXml...", commandFactory.Create(LoadMusicXml)));
             this.documentCollectionViewModel = documentCollectionViewModel;
-            this.documentViewModelFactory = documentViewModelFactory;
             this.browseToFile = browseToFile;
+            this.documentViewModelFactory = documentViewModelFactory;
         }
 
         public void LoadMusicXml()
@@ -25,8 +25,9 @@ namespace Sinfonia.ViewModels.Menu
             {
                 using var fileStream = new FileStream(filepath, FileMode.Open);
                 var document = XDocument.Load(fileStream);
-                var factory = new ScoreBuilderFactoryFromXml(document);
-                var documentViewModel = documentViewModelFactory.Create(factory);
+                var documentViewModel = documentViewModelFactory.Create();
+                documentViewModel.ScoreBuilder.BuildFromXml(document);
+                documentViewModel.Explorer.Rebuild();
                 documentCollectionViewModel.Add(documentViewModel);
             }
         }

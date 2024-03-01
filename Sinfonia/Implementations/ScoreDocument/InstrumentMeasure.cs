@@ -1,5 +1,5 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -9,11 +9,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly ScoreMeasure scoreMeasure;
         private readonly InstrumentRibbon hostRibbon;
         private readonly IKeyGenerator<int> keyGenerator;
-        private IInstrumentMeasureLayout layout;
 
-
-
-        public Guid Guid { get; }
 
 
         public int MeasureIndex =>
@@ -25,19 +21,15 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Instrument Instrument =>
             hostRibbon.Instrument;
 
-        public IEnumerable<ClefChange> ClefChanges => ReadLayout().ClefChanges;
 
 
-        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, IInstrumentMeasureLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator)
+        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.scoreMeasure = scoreMeasure;
             this.hostRibbon = hostRibbon;
             this.keyGenerator = keyGenerator;
-            this.layout = layout;
 
             blockChains = [];
-
-            Guid = guid;
         }
 
 
@@ -78,18 +70,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return blockChains.Select(c => c.Key);
         }
+        
 
-
-
-
-        public IInstrumentMeasureLayout ReadLayout()
-        {
-            return layout;
-        }
-        public void ApplyLayout(IInstrumentMeasureLayout layout)
-        {
-            this.layout = layout;
-        }
 
 
 
@@ -123,7 +105,6 @@ namespace Sinfonia.Implementations.ScoreDocument
             return new InstrumentMeasureMemento
             {
                 Guid = Guid.NewGuid(),
-                Layout = ReadLayout().Copy(),
                 MeasureIndex = MeasureIndex,
                 RibbonIndex = RibbonIndex,
                 VoiceGroups = blockChains.Values
@@ -134,7 +115,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(InstrumentMeasureMemento memento)
         {
             Clear();
-            ApplyLayout(memento.Layout);
             foreach (var voiceGroup in memento.VoiceGroups)
             {
                 var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
@@ -143,16 +123,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-
-
-        public void AddClefChange(ClefChange clefChange)
-        {
-            ReadLayout().AddClefChange(clefChange);
-        }
-        public void RemoveClefChange(ClefChange clefChange)
-        {
-            ReadLayout().RemoveClefChange(clefChange);
-        }
 
 
 

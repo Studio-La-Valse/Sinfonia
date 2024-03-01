@@ -13,24 +13,31 @@ namespace Sinfonia.ViewModels.Application.Document.Explorer
             set => SetValue(() => ScoreDocument, value);
         }
 
-        public ExplorerViewModel(IScoreDocumentReader scoreDocument, ScoreElementViewModel scoreDocumentViewModel)
+        public ICommand RebuildCommand
+        {
+            get => GetValue(() => RebuildCommand);
+            set => SetValue(() => RebuildCommand, value);
+        }
+
+        public ExplorerViewModel(IScoreDocumentReader scoreDocument, ScoreElementViewModel scoreDocumentViewModel, ICommandFactory commandFactory)
         {
             this.scoreDocument = scoreDocument;
             ScoreDocument = scoreDocumentViewModel;
+            RebuildCommand = commandFactory.Create(Rebuild, () => true);
         }
+
+        public void Rebuild() => ScoreDocument.Rebuild();
 
         public void OnCompleted()
         {
             while (queue.Count > 0)
             {
                 var element = queue.Dequeue();
-                var viewModel = ScoreDocument.SelectRecursive(c => c.ScoreElements).FirstOrDefault(c => c.UniqueScoreElement == element);
-                if (viewModel is null)
+                var viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
+                foreach(var viewModel in  viewModels)
                 {
-                    continue;
+                    viewModel.Rebuild();
                 }
-
-                viewModel.Rebuild();
             }
         }
 

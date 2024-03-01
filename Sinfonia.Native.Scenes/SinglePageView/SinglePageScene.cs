@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using StudioLaValse.DependencyInjection;
-
-namespace Sinfonia.Native.Scenes.SinglePageView
+﻿namespace Sinfonia.Native.Scenes.SinglePageView
 {
     public class SinglePageScene : BaseExternalAddin, IExternalScene
     {
@@ -30,18 +27,18 @@ namespace Sinfonia.Native.Scenes.SinglePageView
                 "The page to display");
         }
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary layout)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;
 
-            var noteFactory = new VisualNoteFactory(selection);
+            var noteFactory = new VisualNoteFactory(selection, layout);
             var restFactory = new VisualRestFactory(selection);
-            var noteGroupFactory = new VisualNoteGroupFactory(noteFactory, restFactory);
-            var staffMeasusureFactory = new VisualStaffMeasureFactory(selection, noteGroupFactory);
-            var systemMeasureFactory = new VisualSystemMeasureFactory(selection, staffMeasusureFactory);
-            var staffSystemFactory = new VisualStaffSystemFactory(systemMeasureFactory, selection);
-            return new SinglePageDocumentScene(staffSystemFactory, scoreDocument, () => Page);
+            var noteGroupFactory = new VisualNoteGroupFactory(noteFactory, restFactory, layout);
+            var staffMeasusureFactory = new VisualStaffMeasureFactory(selection, noteGroupFactory, layout);
+            var systemMeasureFactory = new VisualSystemMeasureFactory(selection, staffMeasusureFactory, layout);
+            var staffSystemFactory = new VisualStaffSystemFactory(systemMeasureFactory, selection, layout);
+            return new SinglePageDocumentScene(staffSystemFactory, scoreDocument, layout, () => Page);
         }
     }
 }

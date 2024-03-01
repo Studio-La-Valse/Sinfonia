@@ -1,9 +1,12 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
+
+namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public class InspectorViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {
         private readonly HashSet<IUniqueScoreElement> selectedElements = [];
         private readonly IScoreBuilder scoreBuilder;
+        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
 
         public ScoreElementPropertiesViewModel? PropertiesViewModel
         {
@@ -11,9 +14,10 @@
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        internal InspectorViewModel(IScoreBuilder scoreBuilder)
+        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreLayoutDictionary scoreLayoutDictionary)
         {
             this.scoreBuilder = scoreBuilder;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
         }
 
         public void Update(IEnumerable<IUniqueScoreElement> selected, IEnumerable<IUniqueScoreElement> unselected)
@@ -49,7 +53,7 @@
 
             PropertiesViewModel = firstItem switch
             {
-                INoteEditor _ => new NotePropertiesViewModel(selectedElements.OfType<INoteEditor>(), scoreBuilder),
+                INoteReader _ => new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder, scoreLayoutDictionary),
                 _ => null
             };
 

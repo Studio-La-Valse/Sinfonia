@@ -1,7 +1,11 @@
-﻿namespace Sinfonia.ViewModels.Application.Document
+﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
+
+namespace Sinfonia.ViewModels.Application.Document
 {
     public class DocumentViewModel : BaseViewModel
     {
+        private readonly IScoreLayoutDictionary scoreLayoutProvider;
+
         public bool CanActivate
         {
             get => GetValue(() => CanActivate);
@@ -24,7 +28,7 @@
             {
                 if (value is not null)
                 {
-                    var visualScene = value.ScoreDocumentScene.CreateScene(ScoreDocumentReader);
+                    var visualScene = value.ScoreDocumentScene.CreateScene(ScoreDocumentReader, scoreLayoutProvider);
                     var sceneManager = new SceneManager<IUniqueScoreElement, int>(visualScene, (e) => e.Id).WithBackground(ColorARGB.Black);
                     CanvasViewModel.Scene = sceneManager;
                 }
@@ -50,8 +54,10 @@
 
 
 
-        public DocumentViewModel(CanvasViewModel canvasViewModel, IEnumerable<SceneViewModel> availableScenes, ISelection<IUniqueScoreElement> selection, ICommandFactory commandFactory, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel)
+        internal DocumentViewModel(CanvasViewModel canvasViewModel, IEnumerable<SceneViewModel> availableScenes, ISelection<IUniqueScoreElement> selection, ICommandFactory commandFactory, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreLayoutDictionary scoreLayoutProvider, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel)
         {
+            this.scoreLayoutProvider = scoreLayoutProvider;
+
             Selection = selection;
             CanvasViewModel = canvasViewModel;
             AvailableScenes = new ObservableCollection<SceneViewModel>(availableScenes);

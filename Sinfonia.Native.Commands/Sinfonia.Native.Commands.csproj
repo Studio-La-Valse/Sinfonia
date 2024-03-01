@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
+    <ProjectReference Include="..\Sinfonia.Native\Sinfonia.Native.csproj" />
+  </ItemGroup>
+
 </Project>

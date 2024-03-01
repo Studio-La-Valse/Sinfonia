@@ -218,6 +218,8 @@
                                         <StackPanel>
                                             <TextBlock Text="Navigator"
                                                        Foreground="White"/>
+                                            <Button Command="{Binding RebuildCommand}"
+                                                    Content="Rebuild"/>
                                             <TreeView DataContext="{Binding ScoreDocument}" 
                                                       Background="Black" 
                                                   ItemsSource="{Binding ScoreElements}">
@@ -257,7 +259,7 @@
                                                                        FontWeight="Bold"
                                                                        Foreground="White"/>
                                                             <TextBox Grid.Column="1" 
-                                                                     Text="{Binding Value}"/>
+                                                                     Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ListBox.ItemTemplate>

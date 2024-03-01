@@ -1,40 +1,46 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Proxy;
+﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Builder.IScoreLayoutDictionary;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreBuilder : IScoreBuilder
     {
-        private readonly ScoreDocumentProxy scoreDocument;
+        private readonly IScoreDocumentEditor scoreDocument;
+        private readonly IScoreLayoutDictionary layoutProvider;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
-        private readonly Queue<Action<IScoreDocumentEditor>> pendingEdits = [];
+        private readonly Queue<Action<IScoreDocumentEditor, IScoreLayoutDictionary>> pendingEdits = [];
 
-        public IScoreDocumentReader ScoreDocument => scoreDocument;
-
-
-        public ScoreBuilder(ScoreDocumentProxy scoreDocument, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ScoreBuilder(IScoreDocumentEditor scoreDocument, IScoreLayoutDictionary layoutProvider, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.scoreDocument = scoreDocument;
+            this.layoutProvider = layoutProvider;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
 
-
-
-
-        public IScoreBuilder Edit(Action<IScoreDocumentEditor> editor)
+        public IScoreBuilder Edit(Action<IScoreDocumentEditor> action)
         {
-            pendingEdits.Enqueue(editor);
+            pendingEdits.Enqueue((e, l) =>
+            {
+                action(e);
+            });
+
+            return this;
+        }
+
+        public IScoreBuilder Edit(Action<IScoreDocumentEditor, IScoreLayoutDictionary> action)
+        {
+            pendingEdits.Enqueue(action);
             return this;
         }
 
         public IScoreBuilder Build()
         {
-            while(pendingEdits.Count > 0)
+            while (pendingEdits.Count > 0)
             {
                 var pendingAction = pendingEdits.Dequeue();
                 using var transaction = commandManager.OpenTransaction("Generic score document edit");
-                pendingAction.Invoke(scoreDocument);
+                pendingAction.Invoke(scoreDocument, layoutProvider);
             }
 
             notifyEntityChanged.RenderChanges();

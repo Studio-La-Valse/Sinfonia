@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sinfonia.Implementations;
+using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Menu;
 using StudioLaValse.DependencyInjection.Microsoft;
@@ -14,6 +15,9 @@ namespace Sinfonia.Extensions
         public static IServiceCollection AddModels(this IServiceCollection services)
         {
             services.AddSingleton<IShellMethods, ShellMethods>();
+            services.AddSingleton<IScoreDocumentStyleProvider, ScoreDocumentStyleProvider>();
+            services.AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>();
+            services.AddSingleton<IScoreBuilderFactory, EmptyScoreBuilderFactory>();
             return services;
         }
 

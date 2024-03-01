@@ -1,7 +1,10 @@
-﻿namespace Sinfonia.Interfaces
+﻿using Sinfonia.Implementations.ScoreDocument;
+using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
+
+namespace Sinfonia.Interfaces
 {
     public interface IScoreBuilderFactory
     {
-        (IScoreBuilder builder, IScoreDocumentReader document) Create(ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged);
+        (IScoreBuilder builder, IScoreDocumentReader document, IScoreLayoutDictionary layout) Create(ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged);
     }
 }

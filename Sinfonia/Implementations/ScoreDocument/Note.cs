@@ -1,20 +1,11 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Layout.Elements;
-
-namespace Sinfonia.Implementations.ScoreDocument
+﻿namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class Note : ScoreElement, IMementoElement<NoteMemento>, ILayoutElement<INoteLayout>
+    internal class Note : ScoreElement, IMementoElement<NoteMemento>
     {
         private readonly Chord container;
-        private INoteLayout layout;
-
 
 
         public Pitch Pitch { get; set; }
-        public Guid Guid { get; }
-
-
-
         public bool Grace =>
             container.Grace;
         public Position Position =>
@@ -24,19 +15,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Tuplet Tuplet =>
             container.Tuplet;
 
-        public AccidentalDisplay ForceAccidental { get => ReadLayout().ForceAccidental; set => ReadLayout().ForceAccidental = value; }
-        public int StaffIndex { get => ReadLayout().StaffIndex; set => ReadLayout().StaffIndex = value; }
-        public double XOffset { get => ReadLayout().XOffset; set => ReadLayout().XOffset = value; }
 
 
-
-        internal Note(Pitch pitch, Chord container, INoteLayout measureElementLayout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator)
+        internal Note(Pitch pitch, Chord container, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.container = container;
-            layout = measureElementLayout;
 
             Pitch = pitch;
-            Guid = guid;
         }
 
 
@@ -47,29 +32,20 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public INoteLayout ReadLayout()
-        {
-            return layout;
-        }
-        public void ApplyLayout(INoteLayout layout)
-        {
-            this.layout = layout;
-        }
 
         public NoteMemento GetMemento()
         {
             return new NoteMemento
             {
                 Pitch = Pitch,
-                Layout = ReadLayout(),
                 Guid = Guid
             };
         }
         public void ApplyMemento(NoteMemento memento)
         {
-            ApplyLayout(memento.Layout);
             Pitch = memento.Pitch;
         }
+
 
 
         public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
