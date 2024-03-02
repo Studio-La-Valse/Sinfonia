@@ -1,12 +1,10 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
-
-namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public class InspectorViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {
-        private readonly HashSet<IUniqueScoreElement> selectedElements = [];
+        private readonly HashSet<IUniqueScoreElement> selectedElements = new HashSet<IUniqueScoreElement>(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id));
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
+        private readonly IScoreLayoutProvider scoreLayoutDictionary;
 
         public ScoreElementPropertiesViewModel? PropertiesViewModel
         {
@@ -14,7 +12,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreLayoutDictionary scoreLayoutDictionary)
+        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreLayoutProvider scoreLayoutDictionary)
         {
             this.scoreBuilder = scoreBuilder;
             this.scoreLayoutDictionary = scoreLayoutDictionary;
@@ -71,7 +69,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
                 return;
             }
 
-            Update();
+            //Update();
             refreshOnNextInvalidation = false;
         }
 
@@ -92,7 +90,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
                 return;
             }
 
-            if (PropertiesViewModel.Elements.Any(e => e.Equals(value)))
+            if (PropertiesViewModel.Elements.Any(e => e.Id.Equals(value.Id)))
             {
                 refreshOnNextInvalidation = true;
             }

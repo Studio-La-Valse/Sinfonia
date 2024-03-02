@@ -1,6 +1,4 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
-using CommandManager = StudioLaValse.CommandManager.CommandManager;
-using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Builder.IScoreLayoutDictionary;
+﻿using CommandManager = StudioLaValse.CommandManager.CommandManager;
 
 namespace Sinfonia.Implementations
 {
@@ -8,15 +6,13 @@ namespace Sinfonia.Implementations
     {
         private readonly IEnumerable<IExternalScene> availableScenes;
         private readonly ICommandFactory commandFactory;
-        private readonly IScoreDocumentStyleProvider styleProvider;
         private readonly IKeyGeneratorFactory<int> keyGeneratorFactory;
         private readonly IScoreBuilderFactory scoreBuilderFactory;
 
-        public DocumentViewModelFactory(IAddinCollection<IExternalScene> availableScenes, ICommandFactory commandFactory, IScoreDocumentStyleProvider styleProvider, IKeyGeneratorFactory<int> keyGeneratorFactory, IScoreBuilderFactory scoreBuilderFactory)
+        public DocumentViewModelFactory(IAddinCollection<IExternalScene> availableScenes, ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IScoreBuilderFactory scoreBuilderFactory)
         {
             this.availableScenes = availableScenes;
             this.commandFactory = commandFactory;
-            this.styleProvider = styleProvider;
             this.keyGeneratorFactory = keyGeneratorFactory;
             this.scoreBuilderFactory = scoreBuilderFactory;
         }
@@ -34,9 +30,9 @@ namespace Sinfonia.Implementations
             // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
             notifyEntityChanged.Subscribe(inspectorViewModel);
 
-            var selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault()
-                .AddChangedHandler(inspectorViewModel.Update)
-                .OnChangedNotify(notifyEntityChanged);
+            var selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
+                .AddChangedHandler(inspectorViewModel.Update, e => e.Id)
+                .OnChangedNotify(notifyEntityChanged, e => e.Id);
 
             var scenes = availableScenes.Select(_scene =>
             {

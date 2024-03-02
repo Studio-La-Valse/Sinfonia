@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -20,6 +19,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             scoreMeasure.TimeSignature;
         public Instrument Instrument =>
             hostRibbon.Instrument;
+        public KeySignature KeySignature =>
+            scoreMeasure.KeySignature;
 
 
 
@@ -36,8 +37,14 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public ScoreMeasure ReadMeasureContext() =>
-            scoreMeasure;
+        public MeasureBlockChain GetBlockChainOrThrowCore(int voice)
+        {
+            if (blockChains.TryGetValue(voice, out var chain))
+            {
+                return chain;
+            }
+            throw new Exception($"No voice {voice} found.");
+        }
 
 
         public void Clear()
@@ -55,14 +62,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public MeasureBlockChain GetBlockChainOrThrowCore(int voice)
-        {
-            if (blockChains.TryGetValue(voice, out var chain))
-            {
-                return chain;
-            }
-            throw new Exception($"No voice {voice} found.");
-        }
 
 
 
@@ -70,7 +69,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return blockChains.Select(c => c.Key);
         }
-        
+
 
 
 
@@ -120,15 +119,6 @@ namespace Sinfonia.Implementations.ScoreDocument
                 var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
                 blockChain.ApplyMemento(voiceGroup);
             }
-        }
-
-
-
-
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return blockChains.Values;
         }
     }
 }

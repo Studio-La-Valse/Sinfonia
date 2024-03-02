@@ -11,19 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Native.Scenes", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Native", "Sinfonia.Native\Sinfonia.Native.csproj", "{C8E089E4-0733-4BE6-A875-F4DAE72298DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj", "{EB3EA232-E154-4992-8A9B-F26079A9B108}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Drawable", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj", "{271287A5-1FDE-441D-B1F6-B0FFAED40031}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Native.Commands", "Sinfonia.Native.Commands\Sinfonia.Native.Commands.csproj", "{814D374B-2128-48EA-89DA-670492D8C439}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Builder", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Builder\StudioLaValse.ScoreDocument.Builder.csproj", "{DC623826-511C-468D-B187-6327CFB2FBF8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Layout", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Layout\StudioLaValse.ScoreDocument.Layout.csproj", "{8A478EBA-D354-4D7F-9D92-CD2B3E6C2913}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Core", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Core\StudioLaValse.ScoreDocument.Core.csproj", "{2096C6B1-3E5A-4517-870E-A57C211A6F9C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.MusicXml", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj", "{30CEE70F-88FE-4090-ADC1-C8A216699800}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sinfonia.Tests", "Sinfonia.Tests\Sinfonia.Tests.csproj", "{C367C2F9-9DBC-48A8-B9AB-7B1CAEEE056C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,34 +37,14 @@ Global
 		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8E089E4-0733-4BE6-A875-F4DAE72298DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB3EA232-E154-4992-8A9B-F26079A9B108}.Release|Any CPU.Build.0 = Release|Any CPU
-		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{271287A5-1FDE-441D-B1F6-B0FFAED40031}.Release|Any CPU.Build.0 = Release|Any CPU
 		{814D374B-2128-48EA-89DA-670492D8C439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{814D374B-2128-48EA-89DA-670492D8C439}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814D374B-2128-48EA-89DA-670492D8C439}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814D374B-2128-48EA-89DA-670492D8C439}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC623826-511C-468D-B187-6327CFB2FBF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC623826-511C-468D-B187-6327CFB2FBF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC623826-511C-468D-B187-6327CFB2FBF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC623826-511C-468D-B187-6327CFB2FBF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A478EBA-D354-4D7F-9D92-CD2B3E6C2913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A478EBA-D354-4D7F-9D92-CD2B3E6C2913}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A478EBA-D354-4D7F-9D92-CD2B3E6C2913}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A478EBA-D354-4D7F-9D92-CD2B3E6C2913}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2096C6B1-3E5A-4517-870E-A57C211A6F9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2096C6B1-3E5A-4517-870E-A57C211A6F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2096C6B1-3E5A-4517-870E-A57C211A6F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2096C6B1-3E5A-4517-870E-A57C211A6F9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30CEE70F-88FE-4090-ADC1-C8A216699800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30CEE70F-88FE-4090-ADC1-C8A216699800}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30CEE70F-88FE-4090-ADC1-C8A216699800}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30CEE70F-88FE-4090-ADC1-C8A216699800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C367C2F9-9DBC-48A8-B9AB-7B1CAEEE056C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C367C2F9-9DBC-48A8-B9AB-7B1CAEEE056C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C367C2F9-9DBC-48A8-B9AB-7B1CAEEE056C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C367C2F9-9DBC-48A8-B9AB-7B1CAEEE056C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

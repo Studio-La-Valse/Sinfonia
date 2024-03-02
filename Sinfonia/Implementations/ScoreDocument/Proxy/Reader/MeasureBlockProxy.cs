@@ -1,19 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class MeasureBlockReaderProxy : IMeasureBlockReader
     {
         private readonly MeasureBlock source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
-        public MeasureBlockReaderProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public MeasureBlockReaderProxy(MeasureBlock source)
         {
             this.source = source;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
         }
+
+
 
         public bool Grace => source.Grace;
 
@@ -28,19 +26,15 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
 
 
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
-        }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
+            return ReadChords();
         }
 
         public IEnumerable<IChordReader> ReadChords()
         {
-            return source.GetChordsCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.GetChordsCore().Select(e => e.Proxy());
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IMeasureBlockReader? right)
@@ -48,7 +42,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             right = null;
             if (source.TryReadNext(out var _right))
             {
-                right = _right.Proxy(commandManager, notifyEntityChanged);
+                right = _right.Proxy();
             }
             return right is not null;
         }
@@ -58,7 +52,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             previous = null;
             if (source.TryReadNext(out var _prev))
             {
-                previous = _prev.Proxy(commandManager, notifyEntityChanged);
+                previous = _prev.Proxy();
             }
             return previous is not null;
         }

@@ -1,33 +1,30 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class ChordEditorProxy : IChordEditor
+    internal class ChordEditorProxy : IChordEditor, IUniqueScoreElement
     {
         private readonly Chord source;
+        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
-        public bool Grace =>
-            source.Grace;
-        public Position Position =>
-            source.Position;
-        public RythmicDuration RythmicDuration =>
-            source.RythmicDuration;
-        public Tuplet Tuplet =>
-            source.Tuplet;
-        public int IndexInBlock =>
-            source.IndexInBlock;
 
+        public bool Grace => source.Grace;
 
+        public Position Position => source.Position;
 
+        public RythmicDuration RythmicDuration => source.RythmicDuration;
 
-
-        public int Id => source.Id;
+        public Tuplet Tuplet => source.Tuplet;
 
         public Guid Guid => source.Guid;
 
-        public ChordEditorProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public int Id => source.Id;
+
+
+        public ChordEditorProxy(Chord source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
@@ -55,20 +52,14 @@
             transaction.Enqueue(command);
         }
 
-
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
-        }
-
         public IEnumerable<INoteEditor> ReadNotes()
         {
-            return source.EnumerateNotesCore().Select(n => n.ProxyEditor(commandManager, notifyEntityChanged));
+            return source.EnumerateNotesCore().Select(n => n.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        }
+
+        public IEnumerable<IScoreElement> EnumerateChildren()
+        {
+            return ReadNotes();
         }
     }
 }

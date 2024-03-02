@@ -1,50 +1,66 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal static class ScoreReaderExtensions
     {
-        public static ScoreDocumentReaderProxy Proxy(this ScoreDocumentCore editor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static ScoreDocumentReaderProxy Proxy(this ScoreDocumentCore editor)
         {
-            return new ScoreDocumentReaderProxy(editor, commandManager, notifyEntityChanged);
+            return new ScoreDocumentReaderProxy(editor);
         }
 
 
 
-
-        public static InstrumentRibbonReaderProxy Proxy(this InstrumentRibbon instrumentRibbon, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static InstrumentRibbonReaderProxy Proxy(this InstrumentRibbon instrumentRibbon)
         {
-            return new InstrumentRibbonReaderProxy(instrumentRibbon, commandManager, notifyEntityChanged);
+            return new InstrumentRibbonReaderProxy(instrumentRibbon);
         }
 
-        public static ScoreMeasureReaderProxy Proxy(this ScoreMeasure measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static ScoreMeasureReaderProxy Proxy(this ScoreMeasure measureEditor)
         {
-            return new ScoreMeasureReaderProxy(measureEditor, commandManager, notifyEntityChanged);
+            return new ScoreMeasureReaderProxy(measureEditor);
         }
 
-        public static InstrumentMeasureReaderProxy Proxy(this InstrumentMeasure measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static InstrumentMeasureReaderProxy Proxy(this InstrumentMeasure measureEditor)
         {
-            return new InstrumentMeasureReaderProxy(measureEditor, commandManager, notifyEntityChanged);
+            return new InstrumentMeasureReaderProxy(measureEditor);
         }
 
-        public static MeasureBlockChainReaderProxy Proxy(this MeasureBlockChain measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+
+
+        public static MeasureBlockChainReaderProxy Proxy(this MeasureBlockChain measureEditor)
         {
-            return new MeasureBlockChainReaderProxy(measureEditor, commandManager, notifyEntityChanged);
+            return new MeasureBlockChainReaderProxy(measureEditor);
         }
 
-        public static MeasureBlockReaderProxy Proxy(this MeasureBlock chordGroup, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static MeasureBlockReaderProxy Proxy(this MeasureBlock chordGroup)
         {
-            return new MeasureBlockReaderProxy(chordGroup, commandManager, notifyEntityChanged);
+            return new MeasureBlockReaderProxy(chordGroup);
         }
 
-        public static ChordReaderProxy Proxy(this Chord chordEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static ChordReaderProxy Proxy(this Chord chordEditor)
         {
-            return new ChordReaderProxy(chordEditor, commandManager, notifyEntityChanged);
+            return new ChordReaderProxy(chordEditor);
         }
 
-        public static NoteReaderProxy Proxy(this Note noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static NoteReaderProxy Proxy(this Note noteEditor)
         {
-            return new NoteReaderProxy(noteEditor, commandManager, notifyEntityChanged);
+            return new NoteReaderProxy(noteEditor);
+        }
+
+
+
+        public static StaffSystemReaderProxy Proxy(this StaffSystem staff)
+        {
+            return new StaffSystemReaderProxy(staff);
+        }
+
+        public static StaffGroupProxy Proxy(this StaffGroup staff)
+        {
+            return new StaffGroupProxy(staff);
+        }
+
+        public static StaffReaderProxy Proxy(this Staff staff)
+        {
+            return new StaffReaderProxy(staff);
         }
     }
 }

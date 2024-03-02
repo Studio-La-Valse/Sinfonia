@@ -1,60 +1,31 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
-
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class ChordReaderProxy : IChordReader
     {
         private readonly Chord source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
-
-        public bool Grace =>
-            source.Grace;
-        public Position Position =>
-            source.Position;
-        public RythmicDuration RythmicDuration =>
-            source.RythmicDuration;
-        public Tuplet Tuplet =>
-            source.Tuplet;
-        public int IndexInBlock =>
-            source.IndexInBlock;
 
 
 
 
+        public bool Grace => source.Grace;
+
+        public Position Position => source.Position;
+
+        public RythmicDuration RythmicDuration => source.RythmicDuration;
+
+        public Tuplet Tuplet => source.Tuplet;
 
         public int Id => source.Id;
 
         public Guid Guid => source.Guid;
 
-        public ChordReaderProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+
+
+
+
+        public ChordReaderProxy(Chord source)
         {
             this.source = source;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
-        }
-
-
-
-        public void Add(params Pitch[] pitches)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Add(pitches));
-            transaction.Enqueue(command);
-        }
-
-        public void Set(params Pitch[] pitches)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Set(pitches));
-            transaction.Enqueue(command);
-        }
-
-        public void Clear()
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Clear());
-            transaction.Enqueue(command);
         }
 
 
@@ -62,17 +33,12 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IEnumerable<INoteReader> ReadNotes()
         {
-            return source.EnumerateNotesCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.EnumerateNotesCore().Select(e => e.Proxy());
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
+            return ReadNotes();
         }
 
         public IEnumerable<(BeamType beam, PowerOfTwo duration)> ReadBeamTypes()

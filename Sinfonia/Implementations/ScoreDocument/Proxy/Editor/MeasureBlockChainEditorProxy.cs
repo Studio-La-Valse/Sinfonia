@@ -1,21 +1,25 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor
+    internal class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor, IUniqueScoreElement
     {
         private readonly MeasureBlockChain source;
+        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
+
         public int Voice => source.Voice;
+
         public Guid Guid => source.Guid;
+
         public int Id => source.Id;
 
 
-
-        public MeasureBlockChainEditorProxy(MeasureBlockChain source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public MeasureBlockChainEditorProxy(MeasureBlockChain source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
@@ -52,21 +56,6 @@
             transaction.Enqueue(command);
         }
 
-        public IEnumerable<IMeasureBlockEditor> ReadBlocks()
-        {
-            return source.GetBlocksCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
-        }
-
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
-        }
-
         public void Insert(Position position, RythmicDuration duration, bool grace)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
@@ -79,6 +68,16 @@
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Prepend(duration, grace));
             transaction.Enqueue(command);
+        }
+
+        public IEnumerable<IMeasureBlockEditor> ReadBlocks()
+        {
+            return source.GetBlocksCore().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        }
+
+        public IEnumerable<IScoreElement> EnumerateChildren()
+        {
+            return ReadBlocks();
         }
     }
 }

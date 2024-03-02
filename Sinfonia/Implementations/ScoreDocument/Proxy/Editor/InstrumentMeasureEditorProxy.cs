@@ -2,32 +2,33 @@
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class InstrumentEditorMeasureProxy : IInstrumentMeasureEditor
+    internal class InstrumentMeasureEditorProxy : IInstrumentMeasureEditor
     {
         private readonly InstrumentMeasure source;
+        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
-        public int MeasureIndex =>
-            source.MeasureIndex;
-        public int RibbonIndex =>
-            source.RibbonIndex;
-        public TimeSignature TimeSignature =>
-            source.TimeSignature;
-        public Instrument Instrument =>
-            source.Instrument;
-        public int Id =>
-            source.Id;
-        public Guid Guid =>
-            source.Guid;
-        public KeySignature KeySignature => 
-            source.ReadMeasureContext().KeySignature;
+        public int MeasureIndex => source.MeasureIndex;
+
+        public int RibbonIndex => source.RibbonIndex;
+
+        public TimeSignature TimeSignature => source.TimeSignature;
+
+        public Instrument Instrument => source.Instrument;
+
+        public KeySignature KeySignature => source.KeySignature;
+
+        public Guid Guid => source.Guid;
+
+        public int Id => source.Id;
 
 
-        public InstrumentEditorMeasureProxy(InstrumentMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public InstrumentMeasureEditorProxy(InstrumentMeasure source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
@@ -49,11 +50,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             transaction.Enqueue(command);
         }
 
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
-        }
-
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
@@ -63,20 +59,20 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IMeasureBlockChainEditor ReadBlockChainAt(int voice)
         {
-            return source.GetBlockChainOrThrowCore(voice).ProxyEditor(commandManager, notifyEntityChanged);
+            return source.GetBlockChainOrThrowCore(voice).ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
         }
 
         public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureEditor? previous)
         {
             source.TryReadPrevious(out var _previous);
-            previous = _previous?.ProxyEditor(commandManager, notifyEntityChanged);
+            previous = _previous?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return previous != null;
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureEditor? next)
         {
             source.TryReadNext(out var _next);
-            next = _next?.ProxyEditor(commandManager, notifyEntityChanged);
+            next = _next?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return next != null;
         }
 
@@ -85,9 +81,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return source.EnumerateVoices();
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
+            return ReadVoices().Select(v => ReadBlockChainAt(v));
         }
     }
 }

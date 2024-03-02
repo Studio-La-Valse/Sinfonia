@@ -1,8 +1,8 @@
-﻿using StudioLaValse.ScoreDocument.Layout.ScoreElements;
+﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 
-namespace Sinfonia.Implementations.ScoreDocument.Layout
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class StaffSystemGenerator
+    internal class StaffSystemGenerator
     {
         private readonly IKeyGenerator<int> keyGenerator;
         private IList<StaffSystem> staffSystems = [];
@@ -12,7 +12,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             this.keyGenerator = keyGenerator;
         }
 
-        IStaffSystem GetOrThrow(int index, IScoreDocumentReader scoreDocument, IEnumerable<IScoreMeasureReader> scoreMeasures)
+        private StaffSystem GetOrThrow(int index, ScoreDocumentCore scoreDocument, IEnumerable<ScoreMeasure> scoreMeasures)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(index, nameof(index));
 
@@ -30,20 +30,20 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        public IEnumerable<IStaffSystem> EnumerateStaffSystems(IScoreDocumentReader scoreDocument, ScoreDocumentLayout scoreLayout)
+        public IEnumerable<StaffSystem> EnumerateStaffSystems(ScoreDocumentCore scoreDocument, ScoreDocumentLayout scoreLayout)
         {
-            var measuresForSystem = new List<IScoreMeasureReader>();
+            var measuresForSystem = new List<ScoreMeasure>();
             var staffIndex = 0;
 
-            foreach (var measure in scoreDocument.ReadScoreMeasures())
+            foreach (var measure in scoreDocument.EnumerateMeasuresCore())
             {
                 measuresForSystem.Add(measure);
 
-                if (scoreLayout.BreakSystem(measuresForSystem))
+                if (scoreLayout.BreakSystem(measuresForSystem.Select(e => e.Proxy())))
                 {
                     var system = GetOrThrow(staffIndex, scoreDocument, measuresForSystem);
                     yield return system;
-                    measuresForSystem = new List<IScoreMeasureReader>();
+                    measuresForSystem = [];
                     staffIndex++;
                 }
             }

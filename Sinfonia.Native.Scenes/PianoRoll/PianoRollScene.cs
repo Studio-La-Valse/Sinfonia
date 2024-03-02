@@ -1,6 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Layout;
-
-namespace Sinfonia.Native.Scenes.PianoRoll
+﻿namespace Sinfonia.Native.Scenes.PianoRoll
 {
     public sealed class PianoRollScene : BaseExternalAddin, IExternalScene
     {
@@ -18,7 +16,7 @@ namespace Sinfonia.Native.Scenes.PianoRoll
         }
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary scoreLayoutDictionary)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;

@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class ScoreMeasureReaderProxy : IScoreMeasureReader
     {
         private readonly ScoreMeasure source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
+
+
 
         public int IndexInScore => source.IndexInScore;
 
@@ -18,57 +18,44 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public int Id => source.Id;
 
-        public KeySignature KeySignature
-        {
-            get => source.KeySignature;
-            set => source.KeySignature = value;
-        }
+        public KeySignature KeySignature => source.KeySignature;
 
 
 
-        public ScoreMeasureReaderProxy(ScoreMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ScoreMeasureReaderProxy(ScoreMeasure source)
         {
             this.source = source;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
         }
 
 
-
-
-
-        public IInstrumentMeasureReader ReadMeasure(int ribbonIndex)
-        {
-            return source.GetMeasureCore(ribbonIndex).Proxy(commandManager, notifyEntityChanged);
-        }
-
-        public IEnumerable<IInstrumentMeasureReader> ReadMeasures()
-        {
-            return source.EnumerateMeasuresCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
-        }
 
         public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureReader? next)
         {
             source.TryReadNext(out var _next);
-            next = _next?.Proxy(commandManager, notifyEntityChanged);
+            next = _next?.Proxy();
             return next != null;
         }
 
         public bool TryReadPrevious([NotNullWhen(true)] out IScoreMeasureReader? previous)
         {
             source.TryReadPrevious(out var _previous);
-            previous = _previous?.Proxy(commandManager, notifyEntityChanged);
+            previous = _previous?.Proxy();
             return previous != null;
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IInstrumentMeasureReader ReadMeasure(int ribbonIndex)
         {
-            return source.EnumerateChildren();
+            return source.GetMeasureCore(ribbonIndex).Proxy();
         }
 
-        public bool Equals(IUniqueScoreElement? other)
+        public IEnumerable<IInstrumentMeasureReader> ReadMeasures()
         {
-            return source.Equals(other);
+            return source.EnumerateMeasuresCore().Select(e => e.Proxy());
+        }
+
+        public IEnumerable<IScoreElement> EnumerateChildren()
+        {
+            return ReadMeasures();
         }
     }
 }

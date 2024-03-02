@@ -34,7 +34,7 @@ namespace Sinfonia.ViewModels.Application.Document.Explorer
             {
                 var element = queue.Dequeue();
                 var viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
-                foreach(var viewModel in  viewModels)
+                foreach (var viewModel in viewModels)
                 {
                     viewModel.Rebuild();
                 }

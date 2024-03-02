@@ -1,6 +1,4 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Builder.IScoreLayoutDictionary;
-
-namespace Sinfonia.ViewModels
+﻿namespace Sinfonia.ViewModels
 {
     public class PropertyManagerViewModel : BaseViewModel
     {
@@ -15,104 +13,21 @@ namespace Sinfonia.ViewModels
             Properties = [];
         }
 
-        protected static PropertyViewModel<TProperty?> Create<TProperty, TEntity>(IEnumerable<TEntity> entities, Func<TEntity, TProperty> propertyGetter, Action<TEntity, TProperty> propertySetter, string title) where TProperty : IEquatable<TProperty>
-        {
-            return new PropertyViewModel<TProperty?>(() =>
-            {
-                var fistValue = propertyGetter(entities.First());
-                if (!entities.All(m => propertyGetter(m).Equals(fistValue)))
-                {
-                    return default;
-                }
-
-                return fistValue;
-            },
-            (val) =>
-            {
-                if (val is null)
-                {
-                    return;
-                }
-
-                foreach (var entity in entities)
-                {
-                    propertySetter(entity, val);
-                }
-            },
-            title);
-        }
-
-        protected static PropertyViewModel<TProperty?> Create<TProperty, TEntity>(IEnumerable<TEntity> entities, Func<TEntity, TProperty> propertyGetter, Action<TProperty> propertySetter, string title) where TProperty : IEquatable<TProperty>
-        {
-            return new PropertyViewModel<TProperty?>(() =>
-            {
-                var fistValue = propertyGetter(entities.First());
-                if (!entities.All(m => propertyGetter(m).Equals(fistValue)))
-                {
-                    return default;
-                }
-
-                return fistValue;
-            },
-            (val) =>
-            {
-                if (val is null)
-                {
-                    return;
-                }
-
-                propertySetter(val);
-            },
-            title);
-        }
-
-        protected static PropertyViewModel<TProperty?> Create<TProperty, TEntity>(IEnumerable<TEntity> entities, Func<TEntity, TProperty> propertyGetter, Action<TEntity, TProperty> propertySetter, IScoreBuilder scoreBuilder, string title) where TProperty : IEquatable<TProperty>
-        {
-            return new PropertyViewModel<TProperty?>(() =>
-            {
-                var fistValue = propertyGetter(entities.First());
-                if (!entities.All(m => propertyGetter(m).Equals(fistValue)))
-                {
-                    return default;
-                }
-
-                return fistValue;
-            },
-            (val) =>
-            {
-                if (val is null)
-                {
-                    return;
-                }
-
-                scoreBuilder
-                    .Edit(_ =>
-                    {
-                        foreach (var entity in entities)
-                        {
-                            propertySetter(entity, val);
-                        }
-                    })
-                    .Build();
-
-            },
-            title);
-        }
-
-        protected static PropertyViewModel<TProperty?> CreateLayoutEditor<TProperty, TLayout, TEntity>(IEnumerable<TEntity> entities,
-                                                                                                       Func<StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary, TEntity, TLayout> layoutGetter,
-                                                                                                       Func<TLayout, TProperty> propertyGetter,
-                                                                                                       Action<IScoreLayoutDictionary, TEntity, TLayout> layoutSetter,
-                                                                                                       Action<TLayout, TProperty> propertySetter,
-                                                                                                       IScoreBuilder scoreBuilder,
-                                                                                                       StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary scoreLayoutDictionary,
-                                                                                                       string title) where TProperty : IEquatable<TProperty>
+        protected static PropertyViewModel<TProperty?> Create<TProperty, TLayout, TEntity, TEditor>(IEnumerable<TEntity> entities, 
+                                                                                                    Func<TEntity, TProperty> propertyGetter, 
+                                                                                                    Func<IScoreLayoutBuilder, TEditor, TLayout> layoutGetter, 
+                                                                                                    Action<TLayout, TProperty> propertySetter,
+                                                                                                    Action<IScoreLayoutBuilder, TLayout, TEditor> layoutSetter,
+                                                                                                    IScoreBuilder scoreBuilder, 
+                                                                                                    string title) where TProperty : IEquatable<TProperty>
+                                                                                                                  where TEntity : IUniqueScoreElement
+                                                                                                                  where TEditor : IScoreElementEditor
         {
             return new PropertyViewModel<TProperty?>(() =>
             {
                 var firstEntity = entities.First();
-                var fistValue = propertyGetter(layoutGetter(scoreLayoutDictionary, firstEntity));
-                if (!entities.All(m => propertyGetter(layoutGetter(scoreLayoutDictionary, m)).Equals(fistValue)))
+                var fistValue = propertyGetter(firstEntity);
+                if (!entities.All(m => propertyGetter(m).Equals(fistValue)))
                 {
                     return default;
                 }
@@ -127,14 +42,11 @@ namespace Sinfonia.ViewModels
                 }
 
                 scoreBuilder
-                    .Edit((s, l) =>
+                    .Edit<TEditor>(entities.Select(e => e.Id), (element, layoutBuilder) =>
                     {
-                        foreach (var entity in entities)
-                        {
-                            var layout = layoutGetter(scoreLayoutDictionary, entity);
-                            propertySetter(layout, val);
-                            layoutSetter(l, entity, layout);
-                        }
+                        var layout = layoutGetter(layoutBuilder, element);
+                        propertySetter(layout, val);
+                        layoutSetter(layoutBuilder, layout, element);
                     })
                     .Build();
 

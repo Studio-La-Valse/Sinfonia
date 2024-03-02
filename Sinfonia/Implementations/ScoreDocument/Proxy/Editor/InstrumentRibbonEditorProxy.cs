@@ -1,51 +1,47 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class InstrumentRibbonEditorProxy : IInstrumentRibbonEditor
+    internal class InstrumentRibbonEditorProxy : IInstrumentRibbonEditor, IUniqueScoreElement
     {
         private readonly InstrumentRibbon source;
+        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
 
 
-        public int Id => source.Id;
-        public Guid Guid => source.Guid;
         public int IndexInScore => source.IndexInScore;
 
+        public Instrument Instrument => source.Instrument;
 
+        public Guid Guid => source.Guid;
 
+        public int Id => source.Id;
 
-        public InstrumentRibbonEditorProxy(InstrumentRibbon source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public InstrumentRibbonEditorProxy(InstrumentRibbon source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
 
 
 
-        public Instrument Instrument => source.Instrument;
 
         public IInstrumentMeasureEditor ReadMeasure(int measureIndex)
         {
-            return source.GetMeasureCore(measureIndex).ProxyEditor(commandManager, notifyEntityChanged);
-        }
-
-
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
+            return source.GetMeasureCore(measureIndex).ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
         }
 
         public IEnumerable<IInstrumentMeasureEditor> ReadMeasures()
         {
-            throw new NotImplementedException();
+            return source.EnumerateMeasuresCore().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        }
+
+        public IEnumerable<IScoreElement> EnumerateChildren()
+        {
+            return ReadMeasures();
         }
     }
 }

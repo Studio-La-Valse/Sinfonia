@@ -14,8 +14,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public int Voice =>
-            host.Voice;
         public Position Position
         {
             get
@@ -252,11 +250,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
                 chord.ApplyMemento(chordMemento);
             }
-        }
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return chords;
         }
     }
 }
