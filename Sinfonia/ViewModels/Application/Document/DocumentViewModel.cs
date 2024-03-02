@@ -1,10 +1,8 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
-
-namespace Sinfonia.ViewModels.Application.Document
+﻿namespace Sinfonia.ViewModels.Application.Document
 {
     public class DocumentViewModel : BaseViewModel
     {
-        private readonly IScoreLayoutDictionary scoreLayoutProvider;
+        private readonly IScoreLayoutProvider scoreLayoutProvider;
 
         public bool CanActivate
         {
@@ -54,7 +52,7 @@ namespace Sinfonia.ViewModels.Application.Document
 
 
 
-        internal DocumentViewModel(CanvasViewModel canvasViewModel, IEnumerable<SceneViewModel> availableScenes, ISelection<IUniqueScoreElement> selection, ICommandFactory commandFactory, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreLayoutDictionary scoreLayoutProvider, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel)
+        internal DocumentViewModel(CanvasViewModel canvasViewModel, IEnumerable<SceneViewModel> availableScenes, ISelection<IUniqueScoreElement> selection, ICommandFactory commandFactory, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreLayoutProvider scoreLayoutProvider, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel)
         {
             this.scoreLayoutProvider = scoreLayoutProvider;
 

@@ -1,10 +1,8 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
-
-namespace Sinfonia.API
+﻿namespace Sinfonia.API
 {
     public interface IExternalScene : IExternalAddin
     {
-        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary scoreLayoutDictionary);
+        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary);
         void RegisterSettings(IAddinSettingsManager animationSettingsManager);
     }
 }

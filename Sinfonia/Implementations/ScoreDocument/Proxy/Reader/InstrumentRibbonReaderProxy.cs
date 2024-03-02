@@ -1,49 +1,43 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class InstrumentRibbonReaderProxy : IInstrumentRibbonReader
     {
         private readonly InstrumentRibbon source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
 
 
         public int Id => source.Id;
+
         public Guid Guid => source.Guid;
+
         public int IndexInScore => source.IndexInScore;
+
         public Instrument Instrument => source.Instrument;
 
 
 
 
-        public InstrumentRibbonReaderProxy(InstrumentRibbon source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public InstrumentRibbonReaderProxy(InstrumentRibbon source)
         {
             this.source = source;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
         }
 
 
 
         public IInstrumentMeasureReader ReadMeasure(int measureIndex)
         {
-            return source.GetMeasureCore(measureIndex).Proxy(commandManager, notifyEntityChanged);
+            return source.GetMeasureCore(measureIndex).Proxy();
         }
 
         public IEnumerable<IInstrumentMeasureReader> ReadMeasures()
         {
-            return source.EnumerateMeasuresCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.EnumerateMeasuresCore().Select(e => e.Proxy());
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
+            return ReadMeasures();
         }
     }
 }

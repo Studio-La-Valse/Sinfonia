@@ -1,24 +1,19 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class MeasureBlockChainReaderProxy : IMeasureBlockChainReader
     {
         private readonly MeasureBlockChain source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
         public int Voice => source.Voice;
         public Guid Guid => source.Guid;
-
         public int Id => source.Id;
 
 
 
-        public MeasureBlockChainReaderProxy(MeasureBlockChain source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public MeasureBlockChainReaderProxy(MeasureBlockChain source)
         {
             this.source = source;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
         }
 
 
@@ -28,17 +23,12 @@
 
         public IEnumerable<IMeasureBlockReader> ReadBlocks()
         {
-            return source.GetBlocksCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.GetBlocksCore().Select(e => e.Proxy());
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
-        }
-
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
+            return ReadBlocks();
         }
     }
 }

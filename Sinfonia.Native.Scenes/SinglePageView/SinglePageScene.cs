@@ -27,7 +27,7 @@
                 "The page to display");
         }
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary layout)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider layout)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;

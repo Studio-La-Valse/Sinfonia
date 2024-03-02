@@ -1,6 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Layout;
-
-namespace Sinfonia.Native.Scenes.PianoRoll
+﻿namespace Sinfonia.Native.Scenes.PianoRoll
 {
     internal class PianoRoll : BaseVisualParent<IUniqueScoreElement>
     {
@@ -10,9 +8,9 @@ namespace Sinfonia.Native.Scenes.PianoRoll
 
         private readonly IScoreDocumentReader score;
         private readonly ISelection<IUniqueScoreElement> selection;
-        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
+        private readonly IScoreLayoutProvider scoreLayoutDictionary;
 
-        public PianoRoll(IScoreDocumentReader score, ISelection<IUniqueScoreElement> selection, IScoreLayoutDictionary scoreLayoutDictionary, Func<double> noteHeight) : base(score)
+        public PianoRoll(IScoreDocumentReader score, ISelection<IUniqueScoreElement> selection, IScoreLayoutProvider scoreLayoutDictionary, Func<double> noteHeight) : base(score)
         {
             this.score = score;
             this.selection = selection;
@@ -26,7 +24,7 @@ namespace Sinfonia.Native.Scenes.PianoRoll
             var canvasLeft = 0d;
             foreach (var scoreMeasure in score.ReadScoreMeasures())
             {
-                var layout = scoreLayoutDictionary.GetOrDefault(scoreMeasure);
+                var layout = scoreLayoutDictionary.ScoreMeasureLayout(scoreMeasure);
                 var measureWidth = layout.Width;
                 var measure = new Measure(scoreMeasure, selection, canvasLeft, measureWidth, noteHeight(), generalSpacing, gridLineColor);
                 yield return measure;
@@ -40,7 +38,7 @@ namespace Sinfonia.Native.Scenes.PianoRoll
             var canvasLeft = 0d;
             foreach (var scoreMeasure in score.ReadScoreMeasures())
             {
-                var layout = scoreLayoutDictionary.GetOrDefault(scoreMeasure);
+                var layout = scoreLayoutDictionary.ScoreMeasureLayout(scoreMeasure);
                 var measureWidth = layout.Width;
                 yield return new DrawableLineVertical(canvasLeft, 0, 88 * noteHeight(), 0.2, gridLineColor);
 

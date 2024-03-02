@@ -1,6 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Layout;
-
-namespace Sinfonia.Native.Scenes.MultiPageView
+﻿namespace Sinfonia.Native.Scenes.MultiPageView
 {
     public class MultiPageScene : BaseExternalAddin, IExternalScene
     {
@@ -18,7 +16,7 @@ namespace Sinfonia.Native.Scenes.MultiPageView
         }
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutDictionary layoutDictionary)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider layoutDictionary)
         {
             var document = application.ActiveDocumentOrThrow();
             var selection = document.Selection;

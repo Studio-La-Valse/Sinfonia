@@ -1,8 +1,12 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
     {
+        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         internal readonly ScoreContentTable contentTable;
+        private readonly StaffSystemGenerator staffSystemGenerator;
         private readonly IKeyGenerator<int> keyGenerator;
 
 
@@ -14,9 +18,11 @@
 
 
 
-        internal ScoreDocumentCore(ScoreContentTable contentTable, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreDocumentCore(ScoreLayoutDictionary scoreLayoutDictionary, ScoreContentTable contentTable, StaffSystemGenerator staffSystemGenerator, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.contentTable = contentTable;
+            this.staffSystemGenerator = staffSystemGenerator;
             this.keyGenerator = keyGenerator;
         }
 
@@ -134,17 +140,9 @@
         }
 
 
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<StaffSystem> EnumerateStaffSystems()
         {
-            foreach (var ribbon in EnumerateRibbonsCore())
-            {
-                yield return ribbon;
-            }
-
-            foreach (var measure in EnumerateMeasuresCore())
-            {
-                yield return measure;
-            }
+            return staffSystemGenerator.EnumerateStaffSystems(this, scoreLayoutDictionary.DocumentLayout(this.Proxy()));
         }
     }
 }

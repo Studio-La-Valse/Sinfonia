@@ -1,10 +1,9 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
-using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
+﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class EmptyScoreBuilderFactory : IScoreBuilderFactory
+    public class EmptyScoreBuilderFactory : IScoreBuilderFactory
     {
         private readonly IScoreDocumentStyleProvider scoreDocumentStyleProvider;
 
@@ -13,25 +12,24 @@ namespace Sinfonia.Implementations.ScoreDocument
             this.scoreDocumentStyleProvider = scoreDocumentStyleProvider;
         }
 
-        public (IScoreBuilder builder, IScoreDocumentReader document, IScoreLayoutDictionary layout) Create(ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public (IScoreBuilder builder, IScoreDocumentReader document, IScoreLayoutProvider layout) Create(ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             var keyGenerator = new IncrementalIntGeneratorFactory().CreateKeyGenerator();
             var cellFactory = new InstrumentMeasureFactory(keyGenerator);
             var contentTable = new ScoreContentTable(cellFactory);
-            var staffSystemGenerator = new StaffSystemGenerator(keyGenerator);
             var guid = Guid.NewGuid();
 
-            var score = new ScoreDocumentCore(contentTable, keyGenerator, guid);
-            var scoreEditor = score.ProxyEditor(commandManager, notifyEntityChanged);
-            var scoreReader = score.Proxy(commandManager, notifyEntityChanged);
-
+            var systemGenerator = new StaffSystemGenerator(keyGenerator);
             var documentStyle = scoreDocumentStyleProvider.GetStyles().First();
 
-            var defaultLayout = new ScoreLayoutDictionary(documentStyle, staffSystemGenerator);
+            var layoutDictionary = new ScoreLayoutDictionary(documentStyle, commandManager);
+            var score = new ScoreDocumentCore(layoutDictionary, contentTable, systemGenerator, keyGenerator, guid);
+            var scoreReader = score.Proxy();
+            var scoreEditor = score.ProxyEditor(layoutDictionary, commandManager, notifyEntityChanged);
 
-            var builder = new ScoreBuilder(scoreEditor, defaultLayout, commandManager, notifyEntityChanged);
+            var builder = new ScoreBuilder(scoreEditor, layoutDictionary, commandManager, notifyEntityChanged);
 
-            return (builder, scoreReader, defaultLayout);
+            return (builder, scoreReader, layoutDictionary);
         }
     }
 }

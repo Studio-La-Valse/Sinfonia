@@ -53,10 +53,5 @@
                 measure.ApplyMemento(measureMemento);
             }
         }
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return EnumerateMeasuresCore();
-        }
     }
 }

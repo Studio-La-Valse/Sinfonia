@@ -207,11 +207,5 @@ namespace Sinfonia.Implementations.ScoreDocument
                 newBlock.ApplyMemento(block);
             }
         }
-
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return blocks;
-        }
     }
 }

@@ -1,10 +1,8 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class ScoreDocumentReaderProxy : IScoreDocumentReader
     {
         private readonly ScoreDocumentCore source;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
         public int NumberOfMeasures => source.NumberOfMeasures;
         public int NumberOfInstruments => source.NumberOfInstruments;
@@ -13,11 +11,9 @@
 
 
 
-        public ScoreDocumentReaderProxy(ScoreDocumentCore score, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ScoreDocumentReaderProxy(ScoreDocumentCore score)
         {
             source = score;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
         }
 
 
@@ -25,34 +21,48 @@
 
 
 
-        public bool Equals(IUniqueScoreElement? other)
-        {
-            return source.Equals(other);
-        }
 
         public IEnumerable<IScoreMeasureReader> ReadScoreMeasures()
         {
-            return source.EnumerateMeasuresCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.EnumerateMeasuresCore().Select(e => e.Proxy());
         }
 
         public IEnumerable<IInstrumentRibbonReader> ReadInstrumentRibbons()
         {
-            return source.EnumerateRibbonsCore().Select(e => e.Proxy(commandManager, notifyEntityChanged));
+            return source.EnumerateRibbonsCore().Select(e => e.Proxy());
         }
 
         public IInstrumentRibbonReader ReadInstrumentRibbon(int indexInScore)
         {
-            return source.GetInstrumentRibbonCore(indexInScore).Proxy(commandManager, notifyEntityChanged);
+            return source.GetInstrumentRibbonCore(indexInScore).Proxy();
         }
 
-        public IEnumerable<IUniqueScoreElement> EnumerateChildren()
+        public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return source.EnumerateChildren();
+            foreach (var ribbon in ReadScoreMeasures())
+            {
+                yield return ribbon;
+            }
+
+            foreach (var measure in ReadInstrumentRibbons())
+            {
+                yield return measure;
+            }
+
+            foreach (var system in EnumerateStaffSystems())
+            {
+                yield return system;
+            }
         }
 
         public IScoreMeasureReader ReadScoreMeasure(int indexInScore)
         {
-            return source.GetScoreMeasureCore(indexInScore).Proxy(commandManager, notifyEntityChanged);
+            return source.GetScoreMeasureCore(indexInScore).Proxy();
+        }
+
+        public IEnumerable<IStaffSystemReader> EnumerateStaffSystems()
+        {
+            return source.EnumerateStaffSystems().Select(e => e.Proxy());
         }
     }
 }

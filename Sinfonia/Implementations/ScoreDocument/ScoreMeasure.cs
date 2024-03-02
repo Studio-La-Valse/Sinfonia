@@ -29,7 +29,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void EditKeySignature(KeySignature keySignature)
         {
-            if(this.KeySignature.Equals(keySignature)) return;
+            if (this.KeySignature.Equals(keySignature)) return;
 
             this.KeySignature = keySignature;
         }
@@ -95,12 +95,6 @@ namespace Sinfonia.Implementations.ScoreDocument
                 var measure = GetMeasureCore(measureMemento.RibbonIndex);
                 measure.ApplyMemento(measureMemento);
             }
-        }
-
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return EnumerateMeasuresCore();
         }
     }
 }

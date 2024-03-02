@@ -1,7 +1,7 @@
 ﻿using Sinfonia.ViewModels.Application;
+using StudioLaValse.ScoreDocument.MusicXml;
 using System.IO;
 using System.Xml.Linq;
-using StudioLaValse.ScoreDocument.MusicXml;
 
 namespace Sinfonia.ViewModels.Menu
 {

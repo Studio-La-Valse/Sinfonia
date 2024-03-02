@@ -1,14 +1,12 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Layout.IScoreLayoutDictionary;
-
-namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public class NotePropertiesViewModel : ScoreElementPropertiesViewModel
     {
         private readonly IEnumerable<INoteReader> notes;
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreLayoutDictionary scoreLayoutDictionary;
+        private readonly IScoreLayoutProvider scoreLayoutDictionary;
 
-        internal NotePropertiesViewModel(IEnumerable<INoteReader> notes, IScoreBuilder scoreBuilder, IScoreLayoutDictionary scoreLayoutDictionary) : base(notes)
+        internal NotePropertiesViewModel(IEnumerable<INoteReader> notes, IScoreBuilder scoreBuilder, IScoreLayoutProvider scoreLayoutDictionary) : base(notes)
         {
             this.notes = notes;
             this.scoreBuilder = scoreBuilder;
@@ -19,14 +17,13 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
         {
             Properties.Clear();
             Properties.Add(
-                CreateLayoutEditor(
+                Create<double, NoteLayout, INoteReader, INoteEditor>(
                     notes,
-                    (d, e) => d.GetOrDefault(e),
-                    (l) => l.XOffset, 
-                    (d, e, l) => d.Apply(e, l),
-                    (l, p) => l.XOffset = p,
+                    e => scoreLayoutDictionary.NoteLayout(e).XOffset,
+                    (l, e) => l.NoteLayout(e),
+                    (l, v) => l.XOffset = v,
+                    (b, l, e) => b.Apply(e, l),
                     scoreBuilder,
-                    scoreLayoutDictionary,
                     "X Offset")); ;
         }
     }

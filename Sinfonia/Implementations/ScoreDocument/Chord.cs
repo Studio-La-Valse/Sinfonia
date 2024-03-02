@@ -35,17 +35,8 @@ namespace Sinfonia.Implementations.ScoreDocument
                 return position;
             }
         }
-        public Position PositionEnd
-        {
-            get
-            {
-                return Position + this.ActualDuration();
-            }
-        }
         public bool Grace =>
             hostBlock.Grace;
-        public int IndexInBlock =>
-            hostBlock.IndexOfOrThrow(this);
 
 
 
@@ -61,8 +52,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public InstrumentMeasure ReadContext() =>
-            hostBlock.RibbonMeasure;
 
 
 
@@ -154,14 +143,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public IEnumerable<(BeamType beam, PowerOfTwo duration)> GetBeamTypes()
         {
             return beamTypes.Select(e => (e.Value, new PowerOfTwo(e.Key)));
-        }
-
-
-
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            return measureElements;
         }
     }
 }

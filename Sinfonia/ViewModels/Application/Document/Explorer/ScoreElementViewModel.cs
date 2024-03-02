@@ -2,7 +2,7 @@
 {
     public class ScoreElementViewModel : BaseViewModel
     {
-        private readonly IUniqueScoreElement uniqueScoreElement;
+        private readonly IScoreElement uniqueScoreElement;
 
         public string Name
         {
@@ -15,9 +15,9 @@
             set => SetValue(() => ScoreElements, value);
         }
 
-        public IUniqueScoreElement UniqueScoreElement => uniqueScoreElement;
+        public IScoreElement UniqueScoreElement => uniqueScoreElement;
 
-        public ScoreElementViewModel(IUniqueScoreElement uniqueScoreElement)
+        public ScoreElementViewModel(IScoreElement uniqueScoreElement)
         {
             this.uniqueScoreElement = uniqueScoreElement;
 

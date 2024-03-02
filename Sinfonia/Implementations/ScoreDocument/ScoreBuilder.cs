@@ -1,38 +1,59 @@
-﻿using IScoreLayoutDictionary = StudioLaValse.ScoreDocument.Builder.IScoreLayoutDictionary;
+﻿using Sinfonia.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreBuilder : IScoreBuilder
     {
         private readonly IScoreDocumentEditor scoreDocument;
-        private readonly IScoreLayoutDictionary layoutProvider;
+        private readonly IScoreLayoutBuilder scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
-        private readonly Queue<Action<IScoreDocumentEditor, IScoreLayoutDictionary>> pendingEdits = [];
+        private readonly Queue<Action<IScoreDocumentEditor, IScoreLayoutBuilder>> pendingEdits = [];
 
-        public ScoreBuilder(IScoreDocumentEditor scoreDocument, IScoreLayoutDictionary layoutProvider, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ScoreBuilder(IScoreDocumentEditor scoreDocument, IScoreLayoutBuilder scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.scoreDocument = scoreDocument;
-            this.layoutProvider = layoutProvider;
+            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
 
         public IScoreBuilder Edit(Action<IScoreDocumentEditor> action)
         {
-            pendingEdits.Enqueue((e, l) =>
-            {
-                action(e);
-            });
-
-            return this;
+            return Edit((e, l) => action(e));
         }
 
-        public IScoreBuilder Edit(Action<IScoreDocumentEditor, IScoreLayoutDictionary> action)
+        public IScoreBuilder Edit(Action<IScoreDocumentEditor, IScoreLayoutBuilder> action)
         {
             pendingEdits.Enqueue(action);
             return this;
         }
+
+        public IScoreBuilder Edit<TElement>(IEnumerable<int> elementIds, Action<TElement> action) where TElement : IScoreElementEditor
+        {
+            return Edit<TElement>(elementIds, (e, l) => action(e));
+        }
+
+        public IScoreBuilder Edit<TElement>(IEnumerable<int> elementIds, Action<TElement, IScoreLayoutBuilder> action) where TElement : IScoreElementEditor
+        {
+            void _action(IScoreDocumentEditor scoreBuilder, IScoreLayoutBuilder layoutDictionary)
+            {
+                var children = ((IScoreElement)scoreBuilder).SelectRecursive(e => e.EnumerateChildren())
+                    .OfType<IUniqueScoreElement>()
+                    .Distinct(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id))
+                    .Where(e => elementIds.Contains(e.Id))
+                    .OfType<TElement>();
+
+                foreach (var child in children)
+                {
+                    action(child, layoutDictionary);
+                }
+            }
+
+            pendingEdits.Enqueue(_action);
+            return this;
+        }
+
 
         public IScoreBuilder Build()
         {
@@ -40,12 +61,13 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 var pendingAction = pendingEdits.Dequeue();
                 using var transaction = commandManager.OpenTransaction("Generic score document edit");
-                pendingAction.Invoke(scoreDocument, layoutProvider);
+                pendingAction.Invoke(scoreDocument, scoreLayoutDictionary);
             }
 
             notifyEntityChanged.RenderChanges();
 
             return this;
         }
+
     }
 }

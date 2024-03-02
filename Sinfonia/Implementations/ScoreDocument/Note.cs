@@ -1,4 +1,5 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class Note : ScoreElement, IMementoElement<NoteMemento>
     {
@@ -44,13 +45,6 @@
         public void ApplyMemento(NoteMemento memento)
         {
             Pitch = memento.Pitch;
-        }
-
-
-
-        public override IEnumerable<IUniqueScoreElement> EnumerateChildren()
-        {
-            yield break;
         }
     }
 }
