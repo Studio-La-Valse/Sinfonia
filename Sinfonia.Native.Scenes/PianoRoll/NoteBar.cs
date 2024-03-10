@@ -13,7 +13,7 @@
 
 
         public double CanvasTop =>
-            noteHeight * (88 - note.Pitch.IndexOnKlavier) + generalSpacing / 2;
+            (noteHeight * (88 - note.Pitch.IndexOnKlavier)) + (generalSpacing / 2);
         public double Width =>
             MathUtils.Map((double)note.ActualDuration().Decimal, 0, (double)host.TimeSignature.Decimal, 0, measureWidth - generalSpacing);
         public double Height =>

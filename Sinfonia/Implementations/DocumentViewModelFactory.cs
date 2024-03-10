@@ -19,43 +19,42 @@ namespace Sinfonia.Implementations
 
         public DocumentViewModel Create()
         {
-            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
 
-            var commandManager = CommandManager.CreateGreedy();
-            var keyGenerator = keyGeneratorFactory.CreateKeyGenerator();
+            ICommandManager commandManager = CommandManager.CreateGreedy();
+            IKeyGenerator<int> keyGenerator = keyGeneratorFactory.CreateKeyGenerator();
 
-            var (scoreBuilder, reader, layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged);
+            (IScoreBuilder scoreBuilder, IScoreDocumentReader reader, IScoreLayoutProvider layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged);
 
-            var inspectorViewModel = new InspectorViewModel(scoreBuilder, layout);
+            InspectorViewModel inspectorViewModel = new(scoreBuilder, layout);
             // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
-            notifyEntityChanged.Subscribe(inspectorViewModel);
+            _ = notifyEntityChanged.Subscribe(inspectorViewModel);
 
-            var selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
+            ISelectionManager<IUniqueScoreElement> selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
                 .AddChangedHandler(inspectorViewModel.Update, e => e.Id)
                 .OnChangedNotify(notifyEntityChanged, e => e.Id);
 
-            var scenes = availableScenes.Select(_scene =>
+            IEnumerable<SceneViewModel> scenes = availableScenes.Select(_scene =>
             {
-                var settingsManagerViewModel = new PropertyManagerViewModel();
-                var settingsManager = new AddinSettingsManager(settingsManagerViewModel);
+                SceneSettingsViewModel settingsManagerViewModel = new();
+                AddinSettingsManager settingsManager = new(settingsManagerViewModel);
                 _scene.RegisterSettings(settingsManager);
 
-                var sceneViewModel = new SceneViewModel(_scene, settingsManagerViewModel);
+                SceneViewModel sceneViewModel = new(_scene, settingsManagerViewModel);
                 return sceneViewModel;
             });
 
-            var sceneSettingsManager = new PropertyManagerViewModel();
-            var selectionBorder = new ObservableBoundingBox();
-            var canvasViewModel = new CanvasViewModel(notifyEntityChanged, selectionManager, selectionBorder);
+            ObservableBoundingBox selectionBorder = new();
+            CanvasViewModel canvasViewModel = new(notifyEntityChanged, selectionManager, selectionBorder);
 
-            var scoreDocumentViewModel = new ScoreElementViewModel(reader);
+            ScoreElementViewModel scoreDocumentViewModel = new(reader);
             scoreDocumentViewModel.Rebuild();
 
-            var explorerViewModel = new ExplorerViewModel(reader, scoreDocumentViewModel, commandFactory);
+            ExplorerViewModel explorerViewModel = new(reader, scoreDocumentViewModel, commandFactory);
             // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
-            notifyEntityChanged.Subscribe(explorerViewModel);
+            _ = notifyEntityChanged.Subscribe(explorerViewModel);
 
-            var documentViewModel = new DocumentViewModel(canvasViewModel, scenes, selectionManager, commandFactory, scoreBuilder, reader, layout, explorerViewModel, inspectorViewModel);
+            DocumentViewModel documentViewModel = new(canvasViewModel, scenes, selectionManager, commandFactory, scoreBuilder, reader, layout, explorerViewModel, inspectorViewModel);
             return documentViewModel;
         }
     }

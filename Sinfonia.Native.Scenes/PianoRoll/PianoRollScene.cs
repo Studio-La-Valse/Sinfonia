@@ -6,7 +6,7 @@
 
         public string Name => "Piano roll";
         public string Description => "Displays the score as a piano roll.";
-        public Guid Guid => new Guid("804B8EB1-7D6A-4148-957B-588401754570");
+        public Guid Guid => new("804B8EB1-7D6A-4148-957B-588401754570");
         public double NoteHeight { get; set; } = 5;
 
 
@@ -16,11 +16,8 @@
         }
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary, ISelection<IUniqueScoreElement> selection)
         {
-            var document = application.ActiveDocumentOrThrow();
-            var selection = document.Selection;
-
             return new PianoRoll(scoreDocument, selection, scoreLayoutDictionary, () => NoteHeight);
         }
 
@@ -31,7 +28,7 @@
                 (val) =>
                 {
                     NoteHeight = val;
-                    var document = application.ActiveDocumentOrThrow().DocumentUI;
+                    IDocumentUI document = application.ActiveDocumentOrThrow().DocumentUI;
                     document.RebuildScene();
                 },
                 "Note size");

@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.MusicXml;
 using System.IO;
 using System.Xml.Linq;
 
-namespace Sinfonia.ViewModels.Menu
+namespace Sinfonia.ViewModels.Application.Menu
 {
     public class ImportMenuViewModel : MenuItemViewModel
     {
@@ -21,12 +21,12 @@ namespace Sinfonia.ViewModels.Menu
 
         public void LoadMusicXml()
         {
-            if (browseToFile.BrowseToFile(out var filepath))
+            if (browseToFile.BrowseToFile(out string? filepath))
             {
-                using var fileStream = new FileStream(filepath, FileMode.Open);
-                var document = XDocument.Load(fileStream);
-                var documentViewModel = documentViewModelFactory.Create();
-                documentViewModel.ScoreBuilder.BuildFromXml(document);
+                using FileStream fileStream = new(filepath, FileMode.Open);
+                XDocument document = XDocument.Load(fileStream);
+                DocumentViewModel documentViewModel = documentViewModelFactory.Create();
+                _ = documentViewModel.ScoreBuilder.BuildFromXml(document);
                 documentViewModel.Explorer.Rebuild();
                 documentCollectionViewModel.Add(documentViewModel);
             }

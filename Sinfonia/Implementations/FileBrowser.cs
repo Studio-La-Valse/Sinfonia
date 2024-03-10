@@ -9,7 +9,7 @@ namespace Sinfonia.Implementations
         {
             filePath = "";
 
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            OpenFileDialog openFileDialog = new();
 
             if (openFileDialog.ShowDialog() == true)
             {

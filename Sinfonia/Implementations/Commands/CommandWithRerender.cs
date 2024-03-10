@@ -1,4 +1,4 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.Commands
 {
     public class CommandWithRerender<TEntity> : BaseCommand
     {

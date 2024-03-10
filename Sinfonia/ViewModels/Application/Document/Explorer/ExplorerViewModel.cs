@@ -26,15 +26,18 @@ namespace Sinfonia.ViewModels.Application.Document.Explorer
             RebuildCommand = commandFactory.Create(Rebuild, () => true);
         }
 
-        public void Rebuild() => ScoreDocument.Rebuild();
+        public void Rebuild()
+        {
+            ScoreDocument.Rebuild();
+        }
 
         public void OnCompleted()
         {
             while (queue.Count > 0)
             {
-                var element = queue.Dequeue();
-                var viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
-                foreach (var viewModel in viewModels)
+                IUniqueScoreElement element = queue.Dequeue();
+                IEnumerable<ScoreElementViewModel> viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
+                foreach (ScoreElementViewModel? viewModel in viewModels)
                 {
                     viewModel.Rebuild();
                 }

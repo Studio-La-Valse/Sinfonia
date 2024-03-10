@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿
+using Sinfonia.Implementations.Commands;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class ChordEditorProxy : IChordEditor, IUniqueScoreElement
     {
@@ -33,22 +36,22 @@
 
         public void Add(params Pitch[] pitches)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Add(pitches));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<Chord, ChordMemento> command = new(source, s => s.Add(pitches));
             transaction.Enqueue(command);
         }
 
         public void Set(params Pitch[] pitches)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Set(pitches));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<Chord, ChordMemento> command = new(source, s => s.Set(pitches));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Clear());
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<Chord, ChordMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }
 
@@ -60,6 +63,21 @@
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadNotes();
+        }
+
+        public ChordLayout ReadLayout()
+        {
+            return scoreLayoutDictionary.ChordLayout(this);
+        }
+
+        public void ApplyLayout(ChordLayout layout)
+        {
+            scoreLayoutDictionary.Apply(this, layout);
+        }
+
+        public void RemoveLayout()
+        {
+            scoreLayoutDictionary.Restore(this);
         }
     }
 }

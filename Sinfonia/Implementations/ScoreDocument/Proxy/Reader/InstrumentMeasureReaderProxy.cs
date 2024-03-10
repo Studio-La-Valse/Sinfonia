@@ -42,14 +42,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureReader? previous)
         {
-            source.TryReadPrevious(out var _previous);
+            _ = source.TryReadPrevious(out InstrumentMeasure? _previous);
             previous = _previous?.Proxy();
             return previous != null;
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureReader? next)
         {
-            source.TryReadNext(out var _next);
+            _ = source.TryReadNext(out InstrumentMeasure? _next);
             next = _next?.Proxy();
             return next != null;
         }

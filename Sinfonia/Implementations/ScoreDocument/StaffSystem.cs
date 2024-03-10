@@ -2,37 +2,39 @@
 {
     internal class StaffSystem : ScoreElement
     {
-        private readonly IEnumerable<ScoreMeasure> scoreMeasures;
         private readonly ScoreDocumentCore scoreDocument;
         private readonly IKeyGenerator<int> keyGenerator;
-        private readonly Dictionary<Guid, StaffGroup> staffGroups = [];
+        private readonly Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups;
 
-        public StaffSystem(IEnumerable<ScoreMeasure> scoreMeasures, ScoreDocumentCore scoreDocument, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public IList<ScoreMeasure> ScoreMeasures { get; } = [];
+
+        public StaffSystem(ScoreDocumentCore scoreDocument, IKeyGenerator<int> keyGenerator, Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups) : base(id, guid)
         {
-            this.scoreMeasures = scoreMeasures;
+
             this.scoreDocument = scoreDocument;
             this.keyGenerator = keyGenerator;
+            this.staffGroups = staffGroups;
         }
 
 
         public IEnumerable<ScoreMeasure> EnumerateMeasures()
         {
-            return scoreMeasures;
+            return ScoreMeasures;
         }
 
         public IEnumerable<StaffGroup> EnumerateStaffGroups()
         {
-            foreach (var instrumentRibbon in scoreDocument.EnumerateRibbonsCore())
+            foreach (InstrumentRibbon instrumentRibbon in scoreDocument.EnumerateRibbonsCore())
             {
-                if (staffGroups.TryGetValue(instrumentRibbon.Guid, out var group))
+                if (staffGroups.TryGetValue(instrumentRibbon.Guid, out var groupGenerator))
                 {
-                    yield return group;
-                    break;
+                    yield return new StaffGroup(instrumentRibbon, ScoreMeasures, keyGenerator, groupGenerator.guid, groupGenerator.id, groupGenerator.staves);
+                    continue;
                 }
 
-                group = new StaffGroup(instrumentRibbon, scoreMeasures, keyGenerator, Guid.NewGuid());
-                staffGroups[instrumentRibbon.Guid] = group;
-                yield return group;
+                var (newGuid, newId, newStaves) = (Guid.NewGuid(), keyGenerator.Generate(), new List<(Guid, int)>());
+                staffGroups[instrumentRibbon.Guid] = (newGuid, newId, newStaves);
+                yield return new StaffGroup(instrumentRibbon, ScoreMeasures, keyGenerator, newGuid, newId, newStaves);
             }
         }
     }

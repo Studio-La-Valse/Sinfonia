@@ -29,13 +29,16 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void EditKeySignature(KeySignature keySignature)
         {
-            if (this.KeySignature.Equals(keySignature)) return;
+            if (KeySignature.Equals(keySignature))
+            {
+                return;
+            }
 
-            this.KeySignature = keySignature;
+            KeySignature = keySignature;
         }
         public IEnumerable<InstrumentMeasure> EnumerateMeasuresCore()
         {
-            var measures = score.contentTable.GetInstrumentMeasuresInScoreMeasure(IndexInScore);
+            IEnumerable<InstrumentMeasure> measures = score.contentTable.GetInstrumentMeasuresInScoreMeasure(IndexInScore);
             return measures;
         }
         public InstrumentMeasure GetMeasureCore(int ribbonIndex)
@@ -90,9 +93,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void ApplyMemento(ScoreMeasureMemento memento)
         {
-            foreach (var measureMemento in memento.Measures)
+            foreach (InstrumentMeasureMemento measureMemento in memento.Measures)
             {
-                var measure = GetMeasureCore(measureMemento.RibbonIndex);
+                InstrumentMeasure measure = GetMeasureCore(measureMemento.RibbonIndex);
                 measure.ApplyMemento(measureMemento);
             }
         }

@@ -2,16 +2,16 @@
 {
     internal class AddinSettingsManager : IAddinSettingsManager
     {
-        private readonly PropertyManagerViewModel addinSettingsViewModel;
+        private readonly PropertyCollectionViewModel addinSettingsViewModel;
 
-        public AddinSettingsManager(PropertyManagerViewModel addinSettingsViewModel)
+        public AddinSettingsManager(PropertyCollectionViewModel addinSettingsViewModel)
         {
             this.addinSettingsViewModel = addinSettingsViewModel;
         }
 
         public void Register<T>(Func<T> getValue, Action<T> setValue, string description)
         {
-            var tunnel = new PropertyViewModel<T>(getValue, setValue, description);
+            PropertyViewModel<T> tunnel = new(getValue, setValue, description);
 
             addinSettingsViewModel.Properties.Add(tunnel);
         }

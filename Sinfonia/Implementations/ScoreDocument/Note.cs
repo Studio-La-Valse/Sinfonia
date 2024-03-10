@@ -28,11 +28,10 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public Chord ReadContext() =>
-            container;
-
-
-
+        public Chord ReadContext()
+        {
+            return container;
+        }
 
         public NoteMemento GetMemento()
         {

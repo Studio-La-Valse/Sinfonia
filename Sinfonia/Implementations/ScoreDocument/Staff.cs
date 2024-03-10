@@ -6,7 +6,7 @@
 
 
 
-        public Staff(int indexInStaffGroup, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public Staff(int indexInStaffGroup, int id, Guid guid) : base(id, guid)
         {
             IndexInStaffGroup = indexInStaffGroup;
         }

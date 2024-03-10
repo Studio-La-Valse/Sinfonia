@@ -1,4 +1,5 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+﻿
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
 internal class StaffEditorProxy(Staff staff, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IStaffEditor, IUniqueScoreElement
 {
@@ -18,5 +19,20 @@ internal class StaffEditorProxy(Staff staff, ScoreLayoutDictionary scoreLayoutDi
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
         yield break;
+    }
+
+    public void ApplyLayout(StaffLayout layout)
+    {
+        scoreLayoutDictionary.Apply(this, layout);
+    }
+
+    public StaffLayout ReadLayout()
+    {
+        return scoreLayoutDictionary.StaffLayout(this);
+    }
+
+    public void RemoveLayout()
+    {
+        scoreLayoutDictionary.Restore(this);
     }
 }

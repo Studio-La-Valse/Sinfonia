@@ -2,8 +2,6 @@
 {
     public class ScoreElementViewModel : BaseViewModel
     {
-        private readonly IScoreElement uniqueScoreElement;
-
         public string Name
         {
             get => GetValue(() => Name);
@@ -15,11 +13,11 @@
             set => SetValue(() => ScoreElements, value);
         }
 
-        public IScoreElement UniqueScoreElement => uniqueScoreElement;
+        public IScoreElement UniqueScoreElement { get; }
 
         public ScoreElementViewModel(IScoreElement uniqueScoreElement)
         {
-            this.uniqueScoreElement = uniqueScoreElement;
+            UniqueScoreElement = uniqueScoreElement;
 
             ScoreElements = [];
 
@@ -30,9 +28,9 @@
         {
             ScoreElements.Clear();
 
-            foreach (var child in uniqueScoreElement.EnumerateChildren())
+            foreach (IScoreElement child in UniqueScoreElement.EnumerateChildren())
             {
-                var vm = new ScoreElementViewModel(child);
+                ScoreElementViewModel vm = new(child);
                 vm.Rebuild();
                 ScoreElements.Add(vm);
             }

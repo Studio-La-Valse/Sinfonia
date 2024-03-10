@@ -11,7 +11,12 @@
             Id = keyGenerator.Generate();
             Guid = guid;
         }
-
+        /// <inheritdoc/>
+        public ScoreElement(int id, Guid guid)
+        {
+            Id = id;
+            Guid = guid;
+        }
         /// <inheritdoc/>
         public int Id { get; }
 

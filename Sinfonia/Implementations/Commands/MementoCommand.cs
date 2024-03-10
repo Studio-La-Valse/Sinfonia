@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.Commands
 {
     public class MementoCommand<TEntity, TMemento> : BaseCommand where TEntity : IMementoElement<TMemento>
     {

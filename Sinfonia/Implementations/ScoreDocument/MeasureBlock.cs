@@ -7,22 +7,17 @@ namespace Sinfonia.Implementations.ScoreDocument
     {
         private readonly List<Chord> chords;
         private readonly MeasureBlockChain host;
-        private readonly bool grace;
         private readonly IKeyGenerator<int> keyGenerator;
-        private readonly RythmicDuration duration;
-
-
-
 
         public Position Position
         {
             get
             {
-                var index = host.IndexOfOrThrow(this);
+                int index = host.IndexOfOrThrow(this);
 
-                var position = new Position(0, 4);
+                Position position = new(0, 4);
 
-                foreach (var block in host.GetBlocksCore().Take(index))
+                foreach (MeasureBlock? block in host.GetBlocksCore().Take(index))
                 {
                     if (block.Grace)
                     {
@@ -39,15 +34,13 @@ namespace Sinfonia.Implementations.ScoreDocument
             host.RibbonMeasure;
         public IEnumerable<Chord> Containers =>
             chords;
-        public bool Grace =>
-            grace;
-        public RythmicDuration RythmicDuration =>
-            duration;
+        public bool Grace { get; }
+        public RythmicDuration RythmicDuration { get; }
         public Tuplet Tuplet
         {
             get
             {
-                var groupLength = Containers.Select(e => e.RythmicDuration).ToArray();
+                RythmicDuration[] groupLength = Containers.Select(e => e.RythmicDuration).ToArray();
                 return new Tuplet(RythmicDuration, groupLength);
             }
         }
@@ -56,48 +49,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.host = host;
-            this.grace = grace;
+            Grace = grace;
             this.keyGenerator = keyGenerator;
-            this.duration = duration;
+            RythmicDuration = duration;
 
             chords = [];
         }
 
-
-
-        public Chord? ContainerRight(Chord elementContainer)
-        {
-            var index = IndexOfOrThrow(elementContainer);
-            if (index - 1 < chords.Count)
-            {
-                return chords[index + 1];
-            }
-
-            return null;
-        }
-        public Chord? ContainerLeft(Chord elementContainer)
-        {
-            var index = IndexOfOrThrow(elementContainer);
-            if (index > 0)
-            {
-                return chords[index - 1];
-            }
-
-            return null;
-        }
-
-
-        public int IndexOfOrThrow(Chord container)
-        {
-            var index = chords.IndexOf(container);
-
-            if (index == -1)
-            {
-                throw new Exception("Measure element container does not exist in this measure block");
-            }
-
-            return index;
-        }
 
 
         public IEnumerable<Chord> GetChordsCore()
@@ -106,20 +64,24 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-
-
-        public void AppendChord(RythmicDuration rythmicDuration)
+        public Chord? ContainerRight(Chord elementContainer)
         {
-            var chord = new Chord(this, rythmicDuration, keyGenerator, Guid.NewGuid());
-            chords.Add(chord);
-            Rebeam();
+            int index = IndexOfOrThrow(elementContainer);
+            return index - 1 < chords.Count ? chords[index + 1] : null;
         }
-        public void Splice(int index)
+        public Chord? ContainerLeft(Chord elementContainer)
         {
-            chords.RemoveAt(index);
-            Rebeam();
+            int index = IndexOfOrThrow(elementContainer);
+            return index > 0 ? chords[index - 1] : null;
         }
 
+
+        public int IndexOfOrThrow(Chord container)
+        {
+            int index = chords.IndexOf(container);
+
+            return index == -1 ? throw new Exception("Measure element container does not exist in this measure block") : index;
+        }
 
         public bool TryReadNext([NotNullWhen(true)] out MeasureBlock? right)
         {
@@ -133,31 +95,74 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
+
+
+
+        public void Clear()
+        {
+            chords.Clear();
+        }
+        public void AppendChord(RythmicDuration rythmicDuration)
+        {
+            Chord chord = new(this, rythmicDuration, keyGenerator, Guid.NewGuid());
+            chords.Add(chord);
+            Rebeam();
+        }
+        public void Splice(int index)
+        {
+            chords.RemoveAt(index);
+            Rebeam();
+        }
+
+
+        public void Divide(params int[] steps)
+        {
+            IEnumerable<RythmicDuration> stepsAsRythmicDurations = RythmicDuration.Divide(steps);
+
+            Clear();
+            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            {
+                AppendChord(rythmicDuration);
+            }
+        }
+        public void DivideEqual(int number)
+        {
+            IEnumerable<RythmicDuration> stepsAsRythmicDurations = RythmicDuration.DivideEqual(number);
+
+            Clear();
+            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            {
+                AppendChord(rythmicDuration);
+            }
+        }
+
+
+
         public void Rebeam()
         {
-            foreach (var chord in chords)
+            foreach (Chord chord in chords)
             {
                 chord.ClearBeams();
             }
 
             for (int i = 8; i <= 64; i *= 2)
             {
-                var duration = 1M / i;
+                decimal duration = 1M / i;
 
                 for (int j = 0; j < chords.Count; j++)
                 {
-                    var leftChord = j >= 1 ? chords[j - 1] : null;
-                    var middleChord = chords[j];
-                    var rightChord = j < chords.Count - 1 ? chords[j + 1] : null;
-                    var middleChordBeams = middleChord.GetBeamTypes();
+                    Chord? leftChord = j >= 1 ? chords[j - 1] : null;
+                    Chord middleChord = chords[j];
+                    Chord? rightChord = j < chords.Count - 1 ? chords[j + 1] : null;
+                    IEnumerable<(BeamType beam, PowerOfTwo duration)> middleChordBeams = middleChord.GetBeamTypes();
 
                     if (middleChord.RythmicDuration.PowerOfTwo < 1 / duration)
                     {
                         continue;
                     }
 
-                    var receives = leftChord is not null && leftChord.RythmicDuration.PowerOfTwo >= 1 / duration;
-                    var sends = rightChord is not null && rightChord.RythmicDuration.PowerOfTwo >= 1 / duration;
+                    bool receives = leftChord is not null && leftChord.RythmicDuration.PowerOfTwo >= 1 / duration;
+                    bool sends = rightChord is not null && rightChord.RythmicDuration.PowerOfTwo >= 1 / duration;
 
                     if (leftChord is null && rightChord is null)
                     {
@@ -192,12 +197,12 @@ namespace Sinfonia.Implementations.ScoreDocument
                     }
                     else
                     {
-                        if (!middleChord.TryGetBeamType(i / 2, out var beamUp))
+                        if (!middleChord.TryGetBeamType(i / 2, out BeamType? beamUp))
                         {
                             throw new UnreachableException("Incoherent beaming strategy");
                         }
 
-                        var toAdd = beamUp switch
+                        BeamType toAdd = beamUp switch
                         {
                             BeamType.Continue => BeamType.HookStart,
                             BeamType.End => BeamType.HookEnd,
@@ -222,11 +227,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public void Clear()
-        {
-            chords.Clear();
-        }
-
 
 
 
@@ -243,9 +243,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(MeasureBlockMemento memento)
         {
             Clear();
-            foreach (var chordMemento in memento.Chords)
+            foreach (ChordMemento chordMemento in memento.Chords)
             {
-                var chord = new Chord(this, chordMemento.RythmicDuration, keyGenerator, chordMemento.Guid);
+                Chord chord = new(this, chordMemento.RythmicDuration, keyGenerator, chordMemento.Guid);
                 chords.Add(chord);
 
                 chord.ApplyMemento(chordMemento);

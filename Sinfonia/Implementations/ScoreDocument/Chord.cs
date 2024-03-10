@@ -24,10 +24,10 @@ namespace Sinfonia.Implementations.ScoreDocument
                     return hostBlock.Position;
                 }
 
-                var index = hostBlock.IndexOfOrThrow(this);
-                var position = hostBlock.Position;
+                int index = hostBlock.IndexOfOrThrow(this);
+                Position position = hostBlock.Position;
 
-                foreach (var container in hostBlock.Containers.Take(index))
+                foreach (Chord? container in hostBlock.Containers.Take(index))
                 {
                     position += container.ActualDuration();
                 }
@@ -61,14 +61,14 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void Add(params Pitch[] pitches)
         {
-            foreach (var pitch in pitches)
+            foreach (Pitch pitch in pitches)
             {
                 if (measureElements.Any(e => e.Pitch == pitch))
                 {
                     continue;
                 }
 
-                var noteInMeasure = new Note(pitch, this, keyGenerator, Guid.NewGuid());
+                Note noteInMeasure = new(pitch, this, keyGenerator, Guid.NewGuid());
                 measureElements.Add(noteInMeasure);
             }
         }
@@ -100,10 +100,10 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(ChordMemento memento)
         {
             Clear();
-            foreach (var noteMemento in memento.Notes)
+            foreach (NoteMemento noteMemento in memento.Notes)
             {
-                var pitch = noteMemento.Pitch;
-                var noteInMeasure = new Note(pitch, this, keyGenerator, noteMemento.Guid);
+                Pitch pitch = noteMemento.Pitch;
+                Note noteInMeasure = new(pitch, this, keyGenerator, noteMemento.Guid);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);
             }
@@ -124,7 +124,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             beamType = null;
 
-            if (beamTypes.TryGetValue(i.Value, out var _beamType))
+            if (beamTypes.TryGetValue(i.Value, out BeamType _beamType))
             {
                 beamType = _beamType;
                 return true;
@@ -134,11 +134,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public BeamType? GetBeamType(PowerOfTwo i)
         {
-            if (beamTypes.TryGetValue(i.Value, out var value))
-            {
-                return value;
-            }
-            return null;
+            return beamTypes.TryGetValue(i.Value, out BeamType value) ? value : null;
         }
         public IEnumerable<(BeamType beam, PowerOfTwo duration)> GetBeamTypes()
         {

@@ -3,8 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:vm="clr-namespace:Sinfonia.ViewModels" 
-        xmlns:vmm="clr-namespace:Sinfonia.ViewModels.Menu"
         xmlns:usercontrols="clr-namespace:Sinfonia.UserControls"
         mc:Ignorable="d" 
         WindowState="Maximized"
@@ -36,43 +34,7 @@
 
             <!--menu-->
             <DockPanel Grid.Row="0">
-                
-                <Menu DockPanel.Dock="Top" 
-                      DataContext="{Binding MenuViewModel}" 
-                      ItemsSource="{Binding MenuLayout, UpdateSourceTrigger=PropertyChanged}">
-                    <Menu.Resources>
-                        <ControlTemplate x:Key="MenuSeparatorTemplate">
-                            <Separator>
-                                <Separator.Style>
-                                    <Style TargetType="{x:Type Separator}"
-                                           BasedOn="{StaticResource ResourceKey={x:Static MenuItem.SeparatorStyleKey}}"/>
-                                </Separator.Style>
-                            </Separator>
-                        </ControlTemplate>
-                    </Menu.Resources>
-                    <Menu.ItemContainerStyle>
-                        <Style TargetType="{x:Type MenuItem}">
-                            <Setter Property="Command" 
-                                    Value="{Binding Command}" />
-                            <Setter Property="CommandParameter" 
-                                    Value="{Binding CommandParameter}"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding}" 
-                                             Value="{x:Null}">
-                                    <Setter Property="Template" 
-                                            Value="{StaticResource MenuSeparatorTemplate}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Menu.ItemContainerStyle>
-                    <Menu.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type vmm:MenuItemViewModel}" 
-                                                  ItemsSource="{Binding Path=MenuItems}">
-                            <TextBlock Text="{Binding Header}"/>
-                        </HierarchicalDataTemplate>
-                    </Menu.ItemTemplate>
-                </Menu>
-                
+                <usercontrols:MenuUserControl DataContext="{Binding MenuViewModel}" />
             </DockPanel>
 
             <!-- document array and canvases-->
@@ -141,11 +103,11 @@
                                 <Grid Grid.Column="0">
                                     <!--canvas-->
                                     <usercontrols:CanvasUserControl DataContext="{Binding CanvasViewModel}" 
-                                                                SceneManager="{Binding Scene, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                SelectionBorder="{Binding SelectionBorder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                EnablePan="{Binding EnablePan, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                Pipe="{Binding Pipe, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                Invalidator="{Binding Invalidator, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                                                    SceneManager="{Binding Scene, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                    SelectionBorder="{Binding SelectionBorder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                    EnablePan="{Binding EnablePan, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                    Pipe="{Binding Pipe, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                    Invalidator="{Binding Invalidator, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                                     <!--scene settings-->
                                     <ItemsControl ItemsSource="{Binding AvailableScenes}"
                                               x:Name="SceneCollection">

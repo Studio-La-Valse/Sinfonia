@@ -2,7 +2,7 @@
 {
     public class InspectorViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {
-        private readonly HashSet<IUniqueScoreElement> selectedElements = new HashSet<IUniqueScoreElement>(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id));
+        private readonly HashSet<IUniqueScoreElement> selectedElements = new(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id));
         private readonly IScoreBuilder scoreBuilder;
         private readonly IScoreLayoutProvider scoreLayoutDictionary;
 
@@ -20,14 +20,14 @@
 
         public void Update(IEnumerable<IUniqueScoreElement> selected, IEnumerable<IUniqueScoreElement> unselected)
         {
-            foreach (var item in unselected)
+            foreach (IUniqueScoreElement item in unselected)
             {
-                selectedElements.Remove(item);
+                _ = selectedElements.Remove(item);
             }
 
-            foreach (var item in selected)
+            foreach (IUniqueScoreElement item in selected)
             {
-                selectedElements.Add(item);
+                _ = selectedElements.Add(item);
             }
 
             Update();
@@ -41,8 +41,8 @@
                 return;
             }
 
-            var firstItem = selectedElements.Last();
-            var firstType = firstItem.GetType();
+            IUniqueScoreElement firstItem = selectedElements.Last();
+            Type firstType = firstItem.GetType();
             if (!selectedElements.All(e => e.GetType().Name == firstType.Name))
             {
                 PropertiesViewModel = null;
@@ -55,10 +55,7 @@
                 _ => null
             };
 
-            if (PropertiesViewModel is not null)
-            {
-                PropertiesViewModel.Rebuild();
-            }
+            PropertiesViewModel?.Rebuild();
         }
 
         private bool refreshOnNextInvalidation = false;
@@ -69,7 +66,7 @@
                 return;
             }
 
-            //Update();
+            Update();
             refreshOnNextInvalidation = false;
         }
 

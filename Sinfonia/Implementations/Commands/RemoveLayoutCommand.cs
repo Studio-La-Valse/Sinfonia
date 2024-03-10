@@ -1,4 +1,4 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿namespace Sinfonia.Implementations.Commands
 {
     internal class RemoveLayoutCommand<TLayout> : BaseCommand where TLayout : class, ILayoutElement<TLayout>
     {
@@ -14,14 +14,14 @@
 
         public override void Do()
         {
-            if (!noteLayoutDictionary.TryGetValue(element, out var oldLayout))
+            if (!noteLayoutDictionary.TryGetValue(element, out TLayout? oldLayout))
             {
                 return;
             }
 
             this.oldLayout = oldLayout;
 
-            noteLayoutDictionary.Remove(element);
+            _ = noteLayoutDictionary.Remove(element);
         }
 
         public override void Undo()

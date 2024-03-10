@@ -1,8 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Sinfonia.Implementations.Commands;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class InstrumentMeasureEditorProxy : IInstrumentMeasureEditor
+    internal class InstrumentMeasureEditorProxy : IInstrumentMeasureEditor, IUniqueScoreElement
     {
         private readonly InstrumentMeasure source;
         private readonly ScoreLayoutDictionary scoreLayoutDictionary;
@@ -38,22 +39,22 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void AddVoice(int voice)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.AddVoice(voice));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.AddVoice(voice));
             transaction.Enqueue(command);
         }
 
         public void RemoveVoice(int voice)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.RemoveVoice(voice));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.RemoveVoice(voice));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.Clear());
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }
 
@@ -64,14 +65,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureEditor? previous)
         {
-            source.TryReadPrevious(out var _previous);
+            _ = source.TryReadPrevious(out InstrumentMeasure? _previous);
             previous = _previous?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return previous != null;
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureEditor? next)
         {
-            source.TryReadNext(out var _next);
+            _ = source.TryReadNext(out InstrumentMeasure? _next);
             next = _next?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return next != null;
         }
@@ -83,7 +84,22 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return ReadVoices().Select(v => ReadBlockChainAt(v));
+            return ReadVoices().Select(ReadBlockChainAt);
+        }
+
+        public InstrumentMeasureLayout ReadLayout()
+        {
+            return scoreLayoutDictionary.InstrumentMeasureLayout(this);
+        }
+
+        public void ApplyLayout(InstrumentMeasureLayout layout)
+        {
+            scoreLayoutDictionary.Apply(this, layout);
+        }
+
+        public void RemoveLayout()
+        {
+            scoreLayoutDictionary.Restore(this);
         }
     }
 }

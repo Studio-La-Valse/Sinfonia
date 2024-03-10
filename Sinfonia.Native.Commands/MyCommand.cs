@@ -10,7 +10,7 @@ namespace Sinfonia.Native.Commands
         public string Name => "My command name";
         public string Description => "This command will blow your mind.";
         public string Author => "Who am I";
-        public Guid Guid => new Guid("332B2D99-7678-411C-8599-6880A839A901");
+        public Guid Guid => new("332B2D99-7678-411C-8599-6880A839A901");
 
         public MyCommandActivator(IApplication application)
         {
@@ -34,9 +34,9 @@ namespace Sinfonia.Native.Commands
 
         public void ExecuteCommand()
         {
-            var document = application.ActiveDocumentOrThrow();
+            IDocument document = application.ActiveDocumentOrThrow();
 
-            var builder = document.ScoreBuilder
+            StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder = document.ScoreBuilder
                 .Edit(editor =>
                 {
                     editor.AddInstrumentRibbon(Instrument.Violin);

@@ -1,4 +1,5 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class StaffSystemEditorProxy : IStaffSystemEditor, IUniqueScoreElement
     {
@@ -39,15 +40,30 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (var measure in EnumerateMeasures())
+            foreach (IScoreMeasureEditor measure in EnumerateMeasures())
             {
                 yield return measure;
             }
 
-            foreach (var staffGroup in EnumerateStaffGroups())
+            foreach (IStaffGroupEditor staffGroup in EnumerateStaffGroups())
             {
                 yield return staffGroup;
             }
+        }
+
+        public StaffSystemLayout ReadLayout()
+        {
+            return scoreLayoutDictionary.StaffSystemLayout(this);
+        }
+
+        public void ApplyLayout(StaffSystemLayout layout)
+        {
+            scoreLayoutDictionary.Apply(this, layout);
+        }
+
+        public void RemoveLayout()
+        {
+            scoreLayoutDictionary.Restore(this);
         }
     }
 }

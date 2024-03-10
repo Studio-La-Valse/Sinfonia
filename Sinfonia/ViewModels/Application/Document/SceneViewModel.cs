@@ -2,10 +2,6 @@
 {
     public class SceneViewModel : BaseViewModel
     {
-        private readonly IExternalScene scoreDocumentScene;
-
-
-
         public bool IsActive
         {
             get => GetValue(() => IsActive);
@@ -13,17 +9,16 @@
         }
         public string Name =>
             ScoreDocumentScene.Name;
-        public IExternalScene ScoreDocumentScene =>
-            scoreDocumentScene;
+        public IExternalScene ScoreDocumentScene { get; }
 
 
-        public PropertyManagerViewModel Settings { get; }
+        public PropertyCollectionViewModel Settings { get; }
 
 
 
-        public SceneViewModel(IExternalScene scoreDocumentScene, PropertyManagerViewModel sceneSettingsViewModel)
+        public SceneViewModel(IExternalScene scoreDocumentScene, PropertyCollectionViewModel sceneSettingsViewModel)
         {
-            this.scoreDocumentScene = scoreDocumentScene;
+            ScoreDocumentScene = scoreDocumentScene;
             Settings = sceneSettingsViewModel;
         }
     }

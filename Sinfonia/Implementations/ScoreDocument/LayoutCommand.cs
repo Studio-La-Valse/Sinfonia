@@ -16,9 +16,9 @@
 
         public override void Do()
         {
-            noteLayoutDictionary.TryGetValue(element, out var _oldLayout);
+            _ = noteLayoutDictionary.TryGetValue(element, out TLayout? _oldLayout);
 
-            oldLayout = _oldLayout is null ? null : _oldLayout.Copy();
+            oldLayout = _oldLayout?.Copy();
 
             noteLayoutDictionary[element] = newlayout;
         }
@@ -27,7 +27,7 @@
         {
             if (oldLayout is null)
             {
-                noteLayoutDictionary.Remove(element);
+                _ = noteLayoutDictionary.Remove(element);
             }
             else
             {

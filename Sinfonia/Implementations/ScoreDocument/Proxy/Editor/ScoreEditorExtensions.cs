@@ -6,7 +6,10 @@
         {
             return new ScoreDocumentEditorProxy(editor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
         }
-
+        public static PageEditorProxy ProxyEditor(this Page page, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        {
+            return new PageEditorProxy(page, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+        }
 
 
 

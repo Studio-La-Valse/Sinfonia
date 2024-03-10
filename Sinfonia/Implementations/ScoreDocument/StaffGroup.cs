@@ -2,30 +2,31 @@
 {
     internal class StaffGroup : ScoreElement
     {
-        private readonly InstrumentRibbon instrumentRibbon;
         private readonly IEnumerable<ScoreMeasure> scoreMeasures;
         private readonly IKeyGenerator<int> keyGenerator;
-        private readonly Dictionary<int, Staff> staves = [];
+        private readonly IList<(Guid guid, int id)> staves = [];
 
 
-        public InstrumentRibbon InstrumentRibbon => instrumentRibbon;
-        public Instrument Instrument => instrumentRibbon.Instrument;
-        public int IndexInSystem => instrumentRibbon.IndexInScore;
+        public InstrumentRibbon InstrumentRibbon { get; }
+        public Instrument Instrument => InstrumentRibbon.Instrument;
+        public int IndexInSystem => InstrumentRibbon.IndexInScore;
 
-
-        public StaffGroup(InstrumentRibbon instrumentRibbon, IEnumerable<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+         
+        public StaffGroup(InstrumentRibbon instrumentRibbon, IEnumerable<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid, int id, IList<(Guid guid, int id)> staves) : base(id, guid)
         {
-            this.instrumentRibbon = instrumentRibbon;
             this.scoreMeasures = scoreMeasures;
             this.keyGenerator = keyGenerator;
+            this.staves = staves;   
+
+            InstrumentRibbon = instrumentRibbon;
         }
 
 
         public IEnumerable<Staff> EnumerateStaves()
         {
-            foreach (var staff in staves.Values)
+            for (int i = 0; i < staves.Count; i++)
             {
-                yield return staff;
+                yield return new Staff(i, staves[i].id, staves[i].guid);
             }
         }
 
@@ -33,21 +34,22 @@
         {
             for (int i = 0; i < numberOfStaves; i++)
             {
-                if (staves.TryGetValue(i, out var staff))
+                if (staves.Count > i)
                 {
-                    yield return staff;
-                    break;
+                    var existingStaff = staves[i];
+                    yield return new Staff(i, existingStaff.id, existingStaff.guid);
+                    continue;
                 }
 
-                staff = new Staff(i, keyGenerator, Guid.NewGuid());
-                staves[i] = staff;
-                yield return staff;
+                var (newGuid, newId) = (Guid.NewGuid(), keyGenerator.Generate());
+                staves.Add((newGuid, newId));
+                yield return new Staff(i, newId, newGuid);
             }
         }
 
         public IEnumerable<InstrumentMeasure> EnumerateMeasures()
         {
-            return scoreMeasures.Select(e => e.GetMeasureCore(instrumentRibbon.IndexInScore));
+            return scoreMeasures.Select(e => e.GetMeasureCore(InstrumentRibbon.IndexInScore));
         }
     }
 }

@@ -39,19 +39,19 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (var ribbon in ReadScoreMeasures())
+            foreach (IScoreMeasureReader ribbon in ReadScoreMeasures())
             {
                 yield return ribbon;
             }
 
-            foreach (var measure in ReadInstrumentRibbons())
+            foreach (IInstrumentRibbonReader measure in ReadInstrumentRibbons())
             {
                 yield return measure;
             }
 
-            foreach (var system in EnumerateStaffSystems())
+            foreach (var page in EnumeratePages())
             {
-                yield return system;
+                yield return page;
             }
         }
 
@@ -60,9 +60,9 @@
             return source.GetScoreMeasureCore(indexInScore).Proxy();
         }
 
-        public IEnumerable<IStaffSystemReader> EnumerateStaffSystems()
+        public IEnumerable<IPageReader> EnumeratePages()
         {
-            return source.EnumerateStaffSystems().Select(e => e.Proxy());
+            return source.GeneratePages().Select(p => p.Proxy());
         }
     }
 }

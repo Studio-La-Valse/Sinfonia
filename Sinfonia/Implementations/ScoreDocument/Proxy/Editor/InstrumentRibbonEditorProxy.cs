@@ -1,4 +1,5 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class InstrumentRibbonEditorProxy : IInstrumentRibbonEditor, IUniqueScoreElement
     {
@@ -42,6 +43,21 @@
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadMeasures();
+        }
+
+        public InstrumentRibbonLayout ReadLayout()
+        {
+            return scoreLayoutDictionary.InstrumentRibbonLayout(this);
+        }
+
+        public void ApplyLayout(InstrumentRibbonLayout layout)
+        {
+            scoreLayoutDictionary.Apply(this, layout);
+        }
+
+        public void RemoveLayout()
+        {
+            scoreLayoutDictionary.Restore(this);
         }
     }
 }

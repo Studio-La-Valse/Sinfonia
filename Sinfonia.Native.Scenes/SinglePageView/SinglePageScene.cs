@@ -27,17 +27,14 @@
                 "The page to display");
         }
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider layout)
+        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider layout, ISelection<IUniqueScoreElement> selection)
         {
-            var document = application.ActiveDocumentOrThrow();
-            var selection = document.Selection;
-
-            var noteFactory = new VisualNoteFactory(selection, layout);
-            var restFactory = new VisualRestFactory(selection);
-            var noteGroupFactory = new VisualNoteGroupFactory(noteFactory, restFactory, layout);
-            var staffMeasusureFactory = new VisualStaffMeasureFactory(selection, noteGroupFactory, layout);
-            var systemMeasureFactory = new VisualSystemMeasureFactory(selection, staffMeasusureFactory, layout);
-            var staffSystemFactory = new VisualStaffSystemFactory(systemMeasureFactory, selection, layout);
+            VisualNoteFactory noteFactory = new(selection, layout);
+            VisualRestFactory restFactory = new(selection);
+            VisualNoteGroupFactory noteGroupFactory = new(noteFactory, restFactory, layout);
+            VisualStaffMeasureFactory staffMeasusureFactory = new(selection, noteGroupFactory, layout);
+            VisualSystemMeasureFactory systemMeasureFactory = new(selection, staffMeasusureFactory, layout);
+            VisualStaffSystemFactory staffSystemFactory = new(systemMeasureFactory, selection, layout);
             return new SinglePageDocumentScene(staffSystemFactory, scoreDocument, layout, () => Page);
         }
     }

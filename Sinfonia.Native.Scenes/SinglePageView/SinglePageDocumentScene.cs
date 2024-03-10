@@ -23,14 +23,14 @@
         /// <inheritdoc/>
         public override IEnumerable<BaseContentWrapper> GetContentWrappers()
         {
-            var body = new SinglePageViewSceneFactory(page(), sceneFactory, ColorARGB.Black, ColorARGB.White, scoreLayoutDictionary);
+            SinglePageViewSceneFactory body = new(page(), sceneFactory, ColorARGB.Black, ColorARGB.White, scoreLayoutDictionary);
             yield return body.CreateContent(scoreDocumentReader);
         }
 
         /// <inheritdoc/>
         public override IEnumerable<BaseDrawableElement> GetDrawableElements()
         {
-            return new List<BaseDrawableElement>();
+            return [];
         }
     }
 }

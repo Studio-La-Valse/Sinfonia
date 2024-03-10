@@ -32,19 +32,19 @@
 
         public override IEnumerable<BaseContentWrapper> GetContentWrappers()
         {
-            foreach (var measure in scoreMeasure.ReadMeasures())
+            foreach (IInstrumentMeasureReader measure in scoreMeasure.ReadMeasures())
             {
-                foreach (var voice in measure.ReadVoices())
+                foreach (int voice in measure.ReadVoices())
                 {
-                    var blockChain = measure.ReadBlockChainAt(voice);
-                    foreach (var block in blockChain.ReadBlocks())
+                    IMeasureBlockChainReader blockChain = measure.ReadBlockChainAt(voice);
+                    foreach (IMeasureBlockReader block in blockChain.ReadBlocks())
                     {
-                        foreach (var chord in block.ReadChords())
+                        foreach (IChordReader chord in block.ReadChords())
                         {
-                            foreach (var note in chord.ReadNotes())
+                            foreach (INoteReader note in chord.ReadNotes())
                             {
-                                var noteCanvasLeft = canvasLeft + (double)note.Position.Decimal * measureWidth + generalSpacing / 2;
-                                var noteRepresentation = new NoteBar(note, measure, selection, noteCanvasLeft, measureWidth, noteHeight, generalSpacing, gridLineColor);
+                                double noteCanvasLeft = canvasLeft + ((double)note.Position.Decimal * measureWidth) + (generalSpacing / 2);
+                                NoteBar noteRepresentation = new(note, measure, selection, noteCanvasLeft, measureWidth, noteHeight, generalSpacing, gridLineColor);
                                 yield return noteRepresentation;
                             }
                         }
@@ -57,7 +57,7 @@
 
         public override IEnumerable<BaseDrawableElement> GetDrawableElements()
         {
-            return new List<BaseDrawableElement>();
+            return [];
         }
     }
 }

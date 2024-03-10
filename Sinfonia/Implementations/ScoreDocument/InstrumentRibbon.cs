@@ -3,13 +3,8 @@
     internal class InstrumentRibbon : ScoreElement, IMementoElement<InstrumentRibbonMemento>
     {
         private readonly ScoreDocumentCore score;
-        private readonly Instrument instrument;
 
-
-
-
-        public Instrument Instrument =>
-            instrument;
+        public Instrument Instrument { get; }
         public int IndexInScore =>
             score.contentTable.IndexOf(this);
 
@@ -18,7 +13,7 @@
         public InstrumentRibbon(ScoreDocumentCore score, Instrument instrument, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
-            this.instrument = instrument;
+            Instrument = instrument;
         }
 
 
@@ -47,9 +42,9 @@
         }
         public void ApplyMemento(InstrumentRibbonMemento memento)
         {
-            foreach (var measureMemento in memento.Measures)
+            foreach (InstrumentMeasureMemento measureMemento in memento.Measures)
             {
-                var measure = GetMeasureCore(measureMemento.MeasureIndex);
+                InstrumentMeasure measure = GetMeasureCore(measureMemento.MeasureIndex);
                 measure.ApplyMemento(measureMemento);
             }
         }

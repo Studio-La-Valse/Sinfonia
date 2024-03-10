@@ -31,14 +31,14 @@ namespace Sinfonia.ViewModels.Application
 
             if (document.AvailableScenes.Count > 0 && !document.AvailableScenes.Any(s => s.IsActive))
             {
-                var scene = document.AvailableScenes[0];
+                SceneViewModel scene = document.AvailableScenes[0];
                 document.ActivateScene(scene);
             }
         }
 
         public void Close(DocumentViewModel documentViewModel)
         {
-            Documents.Remove(documentViewModel);
+            _ = Documents.Remove(documentViewModel);
 
             if (Documents.Count > 0)
             {

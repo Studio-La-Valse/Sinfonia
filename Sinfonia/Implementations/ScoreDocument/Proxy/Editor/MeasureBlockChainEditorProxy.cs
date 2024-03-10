@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿using Sinfonia.Implementations.Commands;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor, IUniqueScoreElement
     {
@@ -29,44 +31,44 @@
 
         public void Append(RythmicDuration duration, bool grace)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Append(duration, grace));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Append(duration, grace));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Clear());
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }
 
         public void Divide(params int[] steps)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Divide(steps));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Divide(steps));
             transaction.Enqueue(command);
 
         }
 
         public void DivideEqual(int number)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.DivideEqual(number));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.DivideEqual(number));
             transaction.Enqueue(command);
         }
 
         public void Insert(Position position, RythmicDuration duration, bool grace)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Insert(position, duration, grace));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Insert(position, duration, grace));
             transaction.Enqueue(command);
         }
 
         public void Prepend(RythmicDuration duration, bool grace)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento>(source, s => s.Prepend(duration, grace));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Prepend(duration, grace));
             transaction.Enqueue(command);
         }
 

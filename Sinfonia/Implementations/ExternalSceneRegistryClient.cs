@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Sinfonia.Extensions
+namespace Sinfonia.Implementations
 {
     internal class ExternalSceneRegistryClient : ITypeRegistryClient<IServiceCollection>
     {
         public void Register(Type addin, IServiceCollection container)
         {
-            container.AddSingleton(typeof(IExternalScene), addin);
+            _ = container.AddSingleton(typeof(IExternalScene), addin);
         }
     }
 }

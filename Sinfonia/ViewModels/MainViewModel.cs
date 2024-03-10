@@ -1,5 +1,5 @@
 ﻿using Sinfonia.ViewModels.Application;
-using Sinfonia.ViewModels.Menu;
+using Sinfonia.ViewModels.Application.Menu;
 
 namespace Sinfonia.ViewModels
 {

@@ -6,7 +6,10 @@
         {
             return new ScoreDocumentReaderProxy(editor);
         }
-
+        public static PageReaderProxy Proxy(this Page page)
+        {
+            return new PageReaderProxy(page);
+        }
 
 
         public static InstrumentRibbonReaderProxy Proxy(this InstrumentRibbon instrumentRibbon)

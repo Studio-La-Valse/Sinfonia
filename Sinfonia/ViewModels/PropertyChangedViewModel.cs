@@ -9,7 +9,7 @@ namespace Sinfonia.ViewModels
     /// </summary>
     public abstract class PropertyChangedViewModel : INotifyPropertyChanged
     {
-        private readonly Dictionary<string, object> _values = new();
+        private readonly Dictionary<string, object> _values = [];
 
 
         protected void SetValue<T>(Expression<Func<T>> propertySelector, T value)
@@ -63,18 +63,15 @@ namespace Sinfonia.ViewModels
 
             if (handler != null)
             {
-                var e = new PropertyChangedEventArgs(propertyName);
+                PropertyChangedEventArgs e = new(propertyName);
                 handler(this, e);
             }
         }
         private string GetPropertyName(LambdaExpression expression)
         {
-            if (expression.Body is not MemberExpression memberExpression)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return memberExpression.Member.Name;
+            return expression.Body is not MemberExpression memberExpression
+                ? throw new InvalidOperationException()
+                : memberExpression.Member.Name;
         }
     }
 }

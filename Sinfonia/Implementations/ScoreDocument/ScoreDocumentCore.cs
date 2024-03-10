@@ -1,12 +1,9 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-
-namespace Sinfonia.Implementations.ScoreDocument
+﻿namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
     {
-        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         internal readonly ScoreContentTable contentTable;
-        private readonly StaffSystemGenerator staffSystemGenerator;
+        private readonly PageGenerator pageGenerator;
         private readonly IKeyGenerator<int> keyGenerator;
 
 
@@ -18,11 +15,10 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        internal ScoreDocumentCore(ScoreLayoutDictionary scoreLayoutDictionary, ScoreContentTable contentTable, StaffSystemGenerator staffSystemGenerator, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
-            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.contentTable = contentTable;
-            this.staffSystemGenerator = staffSystemGenerator;
+            this.pageGenerator = pageGenerator;
             this.keyGenerator = keyGenerator;
         }
 
@@ -31,7 +27,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void AddInstrumentRibbon(Instrument instrument)
         {
-            var instrumentRibbon = new InstrumentRibbon(this, instrument, keyGenerator, Guid.NewGuid());
+            InstrumentRibbon instrumentRibbon = new(this, instrument, keyGenerator, Guid.NewGuid());
             contentTable.AddInstrumentRibbon(instrumentRibbon);
         }
         public void RemoveInstrumentRibbon(int indexInScore)
@@ -47,26 +43,26 @@ namespace Sinfonia.Implementations.ScoreDocument
                 throw new Exception("Please construct an instrument ribbon first");
             }
 
-            var previousElement = contentTable.ColumnHeaders.LastOrDefault();
+            ScoreMeasure? previousElement = contentTable.ColumnHeaders.LastOrDefault();
             timeSignature ??= previousElement is not null ?
                     previousElement.TimeSignature :
                     new TimeSignature(4, 4);
 
-            var keySignature = previousElement is not null ?
+            KeySignature keySignature = previousElement is not null ?
                     previousElement.KeySignature :
                     new KeySignature(Step.C, MajorOrMinor.Major);
 
-            var scoreMeasure = new ScoreMeasure(this, timeSignature, keySignature, keyGenerator, guid);
+            ScoreMeasure scoreMeasure = new(this, timeSignature, keySignature, keyGenerator, guid);
             return scoreMeasure;
         }
         public void AppendScoreMeasure(TimeSignature? timeSignature = null)
         {
-            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            ScoreMeasure scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
             contentTable.AddScoreMeasure(scoreMeasure);
         }
         public void InsertScoreMeasure(int index, TimeSignature? timeSignature = null)
         {
-            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            ScoreMeasure scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
             contentTable.InsertScoreMeasure(scoreMeasure, index);
         }
         public void RemoveScoreMeasure(int indexInScore)
@@ -122,27 +118,26 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             Clear();
 
-            foreach (var instrumentMemento in memento.InstrumentRibbons)
+            foreach (InstrumentRibbonMemento instrumentMemento in memento.InstrumentRibbons)
             {
-                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, keyGenerator, instrumentMemento.Guid);
+                InstrumentRibbon instrumentRibbon = new(this, instrumentMemento.Instrument, keyGenerator, instrumentMemento.Guid);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
 
                 instrumentRibbon.ApplyMemento(instrumentMemento);
             }
 
-            foreach (var scoreMeasureMemento in memento.ScoreMeasures)
+            foreach (ScoreMeasureMemento scoreMeasureMemento in memento.ScoreMeasures)
             {
-                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Guid, scoreMeasureMemento.TimeSignature);
+                ScoreMeasure scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Guid, scoreMeasureMemento.TimeSignature);
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);
             }
         }
 
-
-        public IEnumerable<StaffSystem> EnumerateStaffSystems()
+        public IEnumerable<Page> GeneratePages()
         {
-            return staffSystemGenerator.EnumerateStaffSystems(this, scoreLayoutDictionary.DocumentLayout(this.Proxy()));
+            return pageGenerator.Generate(this);
         }
     }
 }

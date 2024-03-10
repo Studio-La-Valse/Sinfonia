@@ -26,7 +26,7 @@
             {
                 if (value is not null)
                 {
-                    var visualScene = value.ScoreDocumentScene.CreateScene(ScoreDocumentReader, scoreLayoutProvider);
+                    var visualScene = value.ScoreDocumentScene.CreateScene(ScoreDocumentReader, scoreLayoutProvider, Selection);
                     var sceneManager = new SceneManager<IUniqueScoreElement, int>(visualScene, (e) => e.Id).WithBackground(ColorARGB.Black);
                     CanvasViewModel.Scene = sceneManager;
                 }
@@ -71,7 +71,7 @@
 
         public void ActivateScene(SceneViewModel scene)
         {
-            foreach (var _scene in AvailableScenes)
+            foreach (SceneViewModel _scene in AvailableScenes)
             {
                 _scene.IsActive = false;
             }

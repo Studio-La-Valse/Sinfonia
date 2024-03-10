@@ -1,6 +1,6 @@
 ﻿using Sinfonia.ViewModels.Application;
 
-namespace Sinfonia.ViewModels.Menu
+namespace Sinfonia.ViewModels.Application.Menu
 {
     public class FileMenuViewModel : MenuItemViewModel
     {
@@ -19,7 +19,7 @@ namespace Sinfonia.ViewModels.Menu
 
         public void CloseDocument()
         {
-            var openDocument = documentCollection.Documents.FirstOrDefault(d => d.IsActive);
+            DocumentViewModel? openDocument = documentCollection.Documents.FirstOrDefault(d => d.IsActive);
             if (openDocument is null)
             {
                 return;
@@ -32,7 +32,7 @@ namespace Sinfonia.ViewModels.Menu
         {
             for (int i = documentCollection.Documents.Count - 1; i >= 0; i--)
             {
-                var document = documentCollection.Documents[i];
+                DocumentViewModel document = documentCollection.Documents[i];
                 documentCollection.Close(document);
             }
 

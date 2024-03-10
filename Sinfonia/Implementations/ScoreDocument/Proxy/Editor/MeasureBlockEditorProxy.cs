@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Sinfonia.Implementations.Commands;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
@@ -27,29 +28,29 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void AppendChord(RythmicDuration rythmicDuration)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.AppendChord(rythmicDuration));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.AppendChord(rythmicDuration));
             transaction.Enqueue(command);
         }
 
         public void Splice(int index)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.Splice(index));
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.Splice(index));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.Clear());
+            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.Clear());
             transaction.Enqueue(command);
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IMeasureBlockEditor? right)
         {
             right = null;
-            if (source.TryReadNext(out var _right))
+            if (source.TryReadNext(out MeasureBlock? _right))
             {
                 right = _right.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             }
@@ -59,7 +60,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public bool TryReadPrevious([NotNullWhen(true)] out IMeasureBlockEditor? previous)
         {
             previous = null;
-            if (source.TryReadNext(out var _prev))
+            if (source.TryReadNext(out MeasureBlock? _prev))
             {
                 previous = _prev.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             }
@@ -74,6 +75,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadChords();
+        }
+
+        public MeasureBlockLayout ReadLayout()
+        {
+            return scoreLayoutDictionary.MeasureBlockLayout(this);
+        }
+
+        public void ApplyLayout(MeasureBlockLayout layout)
+        {
+            scoreLayoutDictionary.Apply(this, layout);
+        }
+
+        public void RemoveLayout()
+        {
+            scoreLayoutDictionary.Restore(this);
         }
     }
 }

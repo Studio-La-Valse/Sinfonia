@@ -1,4 +1,8 @@
-﻿namespace Sinfonia.API
+﻿using StudioLaValse.Drawable.Interaction.Selection;
+using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Builder;
+
+namespace Sinfonia.API
 {
     public interface IDocument
     {

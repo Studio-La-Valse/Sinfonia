@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sinfonia.Extensions;
+using Sinfonia.Views.DocumentStyleEditor;
 using System.Windows;
 
 namespace Sinfonia
@@ -12,11 +13,11 @@ namespace Sinfonia
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            var host = CreateHostBuilder(e.Args).Build();
+            IHost host = CreateHostBuilder(e.Args).Build();
             host.Start();
 
-            var mainWindow = host.Services.GetRequiredService<MainWindow>();
-            mainWindow.ShowDialog();
+            MainWindow mainWindow = host.Services.GetRequiredService<MainWindow>();
+            _ = mainWindow.ShowDialog();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -24,7 +25,7 @@ namespace Sinfonia
             return Host.CreateDefaultBuilder(args)
                 .ConfigureServices(services =>
                 {
-                    services
+                    _ = services
                         .AddModels()
                         .AddViewModels()
                         .AddViews()

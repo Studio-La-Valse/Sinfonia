@@ -39,11 +39,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public MeasureBlockChain GetBlockChainOrThrowCore(int voice)
         {
-            if (blockChains.TryGetValue(voice, out var chain))
-            {
-                return chain;
-            }
-            throw new Exception($"No voice {voice} found.");
+            return blockChains.TryGetValue(voice, out MeasureBlockChain? chain) ? chain : throw new Exception($"No voice {voice} found.");
         }
 
 
@@ -53,12 +49,12 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void RemoveVoice(int voice)
         {
-            blockChains.Remove(voice);
+            _ = blockChains.Remove(voice);
         }
         public void AddVoice(int voice)
         {
-            var guid = Guid.NewGuid();
-            blockChains.TryAdd(voice, new MeasureBlockChain(this, voice, keyGenerator, guid));
+            Guid guid = Guid.NewGuid();
+            _ = blockChains.TryAdd(voice, new MeasureBlockChain(this, voice, keyGenerator, guid));
         }
 
 
@@ -78,7 +74,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool TryReadPrevious([NotNullWhen(true)] out InstrumentMeasure? previous)
         {
             previous = null;
-            if (scoreMeasure.TryReadPrevious(out var previousScoreMeasure))
+            if (scoreMeasure.TryReadPrevious(out ScoreMeasure? previousScoreMeasure))
             {
                 previous = previousScoreMeasure.GetMeasureCore(RibbonIndex);
                 return true;
@@ -88,7 +84,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool TryReadNext([NotNullWhen(true)] out InstrumentMeasure? next)
         {
             next = null;
-            if (scoreMeasure.TryReadNext(out var nextScoreMeasure))
+            if (scoreMeasure.TryReadNext(out ScoreMeasure? nextScoreMeasure))
             {
                 next = nextScoreMeasure.GetMeasureCore(RibbonIndex);
                 return true;
@@ -114,9 +110,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(InstrumentMeasureMemento memento)
         {
             Clear();
-            foreach (var voiceGroup in memento.VoiceGroups)
+            foreach (RibbonMeasureVoiceMemento voiceGroup in memento.VoiceGroups)
             {
-                var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
+                MeasureBlockChain blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
                 blockChain.ApplyMemento(voiceGroup);
             }
         }

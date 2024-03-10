@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="Resources\Bravura.otf" />
     <None Remove="Resources\BravuraText.otf" />
+    <None Remove="Resources\Kortjakje.musicxml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,25 +22,42 @@
     <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Drawable.WPF" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
-    <PackageReference Include="StudioLaValse.ScoreDocument" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Builder" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Core" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Drawable" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Layout" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.MusicXml" Version="2.0.0" />
+    <PackageReference Include="YamlDotNet" Version="15.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Builder\StudioLaValse.ScoreDocument.Builder.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Core\StudioLaValse.ScoreDocument.Core.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Layout\StudioLaValse.ScoreDocument.Layout.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\Bravura.otf" />
     <Resource Include="Resources\BravuraText.otf" />
+    <EmbeddedResource Include="Resources\Kortjakje.musicxml" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="External\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

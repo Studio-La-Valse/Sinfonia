@@ -2,8 +2,8 @@
 {
     internal sealed class ScoreContentTable
     {
-        private readonly List<(InstrumentRibbon instrumentRibbon, List<InstrumentMeasure> instrumentMeasures)> instrumentRibbons;
-        private readonly List<ScoreMeasure> scoreMeasures;
+        private readonly IList<(InstrumentRibbon instrumentRibbon, IList<InstrumentMeasure> instrumentMeasures)> instrumentRibbons;
+        private readonly IList<ScoreMeasure> scoreMeasures;
         private readonly InstrumentMeasureFactory cellFactory;
 
 
@@ -37,11 +37,11 @@
                 throw new Exception("Row already exists in table");
             }
 
-            var values = new List<InstrumentMeasure>();
+            IList<InstrumentMeasure> values = [];
 
-            foreach (var column in scoreMeasures)
+            foreach (ScoreMeasure column in scoreMeasures)
             {
-                var cell = cellFactory.Create(column, identifier);
+                InstrumentMeasure cell = cellFactory.Create(column, identifier);
                 values.Add(cell);
             }
 
@@ -54,11 +54,11 @@
                 throw new Exception("Row already exists in table");
             }
 
-            var values = new List<InstrumentMeasure>();
+            IList<InstrumentMeasure> values = [];
 
-            foreach (var column in scoreMeasures)
+            foreach (ScoreMeasure column in scoreMeasures)
             {
-                var cell = cellFactory.Create(column, identifier);
+                InstrumentMeasure cell = cellFactory.Create(column, identifier);
                 values.Add(cell);
             }
 
@@ -71,7 +71,7 @@
                 throw new Exception($"Cannot add a column at {index}, provide an index smaller than or equal to width {Width}");
             }
 
-            var existingIndex = scoreMeasures.IndexOf(identifier);
+            int existingIndex = scoreMeasures.IndexOf(identifier);
             if (existingIndex != -1)
             {
                 throw new Exception($"Column already exists in table, position: {existingIndex}");
@@ -79,15 +79,15 @@
 
             scoreMeasures.Insert(index, identifier);
 
-            foreach (var (header, cells) in instrumentRibbons)
+            foreach ((InstrumentRibbon header, IList<InstrumentMeasure> cells) in instrumentRibbons)
             {
-                var cell = cellFactory.Create(identifier, header);
+                InstrumentMeasure cell = cellFactory.Create(identifier, header);
                 cells.Insert(index, cell);
             }
         }
         public void AddScoreMeasure(ScoreMeasure identifier)
         {
-            var existingIndex = scoreMeasures.IndexOf(identifier);
+            int existingIndex = scoreMeasures.IndexOf(identifier);
 
             if (existingIndex != -1)
             {
@@ -96,9 +96,9 @@
 
             scoreMeasures.Add(identifier);
 
-            foreach (var (header, cells) in instrumentRibbons)
+            foreach ((InstrumentRibbon header, IList<InstrumentMeasure> cells) in instrumentRibbons)
             {
-                var cell = cellFactory.Create(identifier, header);
+                InstrumentMeasure cell = cellFactory.Create(identifier, header);
                 cells.Add(cell);
             }
         }
@@ -132,12 +132,9 @@
         }
         public InstrumentMeasure GetInstrumentMeasure(int x, int y)
         {
-            if (!PositionExists(x, y))
-            {
-                throw new Exception($"Position {x}, {y} does not exist in the table");
-            }
-
-            return instrumentRibbons[y].instrumentMeasures[x];
+            return !PositionExists(x, y)
+                ? throw new Exception($"Position {x}, {y} does not exist in the table")
+                : instrumentRibbons[y].instrumentMeasures[x];
         }
         public bool PositionExists(int x, int y)
         {
@@ -151,16 +148,18 @@
         public void RemoveInstrumentRibbon(int index)
         {
             if (index < 0 || index > Height)
+            {
                 throw new Exception("Index is out of range");
+            }
 
             instrumentRibbons.RemoveAt(index);
         }
         public void RemoveScoreMeasure(int index)
         {
             scoreMeasures.RemoveAt(index);
-            foreach (var entry in instrumentRibbons)
+            foreach ((_, IList<InstrumentMeasure> instrumentMeasures) in instrumentRibbons)
             {
-                entry.instrumentMeasures.RemoveAt(index);
+                instrumentMeasures.RemoveAt(index);
             }
         }
         #endregion

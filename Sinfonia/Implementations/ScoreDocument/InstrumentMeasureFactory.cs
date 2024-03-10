@@ -1,13 +1,8 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class InstrumentMeasureFactory
+    internal class InstrumentMeasureFactory(IKeyGenerator<int> keyGenerator)
     {
-        private readonly IKeyGenerator<int> keyGenerator;
-
-        public InstrumentMeasureFactory(IKeyGenerator<int> keyGenerator)
-        {
-            this.keyGenerator = keyGenerator;
-        }
+        private readonly IKeyGenerator<int> keyGenerator = keyGenerator;
 
         public InstrumentMeasure Create(ScoreMeasure column, InstrumentRibbon row)
         {

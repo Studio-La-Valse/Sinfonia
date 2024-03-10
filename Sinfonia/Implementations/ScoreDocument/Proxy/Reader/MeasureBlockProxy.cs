@@ -40,7 +40,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public bool TryReadNext([NotNullWhen(true)] out IMeasureBlockReader? right)
         {
             right = null;
-            if (source.TryReadNext(out var _right))
+            if (source.TryReadNext(out MeasureBlock? _right))
             {
                 right = _right.Proxy();
             }
@@ -50,7 +50,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public bool TryReadPrevious([NotNullWhen(true)] out IMeasureBlockReader? previous)
         {
             previous = null;
-            if (source.TryReadNext(out var _prev))
+            if (source.TryReadNext(out MeasureBlock? _prev))
             {
                 previous = _prev.Proxy();
             }

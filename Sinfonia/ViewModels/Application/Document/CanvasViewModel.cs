@@ -29,7 +29,7 @@
                 }
 
                 Pipe = Pipeline.DoNothing()
-                    .InterceptKeys(selection, out var _selectionManager)
+                    .InterceptKeys(selection, out ISelectionManager<IUniqueScoreElement>? _selectionManager)
                     .ThenHandleDefaultMouseInteraction(value.VisualParents, Invalidator)
                     .ThenHandleMouseHover(value.VisualParents, Invalidator)
                     .ThenHandleDefaultClick(value.VisualParents, _selectionManager)

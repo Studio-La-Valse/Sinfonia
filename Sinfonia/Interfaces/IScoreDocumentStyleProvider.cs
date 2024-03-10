@@ -1,7 +1,7 @@
-﻿namespace Sinfonia.Interfaces
-{
-    public interface IScoreDocumentStyleProvider
-    {
-        IEnumerable<ScoreDocumentStyle> GetStyles();
-    }
-}
+﻿//namespace Sinfonia.Interfaces
+//{
+//    public interface IScoreDocumentStyleProvider
+//    {
+//        IEnumerable<ScoreDocumentStyle> GetStyles();
+//    }
+//}

@@ -35,14 +35,29 @@ internal class StaffGroupEditorProxy(StaffGroup staffGroup, ScoreLayoutDictionar
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
-        foreach (var measure in EnumerateMeasures())
+        foreach (IInstrumentMeasureEditor measure in EnumerateMeasures())
         {
             yield return measure;
         }
 
-        foreach (var staff in staffGroup.EnumerateStaves().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged)))
+        foreach (StaffEditorProxy? staff in staffGroup.EnumerateStaves().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged)))
         {
             yield return staff;
         }
+    }
+
+    public StaffGroupLayout ReadLayout()
+    {
+        return scoreLayoutDictionary.StaffGroupLayout(this);
+    }
+
+    public void ApplyLayout(StaffGroupLayout layout)
+    {
+        scoreLayoutDictionary.Apply(this, layout);
+    }
+
+    public void RemoveLayout()
+    {
+        scoreLayoutDictionary.Restore(this);
     }
 }
