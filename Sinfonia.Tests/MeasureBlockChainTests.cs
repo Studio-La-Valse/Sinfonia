@@ -4,6 +4,9 @@ using StudioLaValse.CommandManager;
 using StudioLaValse.Drawable;
 using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Core;
+using StudioLaValse.ScoreDocument.Core.Primitives;
+using StudioLaValse.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Tests
 {
@@ -33,7 +36,8 @@ namespace Sinfonia.Tests
         {
             ICommandManager commandManager = CommandManager.CreateGreedy();
             INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, StudioLaValse.ScoreDocument.Layout.IScoreLayoutProvider layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged);
+            ScoreDocumentStyleTemplate style = new();
+            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
             StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
                 .Edit(editor =>
@@ -69,7 +73,8 @@ namespace Sinfonia.Tests
         {
             ICommandManager commandManager = CommandManager.CreateGreedy();
             INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, StudioLaValse.ScoreDocument.Layout.IScoreLayoutProvider layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged);
+            ScoreDocumentStyleTemplate style = new();
+            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
             StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
                 .Edit(editor =>
@@ -102,7 +107,8 @@ namespace Sinfonia.Tests
         {
             ICommandManager commandManager = CommandManager.CreateGreedy();
             INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, StudioLaValse.ScoreDocument.Layout.IScoreLayoutProvider layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged);
+            ScoreDocumentStyleTemplate style = new();
+            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
             StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
                 .Edit(editor =>

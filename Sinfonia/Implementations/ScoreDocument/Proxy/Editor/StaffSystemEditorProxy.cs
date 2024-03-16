@@ -1,5 +1,4 @@
-﻿
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class StaffSystemEditorProxy : IStaffSystemEditor, IUniqueScoreElement
     {
@@ -56,7 +55,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return scoreLayoutDictionary.StaffSystemLayout(this);
         }
 
-        public void ApplyLayout(StaffSystemLayout layout)
+        public void Apply(StaffSystemLayout layout)
         {
             scoreLayoutDictionary.Apply(this, layout);
         }

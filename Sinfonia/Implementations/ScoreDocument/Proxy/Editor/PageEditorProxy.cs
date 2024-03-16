@@ -17,16 +17,18 @@ internal class PageEditorProxy : IPageEditor, IUniqueScoreElement
         this.notifyEntityChanged = notifyEntityChanged;
     }
 
-    public Guid Guid => throw new NotImplementedException();
+    public Guid Guid => page.Guid;
 
-    public void ApplyLayout(PageLayout layout)
+    public int IndexInScore => page.IndexInScore;
+
+    public void Apply(PageLayout layout)
     {
         scoreLayoutDictionary.Apply(this, layout);
     }
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
-        return page.StaffSystems.Select(s => s.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        return EnumerateStaffSystems();
     }
 
     public PageLayout ReadLayout()
@@ -37,5 +39,10 @@ internal class PageEditorProxy : IPageEditor, IUniqueScoreElement
     public void RemoveLayout()
     {
         scoreLayoutDictionary.Restore(this);
+    }
+
+    public IEnumerable<IStaffSystemEditor> EnumerateStaffSystems()
+    {
+        return page.StaffSystems.Where(s => s.ScoreMeasures.Count > 0).Select(s => s.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
     }
 }

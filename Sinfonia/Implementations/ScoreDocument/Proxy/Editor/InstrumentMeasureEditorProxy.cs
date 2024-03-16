@@ -92,7 +92,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return scoreLayoutDictionary.InstrumentMeasureLayout(this);
         }
 
-        public void ApplyLayout(InstrumentMeasureLayout layout)
+        public void Apply(InstrumentMeasureLayout layout)
         {
             scoreLayoutDictionary.Apply(this, layout);
         }

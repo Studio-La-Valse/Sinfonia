@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -34,8 +35,6 @@ namespace Sinfonia.Implementations.ScoreDocument
             host.RibbonMeasure;
         public IEnumerable<Chord> Containers =>
             chords;
-        public bool Grace { get; }
-        public RythmicDuration RythmicDuration { get; }
         public Tuplet Tuplet
         {
             get
@@ -44,6 +43,10 @@ namespace Sinfonia.Implementations.ScoreDocument
                 return new Tuplet(RythmicDuration, groupLength);
             }
         }
+
+
+        public bool Grace { get; }
+        public RythmicDuration RythmicDuration { get; }
 
 
         public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)

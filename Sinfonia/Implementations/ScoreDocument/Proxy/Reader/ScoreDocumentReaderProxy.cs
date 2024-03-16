@@ -49,7 +49,7 @@
                 yield return measure;
             }
 
-            foreach (var page in EnumeratePages())
+            foreach (var page in GeneratePages())
             {
                 yield return page;
             }
@@ -60,9 +60,9 @@
             return source.GetScoreMeasureCore(indexInScore).Proxy();
         }
 
-        public IEnumerable<IPageReader> EnumeratePages()
+        public IEnumerable<IPageReader> GeneratePages()
         {
-            return source.GeneratePages().Select(p => p.Proxy());
+            return source.GeneratePages().Select(e => e.Proxy());
         }
     }
 }

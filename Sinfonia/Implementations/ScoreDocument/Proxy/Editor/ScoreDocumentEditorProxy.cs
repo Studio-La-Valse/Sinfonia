@@ -94,7 +94,7 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
             yield return measure;
         }
 
-        foreach (IStaffSystemEditor system in EnumeratePages())
+        foreach (IPageEditor system in EnumeratePages())
         {
             yield return system;
         }
@@ -105,7 +105,7 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
         return scoreLayoutDictionary.DocumentLayout(this);
     }
 
-    public void ApplyLayout(ScoreDocumentLayout layout)
+    public void Apply(ScoreDocumentLayout layout)
     {
         scoreLayoutDictionary.Apply(this, layout);
     }

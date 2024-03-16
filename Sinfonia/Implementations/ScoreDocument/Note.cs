@@ -5,7 +5,7 @@ namespace Sinfonia.Implementations.ScoreDocument
     {
         private readonly Chord container;
 
-
+        public InstrumentMeasure HostMeasure => container.HostMeasure;
         public Pitch Pitch { get; set; }
         public bool Grace =>
             container.Grace;
@@ -28,10 +28,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public Chord ReadContext()
-        {
-            return container;
-        }
 
         public NoteMemento GetMemento()
         {

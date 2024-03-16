@@ -1,5 +1,5 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Drawable.Extensions;
+using StudioLaValse.ScoreDocument.Layout.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -7,10 +7,10 @@ namespace Sinfonia.Implementations.ScoreDocument
     {
         private readonly Dictionary<int, Page> pages = [];
         private readonly IKeyGenerator<int> keyGenerator;
-        private readonly IScoreLayoutProvider scoreLayoutProvider;
+        private readonly IScoreDocumentLayout scoreLayoutProvider;
         private readonly IList<(Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups)> staffSystems = [];
 
-        public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreLayoutProvider scoreLayoutProvider)
+        public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreDocumentLayout scoreLayoutProvider)
         {
             this.keyGenerator = keyGenerator;
             this.scoreLayoutProvider = scoreLayoutProvider;
@@ -36,9 +36,9 @@ namespace Sinfonia.Implementations.ScoreDocument
             throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        public Page GetOrCreate(int index)
+        private Page GetOrCreate(int index)
         {
-            if(pages.TryGetValue(index, out var page))
+            if (pages.TryGetValue(index, out var page))
             {
                 return page;
             }
@@ -55,24 +55,24 @@ namespace Sinfonia.Implementations.ScoreDocument
             currentpage.StaffSystems.Add(currentSystem);
 
             var pageLayout = scoreLayoutProvider.PageLayout(currentpage.Proxy());
-            var pageWidth = pageLayout.PageWidth.Value;
-            var pageHeight = pageLayout.PageHeight.Value;
-            var pageMarginBottom = pageLayout.MarginBottom.Value;
+            var pageWidth = pageLayout.PageWidth;
+            var pageHeight = pageLayout.PageHeight;
+            var pageMarginBottom = pageLayout.MarginBottom;
 
             var systemIndex = 1;
             var pageIndex = 1;
-            var currentSystemCanvasTop = pageLayout.MarginTop.Value;
-            foreach (ScoreMeasure measure in scoreDocument.EnumerateMeasuresCore())
+            var currentSystemCanvasTop = pageLayout.MarginTop;
+            foreach (var measure in scoreDocument.EnumerateMeasuresCore())
             {
                 currentSystem.ScoreMeasures.Add(measure);
 
-                var currentSystemLength = currentSystem.ScoreMeasures.Select(m => scoreLayoutProvider.ScoreMeasureLayout(m.Proxy()).Width.Value).Sum();
-                var currentAvailableWidth = pageWidth - pageLayout.MarginLeft.Value - pageLayout.MarginRight.Value;
+                var currentSystemLength = currentSystem.ScoreMeasures.Select(m => scoreLayoutProvider.ScoreMeasureLayout(m.Proxy()).Width).Sum();
+                var currentAvailableWidth = pageWidth - pageLayout.MarginLeft - pageLayout.MarginRight;
                 // Need to add a new system.
-                if(currentSystemLength > currentAvailableWidth)
+                if (currentSystemLength > currentAvailableWidth)
                 {
                     var previousSystemHeight = currentSystem.Proxy().CalculateHeight(scoreLayoutProvider);
-                    var previousSystemMarginBottom = scoreLayoutProvider.StaffSystemLayout(currentSystem.Proxy()).PaddingBottom.Value;
+                    var previousSystemMarginBottom = scoreLayoutProvider.StaffSystemLayout(currentSystem.Proxy()).PaddingBottom;
                     currentSystem = GetAppendOrThrow(systemIndex, scoreDocument);
                     currentSystemCanvasTop += previousSystemHeight + previousSystemMarginBottom;
 
@@ -85,11 +85,11 @@ namespace Sinfonia.Implementations.ScoreDocument
                         currentpage = GetOrCreate(pageIndex);
                         currentpage.StaffSystems.Clear();
                         pageLayout = scoreLayoutProvider.PageLayout(currentpage.Proxy());
-                        pageWidth = pageLayout.PageWidth.Value;
-                        pageHeight = pageLayout.PageHeight.Value;
-                        pageMarginBottom = pageLayout.MarginBottom.Value;
+                        pageWidth = pageLayout.PageWidth;
+                        pageHeight = pageLayout.PageHeight;
+                        pageMarginBottom = pageLayout.MarginBottom;
 
-                        currentSystemCanvasTop = pageLayout.MarginTop.Value;
+                        currentSystemCanvasTop = pageLayout.MarginTop;
                         pageIndex++;
                     }
 
@@ -97,7 +97,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     systemIndex++;
                 }
             }
-            if(currentpage.StaffSystems.Any(s => s.ScoreMeasures.Count > 0))
+            if (currentpage.StaffSystems.Any(s => s.ScoreMeasures.Count > 0))
             {
                 yield return currentpage;
             }

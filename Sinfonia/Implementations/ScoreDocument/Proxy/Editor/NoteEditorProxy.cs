@@ -1,5 +1,4 @@
-﻿
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
 internal class NoteEditorProxy(Note source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : INoteEditor, IUniqueScoreElement
 {
@@ -8,6 +7,8 @@ internal class NoteEditorProxy(Note source, ScoreLayoutDictionary scoreLayoutDic
     private readonly ICommandManager commandManager = commandManager;
     private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
+
+    public InstrumentMeasure HostMeasure => source.HostMeasure;
 
     public Pitch Pitch => source.Pitch;
 
@@ -29,7 +30,7 @@ internal class NoteEditorProxy(Note source, ScoreLayoutDictionary scoreLayoutDic
         yield break;
     }
 
-    public void ApplyLayout(NoteLayout layout)
+    public void Apply(NoteLayout layout)
     {
         scoreLayoutDictionary.Apply(this, layout);
     }

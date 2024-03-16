@@ -1,6 +1,4 @@
-﻿using Sinfonia.Extensions;
-
-namespace Sinfonia.ViewModels.Application.Document.Explorer
+﻿namespace Sinfonia.ViewModels.Application.Document.Explorer
 {
     public class ExplorerViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {

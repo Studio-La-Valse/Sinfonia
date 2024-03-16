@@ -24,7 +24,7 @@
 
         public IEnumerable<StaffGroup> EnumerateStaffGroups()
         {
-            foreach (InstrumentRibbon instrumentRibbon in scoreDocument.EnumerateRibbonsCore())
+            foreach (var instrumentRibbon in scoreDocument.EnumerateRibbonsCore())
             {
                 if (staffGroups.TryGetValue(instrumentRibbon.Guid, out var groupGenerator))
                 {

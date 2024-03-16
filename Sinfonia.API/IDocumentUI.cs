@@ -1,5 +1,5 @@
 ﻿using StudioLaValse.Drawable;
-using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Core.Primitives;
 
 namespace Sinfonia.API
 {

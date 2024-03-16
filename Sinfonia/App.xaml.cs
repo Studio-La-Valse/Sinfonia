@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sinfonia.Extensions;
-using Sinfonia.Views.DocumentStyleEditor;
 using System.Windows;
 
 namespace Sinfonia
@@ -29,8 +27,7 @@ namespace Sinfonia
                         .AddModels()
                         .AddViewModels()
                         .AddViews()
-                        .RegisterExternalAddins()
-                        .RegisterExternalScenes();
+                        .RegisterExternalAddins();
                 });
         }
     }

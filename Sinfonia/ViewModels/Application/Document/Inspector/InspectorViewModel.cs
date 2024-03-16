@@ -4,15 +4,15 @@
     {
         private readonly HashSet<IUniqueScoreElement> selectedElements = new(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id));
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreLayoutProvider scoreLayoutDictionary;
+        private readonly IScoreDocumentLayout scoreLayoutDictionary;
 
-        public ScoreElementPropertiesViewModel? PropertiesViewModel
+        public PropertyCollectionViewModel? PropertiesViewModel
         {
             get => GetValue(() => PropertiesViewModel);
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreLayoutProvider scoreLayoutDictionary)
+        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutDictionary)
         {
             this.scoreBuilder = scoreBuilder;
             this.scoreLayoutDictionary = scoreLayoutDictionary;
@@ -54,8 +54,6 @@
                 INoteReader _ => new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder, scoreLayoutDictionary),
                 _ => null
             };
-
-            PropertiesViewModel?.Rebuild();
         }
 
         private bool refreshOnNextInvalidation = false;
@@ -87,7 +85,7 @@
                 return;
             }
 
-            if (PropertiesViewModel.Elements.Any(e => e.Id.Equals(value.Id)))
+            if (selectedElements.Any(e => e.Id.Equals(value.Id)))
             {
                 refreshOnNextInvalidation = true;
             }

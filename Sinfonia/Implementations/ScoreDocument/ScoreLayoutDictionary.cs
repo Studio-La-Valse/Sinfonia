@@ -1,12 +1,12 @@
-﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.Commands;
+﻿using Sinfonia.Implementations.Commands;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 using StudioLaValse.ScoreDocument.Core.Primitives;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreLayoutDictionary : IScoreLayoutProvider
+    internal class ScoreLayoutDictionary : IScoreDocumentLayout
     {
         private readonly Dictionary<Guid, PageLayout> pageLayoutDictionary = [];
 
@@ -84,13 +84,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(NoteEditorProxy note, NoteLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            BaseCommand command = new LayoutCommand<NoteLayout>(noteLayoutDictionary, note.Guid, layout).ThenInvalidate(notifyEntityChanged, note);
+            BaseCommand command = new LayoutCommand<NoteLayout>(noteLayoutDictionary, note.Guid, layout).ThenInvalidate(notifyEntityChanged, note.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(NoteEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<NoteLayout> command = new(noteLayoutDictionary, element.Guid);
+            BaseCommand command = new RemoveLayoutCommand<NoteLayout>(noteLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -214,7 +214,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
             transaction.Enqueue(new WipeDictionaryCommand<ChordLayout>(chordLayoutDictionary));
-            transaction.Enqueue(new WipeDictionaryCommand<PageLayout>(pageLayoutDictionary));   
+            transaction.Enqueue(new WipeDictionaryCommand<PageLayout>(pageLayoutDictionary));
             transaction.Enqueue(new WipeDictionaryCommand<InstrumentMeasureLayout>(instrumentMeasureLayoutDictionary));
             transaction.Enqueue(new WipeDictionaryCommand<InstrumentRibbonLayout>(instrumentRibbonLayoutDictionary));
             transaction.Enqueue(new WipeDictionaryCommand<MeasureBlockLayout>(measureBlockLayoutDictionary));
@@ -229,7 +229,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public ScoreDocumentLayout DocumentLayout<TElement>(TElement element) where TElement : IScoreDocument, IScoreEntity
         {
-            if(documentLayout is not null)
+            if (documentLayout is not null)
             {
                 return documentLayout.Copy();
             }
@@ -238,7 +238,6 @@ namespace Sinfonia.Implementations.ScoreDocument
             documentLayout = newLayout;
             return DocumentLayout(element);
         }
-
         public PageLayout PageLayout<TElement>(TElement element) where TElement : IPage, IScoreEntity
         {
             if (pageLayoutDictionary.TryGetValue(element.Guid, out PageLayout? value))
@@ -297,7 +296,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             }
 
             noteLayoutDictionary[element.Guid] = new NoteLayout(Template.NoteStyleTemplate, element.Grace);
-            return NoteLayout(element); 
+            return NoteLayout(element);
         }
         public ScoreMeasureLayout ScoreMeasureLayout<TElement>(TElement element) where TElement : IScoreMeasure, IScoreEntity
         {

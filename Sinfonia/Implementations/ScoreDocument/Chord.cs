@@ -1,4 +1,5 @@
 ﻿using StudioLaValse.ScoreDocument.Core.Primitives.Extensions;
+using System.ComponentModel;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -37,7 +38,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public bool Grace =>
             hostBlock.Grace;
-
+        public InstrumentMeasure HostMeasure => 
+            hostBlock.RibbonMeasure;
 
 
 

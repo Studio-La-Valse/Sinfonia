@@ -5,11 +5,15 @@ namespace Sinfonia.Implementations
 {
     internal class FileBrowser : IBrowseToFile
     {
-        public bool BrowseToFile(out string filePath)
+        public bool BrowseToFile(string extension, string filter, out string filePath)
         {
             filePath = "";
 
-            OpenFileDialog openFileDialog = new();
+            OpenFileDialog openFileDialog = new()
+            {
+                DefaultExt = extension,
+                Filter = filter
+            };
 
             if (openFileDialog.ShowDialog() == true)
             {

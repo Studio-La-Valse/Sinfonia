@@ -1,5 +1,4 @@
-﻿using Sinfonia.ViewModels.Application;
-using StudioLaValse.ScoreDocument.MusicXml;
+﻿using StudioLaValse.ScoreDocument.MusicXml;
 using System.IO;
 using System.Xml.Linq;
 
@@ -21,12 +20,16 @@ namespace Sinfonia.ViewModels.Application.Menu
 
         public void LoadMusicXml()
         {
-            if (browseToFile.BrowseToFile(out string? filepath))
+            if (browseToFile.BrowseToFile(".musicxml", "Music XML Files(*.musicxml)|*musicxml|XML Files(*.xml)|*xml", out string? filepath))
             {
                 using FileStream fileStream = new(filepath, FileMode.Open);
                 XDocument document = XDocument.Load(fileStream);
                 DocumentViewModel documentViewModel = documentViewModelFactory.Create();
-                _ = documentViewModel.ScoreBuilder.BuildFromXml(document);
+                var layout = documentViewModel.PageViewLayout;
+                _ = documentViewModel.ScoreBuilder.Edit(e =>
+                {
+                    e.BuildFromXml(layout, document);
+                }).Build();
                 documentViewModel.Explorer.Rebuild();
                 documentCollectionViewModel.Add(documentViewModel);
             }

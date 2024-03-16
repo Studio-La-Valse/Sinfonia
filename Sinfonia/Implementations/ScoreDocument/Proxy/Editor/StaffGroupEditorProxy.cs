@@ -51,7 +51,7 @@ internal class StaffGroupEditorProxy(StaffGroup staffGroup, ScoreLayoutDictionar
         return scoreLayoutDictionary.StaffGroupLayout(this);
     }
 
-    public void ApplyLayout(StaffGroupLayout layout)
+    public void Apply(StaffGroupLayout layout)
     {
         scoreLayoutDictionary.Apply(this, layout);
     }

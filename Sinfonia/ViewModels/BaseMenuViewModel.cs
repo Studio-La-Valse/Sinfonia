@@ -1,6 +1,4 @@
-﻿using Sinfonia.ViewModels.Application.Menu;
-
-namespace Sinfonia.ViewModels
+﻿namespace Sinfonia.ViewModels
 {
     public abstract class BaseMenuViewModel : BaseViewModel
     {

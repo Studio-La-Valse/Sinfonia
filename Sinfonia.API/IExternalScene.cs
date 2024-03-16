@@ -1,13 +1,19 @@
-﻿using StudioLaValse.Drawable.ContentWrappers;
-using StudioLaValse.Drawable.Interaction.Selection;
-using StudioLaValse.ScoreDocument;
-using StudioLaValse.ScoreDocument.Layout;
+﻿//using StudioLaValse.Drawable.ContentWrappers;
+//using StudioLaValse.ScoreDocument;
+//using StudioLaValse.ScoreDocument.Core.Primitives;
+//using StudioLaValse.ScoreDocument.Layout;
 
-namespace Sinfonia.API
-{
-    public interface IExternalScene : IExternalAddin
-    {
-        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary, ISelection<IUniqueScoreElement> selection);
-        void RegisterSettings(IAddinSettingsManager animationSettingsManager);
-    }
-}
+//namespace Sinfonia.API
+//{
+//    public interface IExternalScene : IExternalAddin
+//    {
+//        IExternalSceneContext CreateContext(IDocument document);
+//    }
+
+//    public interface IExternalSceneContext
+//    {
+//        IScoreDocumentLayout ScoreDocumentLayout { get; }
+//        void RegisterSettings(IAddinSettingsManager animationSettingsManager);
+//        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument);
+//    }
+//}

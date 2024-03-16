@@ -1,4 +1,5 @@
 ﻿global using Sinfonia.API;
+global using Sinfonia.Extensions;
 global using Sinfonia.Implementations.ScoreDocument.Memento;
 global using Sinfonia.Interfaces;
 global using Sinfonia.ViewModels;
@@ -6,7 +7,6 @@ global using Sinfonia.ViewModels.Application.Document;
 global using Sinfonia.ViewModels.Application.Document.Explorer;
 global using Sinfonia.ViewModels.Application.Document.Inspector;
 global using StudioLaValse.CommandManager;
-global using StudioLaValse.DependencyInjection;
 global using StudioLaValse.Drawable;
 global using StudioLaValse.Drawable.Extensions;
 global using StudioLaValse.Drawable.Interaction.Extensions;

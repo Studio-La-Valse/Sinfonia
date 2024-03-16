@@ -82,7 +82,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return scoreLayoutDictionary.MeasureBlockLayout(this);
         }
 
-        public void ApplyLayout(MeasureBlockLayout layout)
+        public void Apply(MeasureBlockLayout layout)
         {
             scoreLayoutDictionary.Apply(this, layout);
         }

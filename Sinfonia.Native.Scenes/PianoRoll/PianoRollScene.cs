@@ -1,37 +1,37 @@
-﻿namespace Sinfonia.Native.Scenes.PianoRoll
-{
-    public sealed class PianoRollScene : BaseExternalAddin, IExternalScene
-    {
-        private readonly IApplication application;
+﻿//namespace Sinfonia.Native.Scenes.PianoRoll
+//{
+//    public sealed class PianoRollScene : BaseExternalAddin, IExternalScene
+//    {
+//        private readonly IApplication application;
 
-        public string Name => "Piano roll";
-        public string Description => "Displays the score as a piano roll.";
-        public Guid Guid => new("804B8EB1-7D6A-4148-957B-588401754570");
-        public double NoteHeight { get; set; } = 5;
-
-
-        public PianoRollScene(IApplication application)
-        {
-            this.application = application;
-        }
+//        public string Name => "Piano roll";
+//        public string Description => "Displays the score as a piano roll.";
+//        public Guid Guid => new("804B8EB1-7D6A-4148-957B-588401754570");
+//        public double NoteHeight { get; set; } = 5;
 
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary, ISelection<IUniqueScoreElement> selection)
-        {
-            return new PianoRoll(scoreDocument, selection, scoreLayoutDictionary, () => NoteHeight);
-        }
+//        public PianoRollScene(IApplication application)
+//        {
+//            this.application = application;
+//        }
 
-        public override void RegisterSettings(IAddinSettingsManager animationSettingsManager)
-        {
-            animationSettingsManager.Register(
-                () => NoteHeight,
-                (val) =>
-                {
-                    NoteHeight = val;
-                    IDocumentUI document = application.ActiveDocumentOrThrow().DocumentUI;
-                    document.RebuildScene();
-                },
-                "Note size");
-        }
-    }
-}
+
+//        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider scoreLayoutDictionary, ISelection<IUniqueScoreElement> selection)
+//        {
+//            return new PianoRoll(scoreDocument, selection, scoreLayoutDictionary, () => NoteHeight);
+//        }
+
+//        public override void RegisterSettings(IAddinSettingsManager animationSettingsManager)
+//        {
+//            animationSettingsManager.Register(
+//                () => NoteHeight,
+//                (val) =>
+//                {
+//                    NoteHeight = val;
+//                    IDocumentUI document = application.ActiveDocumentOrThrow().DocumentUI;
+//                    document.RebuildScene();
+//                },
+//                "Note size");
+//        }
+//    }
+//}

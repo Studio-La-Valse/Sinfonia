@@ -70,7 +70,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return scoreLayoutDictionary.ChordLayout(this);
         }
 
-        public void ApplyLayout(ChordLayout layout)
+        public void Apply(ChordLayout layout)
         {
             scoreLayoutDictionary.Apply(this, layout);
         }

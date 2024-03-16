@@ -1,6 +1,4 @@
-﻿using Sinfonia.Extensions;
-
-namespace Sinfonia.ViewModels.Application
+﻿namespace Sinfonia.ViewModels.Application
 {
     public class DocumentCollectionViewModel : BaseViewModel
     {
@@ -28,12 +26,6 @@ namespace Sinfonia.ViewModels.Application
         {
             Documents.ForEach(d => d.SetInactive());
             document.SetActive();
-
-            if (document.AvailableScenes.Count > 0 && !document.AvailableScenes.Any(s => s.IsActive))
-            {
-                SceneViewModel scene = document.AvailableScenes[0];
-                document.ActivateScene(scene);
-            }
         }
 
         public void Close(DocumentViewModel documentViewModel)

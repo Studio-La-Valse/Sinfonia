@@ -1,20 +1,21 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿
+namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
-    public class NotePropertiesViewModel : ScoreElementPropertiesViewModel
+    public class NotePropertiesViewModel : ScoreElementPropertiesViewModel<INoteReader, INoteEditor, NoteLayout>
     {
-        private readonly IEnumerable<INoteReader> notes;
-
-        internal NotePropertiesViewModel(IEnumerable<INoteReader> notes, IScoreBuilder scoreBuilder, IScoreLayoutProvider scoreLayoutDictionary) : base(notes, scoreBuilder, scoreLayoutDictionary)
+        internal NotePropertiesViewModel(IEnumerable<INoteReader> notes, IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutDictionary) : base(scoreBuilder, scoreLayoutDictionary, notes)
         {
-            this.notes = notes;
+            Properties.Add(Create(l => l.StaffIndex, (l, v) => l.StaffIndex = v, "Staff Index"));
+            Properties.Add(Create(l => l.XOffset, (l, v) => l.XOffset = v, "X Offset"));
+            Properties.Add(Create(l => l.ForceAccidental, (l, v) => l.ForceAccidental = v, "Accidental"));
+            Properties.Add(Create(l => l.Scale, (l, v) => l.Scale = v, "Scale"));
         }
 
         public override string Header => "Note Properties";
 
-        public override void Rebuild()
+        public override NoteLayout GetLayout(IScoreDocumentLayout scoreLayoutProvider, INoteReader entity)
         {
-            Properties.Clear();
-            Properties.Add(Create<double, NoteLayout, INoteReader, INoteEditor>(notes, (e, l) => e.NoteLayout(l).XOffset, (l, v) => l.XOffset = v, "X Offset"));
+            return scoreLayoutProvider.NoteLayout(entity);
         }
     }
 }

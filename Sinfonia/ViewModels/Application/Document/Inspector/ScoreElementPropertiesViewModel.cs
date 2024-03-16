@@ -1,49 +1,49 @@
 ﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
-    public abstract class ScoreElementPropertiesViewModel : PropertyCollectionViewModel
+    public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor, TLayout> : PropertyCollectionViewModel
+            where TEntity : IScoreEntity, IUniqueScoreElement
+            where TEditor : IScoreElementEditor, ILayoutEditor<TLayout>
+            where TLayout : class, ILayoutElement<TLayout>
     {
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreLayoutProvider scoreLayoutProvider;
+        private readonly IScoreDocumentLayout scoreLayoutProvider;
+        private readonly IEnumerable<TEntity> notes;
 
-        public IEnumerable<IUniqueScoreElement> Elements { get; }
-
-        internal ScoreElementPropertiesViewModel(IEnumerable<IUniqueScoreElement> uniqueScoreElements, IScoreBuilder scoreBuilder, IScoreLayoutProvider scoreLayoutProvider)
+        internal ScoreElementPropertiesViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutProvider, IEnumerable<TEntity> notes)
         {
             this.scoreBuilder = scoreBuilder;
             this.scoreLayoutProvider = scoreLayoutProvider;
-
-            Elements = uniqueScoreElements;
+            this.notes = notes;
         }
 
-        public abstract void Rebuild();
+        public abstract TLayout GetLayout(IScoreDocumentLayout scoreLayoutProvider, TEntity entity);
 
-        protected PropertyViewModel<TProperty?> Create<TProperty, TLayout, TEntity, TEditor>(IEnumerable<TEntity> entities,
-                                                                                             Func<IScoreLayoutProvider, TEntity, TProperty> propertyGetter,
-                                                                                             Action<TLayout, TProperty> propertySetter,
-                                                                                             string title) where TProperty : IEquatable<TProperty>
-                                                                                                           where TEntity : IScoreEntity, IUniqueScoreElement
-                                                                                                           where TEditor : IScoreElementEditor, ILayoutEditor<TLayout>
-                                                                                                           where TLayout : ILayoutElement<TLayout>
+        protected PropertyViewModel<TProperty> Create<TProperty>(Func<TLayout, TProperty> propertyGetter, Action<TLayout, TProperty> propertySetter, string title)
         {
-            return new PropertyViewModel<TProperty?>(() =>
+
+            return new PropertyViewModel<TProperty>(
+            () =>
             {
+                TProperty getProperty(TEntity entity)
+                {
+                    var layout = GetLayout(scoreLayoutProvider, entity);
+                    var property = propertyGetter(layout);
+                    return property;
+                }
+
+                var entities = notes;
                 TEntity firstEntity = entities.First();
-                TProperty fistValue = propertyGetter(scoreLayoutProvider, firstEntity);
-                return !entities.All(m => propertyGetter(scoreLayoutProvider, m).Equals(fistValue)) ? default : fistValue;
+                TProperty firstValue = getProperty(firstEntity);
+                return !entities.All(m => getProperty(m)!.Equals(firstValue)) ? default! : firstValue;
             },
             (val) =>
             {
-                if (val is null)
-                {
-                    return;
-                }
-
-                _ = scoreBuilder
-                    .Edit<TEditor>(entities.Select(e => e.Id), (element) =>
+                scoreBuilder
+                    .Edit<TEditor>(notes.Select(e => e.Id), (element) =>
                     {
-                        TLayout layout = element.ReadLayout();
+                        var layout = element.ReadLayout();
                         propertySetter(layout, val);
-                        element.ApplyLayout(layout);
+                        element.Apply(layout);
                     })
                     .Build();
 

@@ -108,59 +108,6 @@
                                                                     EnablePan="{Binding EnablePan, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                     Pipe="{Binding Pipe, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                     Invalidator="{Binding Invalidator, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                                    <!--scene settings-->
-                                    <ItemsControl ItemsSource="{Binding AvailableScenes}"
-                                              x:Name="SceneCollection">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel></StackPanel>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Width="300"
-                                                            HorizontalAlignment="Left">
-                                                    <Button Width="300"
-                                                            Height="auto"
-                                                            Content="{Binding Name}"
-                                                            HorizontalAlignment="Left"
-                                                            CommandParameter="{Binding}"
-                                                            Command="{Binding ElementName=SceneCollection, Path=DataContext.ActivateSceneCommand}"/>
-                                                    <Grid Style="{StaticResource HiddenGridStyle}">
-                                                        <ScrollViewer Background="Black"
-                                                                      DataContext="{Binding Settings}"
-                                                                      VerticalScrollBarVisibility="Auto"
-                                                                      Height="auto">
-                                                            <StackPanel>
-                                                                <ListBox ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}"
-                                                                         Background="Transparent"
-                                                                         Grid.IsSharedSizeScope="True"
-                                                                         HorizontalContentAlignment="Stretch"
-                                                                         Height="auto">
-                                                                    <ListBox.ItemTemplate>
-                                                                        <DataTemplate>
-                                                                            <Grid Height="15">
-                                                                                <Grid.ColumnDefinitions>
-                                                                                    <ColumnDefinition Width="Auto" 
-                                                                                                      SharedSizeGroup="Key" />
-                                                                                    <ColumnDefinition Width="*" />
-                                                                                </Grid.ColumnDefinitions>
-                                                                                <TextBlock Text="{Binding Description}" 
-                                                                                           FontWeight="Bold"
-                                                                                           Foreground="White"/>
-                                                                                <TextBox Grid.Column="1" 
-                                                                                         Text="{Binding Value}"/>
-                                                                            </Grid>
-                                                                        </DataTemplate>
-                                                                    </ListBox.ItemTemplate>
-                                                                </ListBox>
-                                                            </StackPanel>
-                                                        </ScrollViewer>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
                                 </Grid>
 
                                 <GridSplitter Grid.Column="1"
@@ -169,6 +116,8 @@
 
                                 <Grid Grid.Column="2">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="5"/>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="5"/>
                                         <RowDefinition Height="*"/>
@@ -199,9 +148,69 @@
                                                   HorizontalAlignment="Stretch"
                                                   VerticalAlignment="Stretch"/>
 
+                                    <Grid Grid.Row="2"
+                                          DataContext="{Binding DocumentStyleEditorViewModel}">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button Command="{Binding LoadYamlCommand}"
+                                                        Content="Load Yaml"
+                                                        Grid.Column="0"/>
+                                                <Button Command="{Binding SaveYamlCommand}"
+                                                        Content="Save Yaml"
+                                                        Grid.Column="1"/>
+                                            </Grid>
+                                            <ItemsControl ItemsSource="{Binding Templates}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Expander Header="{Binding Header}"
+                                                                  DataContext="{Binding}">
+                                                            <StackPanel>
+                                                                <ListBox ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}"
+                                                                         Background="Transparent"
+                                                                         Grid.IsSharedSizeScope="True"
+                                                                         HorizontalContentAlignment="Stretch"
+                                                                         Height="auto">
+                                                                    <ListBox.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                            <Grid Height="15">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="Auto" 
+                                                                                                      SharedSizeGroup="Key" />
+                                                                                    <ColumnDefinition Width="*" />
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <TextBlock Text="{Binding Description}" 
+                                                                                           FontWeight="Bold"/>
+                                                                                <TextBox Grid.Column="1" 
+                                                                                         Text="{Binding Value}"/>
+                                                                            </Grid>
+                                                                        </DataTemplate>
+                                                                    </ListBox.ItemTemplate>
+                                                                </ListBox>
+                                                            </StackPanel>
+                                                        </Expander>
+                                                    </DataTemplate>
+
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <GridSplitter Grid.Row="3"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"/>
+
                                     <!--Inspector-->
                                     <Border Background="Black"
-                                            Grid.Row="2"
+                                            Grid.Row="4"
                                             DataContext="{Binding Inspector}">
                                         <StackPanel>
                                             <ListBox ItemsSource="{Binding PropertiesViewModel.Properties, UpdateSourceTrigger=PropertyChanged}"

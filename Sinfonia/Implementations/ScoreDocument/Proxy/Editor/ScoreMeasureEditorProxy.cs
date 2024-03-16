@@ -1,5 +1,4 @@
-﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.Commands;
+﻿using Sinfonia.Implementations.Commands;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
@@ -67,7 +66,7 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ScoreLayoutDictionar
         return scoreLayoutDictionary.ScoreMeasureLayout(this);
     }
 
-    public void ApplyLayout(ScoreMeasureLayout layout)
+    public void Apply(ScoreMeasureLayout layout)
     {
         scoreLayoutDictionary.Apply(this, layout);
     }

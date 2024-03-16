@@ -2,6 +2,6 @@
 {
     public interface IBrowseToFile
     {
-        bool BrowseToFile(out string filePath);
+        bool BrowseToFile(string extension, string filter, out string filePath);
     }
 }

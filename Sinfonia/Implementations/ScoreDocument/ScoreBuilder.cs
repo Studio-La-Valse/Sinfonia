@@ -1,6 +1,4 @@
-﻿using Sinfonia.Extensions;
-
-namespace Sinfonia.Implementations.ScoreDocument
+﻿namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreBuilder : IScoreBuilder
     {

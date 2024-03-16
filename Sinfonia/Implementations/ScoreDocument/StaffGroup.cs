@@ -2,7 +2,7 @@
 {
     internal class StaffGroup : ScoreElement
     {
-        private readonly IEnumerable<ScoreMeasure> scoreMeasures;
+        private readonly IList<ScoreMeasure> scoreMeasures;
         private readonly IKeyGenerator<int> keyGenerator;
         private readonly IList<(Guid guid, int id)> staves = [];
 
@@ -11,12 +11,12 @@
         public Instrument Instrument => InstrumentRibbon.Instrument;
         public int IndexInSystem => InstrumentRibbon.IndexInScore;
 
-         
-        public StaffGroup(InstrumentRibbon instrumentRibbon, IEnumerable<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid, int id, IList<(Guid guid, int id)> staves) : base(id, guid)
+
+        public StaffGroup(InstrumentRibbon instrumentRibbon, IList<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid, int id, IList<(Guid guid, int id)> staves) : base(id, guid)
         {
             this.scoreMeasures = scoreMeasures;
             this.keyGenerator = keyGenerator;
-            this.staves = staves;   
+            this.staves = staves;
 
             InstrumentRibbon = instrumentRibbon;
         }
@@ -36,8 +36,8 @@
             {
                 if (staves.Count > i)
                 {
-                    var existingStaff = staves[i];
-                    yield return new Staff(i, existingStaff.id, existingStaff.guid);
+                    var (guid, id) = staves[i];
+                    yield return new Staff(i, id, guid);
                     continue;
                 }
 

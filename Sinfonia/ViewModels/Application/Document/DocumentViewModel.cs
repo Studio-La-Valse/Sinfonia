@@ -1,9 +1,9 @@
-﻿namespace Sinfonia.ViewModels.Application.Document
+﻿using Sinfonia.ViewModels.Application.Document.StyleTemplate;
+
+namespace Sinfonia.ViewModels.Application.Document
 {
     public class DocumentViewModel : BaseViewModel
     {
-        private readonly IScoreLayoutProvider scoreLayoutProvider;
-
         public bool CanActivate
         {
             get => GetValue(() => CanActivate);
@@ -19,82 +19,44 @@
             get => GetValue(() => Header);
             set => SetValue(() => Header, value);
         }
-        public SceneViewModel? SelectedScene
-        {
-            get => GetValue(() => SelectedScene);
-            set
-            {
-                if (value is not null)
-                {
-                    var visualScene = value.ScoreDocumentScene.CreateScene(ScoreDocumentReader, scoreLayoutProvider, Selection);
-                    var sceneManager = new SceneManager<IUniqueScoreElement, int>(visualScene, (e) => e.Id).WithBackground(ColorARGB.Black);
-                    CanvasViewModel.Scene = sceneManager;
-                }
 
-                SetValue(() => SelectedScene, value);
-            }
-        }
-        public ObservableCollection<SceneViewModel> AvailableScenes
-        {
-            get => GetValue(() => AvailableScenes);
-            set => SetValue(() => AvailableScenes, value);
-        }
 
 
 
         public IScoreBuilder ScoreBuilder { get; }
         public IScoreDocumentReader ScoreDocumentReader { get; }
-        public ICommand ActivateSceneCommand { get; }
+        public IScoreDocumentLayout PageViewLayout { get; }
+        public IKeyGenerator<int> KeyGenerator { get; }
         public CanvasViewModel CanvasViewModel { get; }
         public ISelection<IUniqueScoreElement> Selection { get; }
         public ExplorerViewModel Explorer { get; }
         public InspectorViewModel Inspector { get; }
+        public DocumentStyleEditorViewModel DocumentStyleEditorViewModel { get; }
 
-
-
-        internal DocumentViewModel(CanvasViewModel canvasViewModel, IEnumerable<SceneViewModel> availableScenes, ISelection<IUniqueScoreElement> selection, ICommandFactory commandFactory, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreLayoutProvider scoreLayoutProvider, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel)
+        internal DocumentViewModel(CanvasViewModel canvasViewModel, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel, DocumentStyleEditorViewModel documentStyleEditorViewModel, ISelection<IUniqueScoreElement> selection, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreDocumentLayout pageViewLayout, IKeyGenerator<int> keyGenerator)
         {
-            this.scoreLayoutProvider = scoreLayoutProvider;
-
             Selection = selection;
             CanvasViewModel = canvasViewModel;
-            AvailableScenes = new ObservableCollection<SceneViewModel>(availableScenes);
             Header = "Unsaved document";
-            ActivateSceneCommand = commandFactory.Create<SceneViewModel>(ActivateScene, (scene) => SelectedScene is null || scene.Name != SelectedScene.Name);
             ScoreBuilder = scoreDocumentEditor;
             ScoreDocumentReader = scoreDocumentReader;
+            PageViewLayout = pageViewLayout;
             Explorer = explorerViewModel;
             Inspector = inspectorViewModel;
-        }
-
-
-
-        public void ActivateScene(SceneViewModel scene)
-        {
-            foreach (SceneViewModel _scene in AvailableScenes)
-            {
-                _scene.IsActive = false;
-            }
-
-            SelectedScene = scene;
-            SelectedScene.IsActive = true;
-        }
-
-        public void SetActive()
-        {
-            if (!CanActivate)
-            {
-                return;
-            }
-
-            IsActive = true;
-            CanActivate = false;
+            DocumentStyleEditorViewModel = documentStyleEditorViewModel;
+            KeyGenerator = keyGenerator;
         }
 
         public void SetInactive()
         {
             IsActive = false;
             CanActivate = true;
+        }
+
+        public void SetActive()
+        {
+            IsActive = true;
+            CanActivate = false;
         }
     }
 }

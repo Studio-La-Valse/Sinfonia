@@ -1,31 +1,61 @@
-﻿namespace Sinfonia.Native.Scenes.MultiPageView
-{
-    public class MultiPageScene : BaseExternalAddin, IExternalScene
-    {
-        private readonly IApplication application;
+﻿//using StudioLaValse.Drawable.Interaction.Selection;
+//using StudioLaValse.ScoreDocument.Drawable.PageView.Layout;
+//using StudioLaValse.ScoreDocument.Drawable.PageView.Layout.Templates;
+//using StudioLaValse.ScoreDocument.Drawable.PageView.Scenes;
+//using StudioLaValse.ScoreDocument.Layout;
+
+//namespace Sinfonia.Native.Scenes.MultiPageView
+//{
+//    public class MultiPageScene : BaseExternalAddin, IExternalScene
+//    {
+//        public string Name => "Multi page view";
+//        public string Description => "Displays all the pages from the score document.";
+//        public Guid Guid => new("AC454ABB-F73F-4A67-BA2F-8B1C2DD3CC61");
 
 
-        public string Name => "Multi page view";
-        public string Description => "Displays all the pages from the score document.";
-        public Guid Guid => new("AC454ABB-F73F-4A67-BA2F-8B1C2DD3CC61");
+
+//        public MultiPageScene()
+//        {
+
+//        }
 
 
-        public MultiPageScene(IApplication application)
-        {
-            this.application = application;
-        }
+        
 
+//        public IExternalSceneContext CreateContext(IDocument document)
+//        {
+//            return new MultiPageSceneContext(document);
+//        }
+//    }
 
-        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument, IScoreLayoutProvider layoutDictionary, ISelection<IUniqueScoreElement> selection)
-        {
-            VisualNoteFactory noteFactory = new(selection, layoutDictionary);
-            VisualRestFactory restFactory = new(selection);
-            VisualNoteGroupFactory noteGroupFactory = new(noteFactory, restFactory, layoutDictionary);
-            VisualStaffMeasureFactory staffMeasusureFactory = new(selection, noteGroupFactory, layoutDictionary);
-            VisualSystemMeasureFactory systemMeasureFactory = new(selection, staffMeasusureFactory, layoutDictionary);
-            VisualStaffSystemFactory staffSystemFactory = new(systemMeasureFactory, selection, layoutDictionary);
-            PageViewSceneFactory scene = new(staffSystemFactory, 20, 30, ColorARGB.Black, ColorARGB.White, layoutDictionary);
-            return new VisualScoreDocumentScene(scene, scoreDocument);
-        }
-    }
-}
+//    public class MultiPageSceneContext : IExternalSceneContext
+//    {
+//        private readonly ISelection<IUniqueScoreElement> selection;
+//        private readonly ScoreDocumentStyleTemplate styleTemplate;
+//        private readonly ScoreLayoutDictionary layoutDictionary;
+//        private readonly PageGenerator pageGenerator;
+
+//        public MultiPageSceneContext(IDocument document)
+//        {
+//            this.selection = document.Selection;
+//            this.styleTemplate = new ScoreDocumentStyleTemplate();
+//            this.layoutDictionary = new ScoreLayoutDictionary(styleTemplate);
+//            this.pageGenerator = new PageGenerator(document.KeyGenerator, layoutDictionary, document.ScoreReader);
+//        }
+
+//        public IScoreDocumentLayout ScoreDocumentLayout => layoutDictionary;
+
+//        public BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument)
+//        {
+            
+//            return new VisualScoreDocumentScene(scene, scoreDocument);
+//        }
+
+//        public void RegisterSettings(IAddinSettingsManager animationSettingsManager)
+//        {
+//            animationSettingsManager.Register(() => styleTemplate.NoteStyleTemplate.Scale, val => styleTemplate.NoteStyleTemplate.Scale = val, "Scale");
+
+//            animationSettingsManager.RegisterLayoutProperty<NoteLayout, int>("staffindex", "Staff Index");
+//        }
+//    }
+//}
