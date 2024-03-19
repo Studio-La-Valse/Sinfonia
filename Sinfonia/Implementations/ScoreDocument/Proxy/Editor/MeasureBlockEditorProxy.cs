@@ -23,7 +23,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public int Id => source.Id;
 
-
+        public InstrumentMeasure HostMeasure => source.RibbonMeasure;
 
 
         public void AppendChord(RythmicDuration rythmicDuration)

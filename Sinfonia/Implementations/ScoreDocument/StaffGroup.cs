@@ -10,7 +10,7 @@
         public InstrumentRibbon InstrumentRibbon { get; }
         public Instrument Instrument => InstrumentRibbon.Instrument;
         public int IndexInSystem => InstrumentRibbon.IndexInScore;
-
+        public ScoreDocumentCore HostScoreDocument => InstrumentRibbon.HostScoreDocument;
 
         public StaffGroup(InstrumentRibbon instrumentRibbon, IList<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid, int id, IList<(Guid guid, int id)> staves) : base(id, guid)
         {
@@ -26,7 +26,7 @@
         {
             for (int i = 0; i < staves.Count; i++)
             {
-                yield return new Staff(i, staves[i].id, staves[i].guid);
+                yield return new Staff(i, HostScoreDocument, staves[i].id, staves[i].guid);
             }
         }
 
@@ -37,13 +37,13 @@
                 if (staves.Count > i)
                 {
                     var (guid, id) = staves[i];
-                    yield return new Staff(i, id, guid);
+                    yield return new Staff(i, HostScoreDocument, id, guid);
                     continue;
                 }
 
                 var (newGuid, newId) = (Guid.NewGuid(), keyGenerator.Generate());
                 staves.Add((newGuid, newId));
-                yield return new Staff(i, newId, newGuid);
+                yield return new Staff(i, HostScoreDocument, newId, newGuid);
             }
         }
 

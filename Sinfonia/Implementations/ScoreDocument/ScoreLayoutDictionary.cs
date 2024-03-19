@@ -69,13 +69,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(PageEditorProxy page, PageLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            BaseCommand command = new LayoutCommand<PageLayout>(pageLayoutDictionary, page.Guid, layout).ThenInvalidate(notifyEntityChanged, page);
+            BaseCommand command = new LayoutCommand<PageLayout>(pageLayoutDictionary, page.Guid, layout).ThenInvalidate(notifyEntityChanged, page.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(PageEditorProxy page)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<PageLayout> command = new(pageLayoutDictionary, page.Guid);
+            var command = new RemoveLayoutCommand<PageLayout>(pageLayoutDictionary, page.Guid).ThenInvalidate(notifyEntityChanged, page.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -98,13 +98,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(ChordEditorProxy chord, ChordLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            BaseCommand command = new LayoutCommand<ChordLayout>(chordLayoutDictionary, chord.Guid, layout).ThenInvalidate(notifyEntityChanged, chord);
+            BaseCommand command = new LayoutCommand<ChordLayout>(chordLayoutDictionary, chord.Guid, layout).ThenInvalidate(notifyEntityChanged, chord.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(ChordEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            BaseCommand command = new RemoveLayoutCommand<ChordLayout>(chordLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element);
+            BaseCommand command = new RemoveLayoutCommand<ChordLayout>(chordLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -112,13 +112,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(MeasureBlockEditorProxy measureBlock, MeasureBlockLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<MeasureBlockLayout> command = new(measureBlockLayoutDictionary, measureBlock.Guid, layout);
+            var command = new LayoutCommand<MeasureBlockLayout>(measureBlockLayoutDictionary, measureBlock.Guid, layout).ThenInvalidate(notifyEntityChanged, measureBlock.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(MeasureBlockEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<MeasureBlockLayout> command = new(measureBlockLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<MeasureBlockLayout>(measureBlockLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostMeasure.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -126,13 +126,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(InstrumentMeasureEditorProxy instrumentMeasure, InstrumentMeasureLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<InstrumentMeasureLayout> command = new(instrumentMeasureLayoutDictionary, instrumentMeasure.Guid, layout);
+            var command = new LayoutCommand<InstrumentMeasureLayout>(instrumentMeasureLayoutDictionary, instrumentMeasure.Guid, layout).ThenInvalidate(notifyEntityChanged, instrumentMeasure);
             transaction.Enqueue(command);
         }
         public void Restore(InstrumentMeasureEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<InstrumentMeasureLayout> command = new(instrumentMeasureLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<InstrumentMeasureLayout>(instrumentMeasureLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element);
             transaction.Enqueue(command);
         }
 
@@ -141,13 +141,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(ScoreMeasureEditorProxy scoreMeasure, ScoreMeasureLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<ScoreMeasureLayout> command = new(scoreMeasureLayoutDictionary, scoreMeasure.Guid, layout);
+            var command = new LayoutCommand<ScoreMeasureLayout>(scoreMeasureLayoutDictionary, scoreMeasure.Guid, layout).ThenInvalidate(notifyEntityChanged, scoreMeasure);
             transaction.Enqueue(command);
         }
         public void Restore(ScoreMeasureEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<ScoreMeasureLayout> command = new(scoreMeasureLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<ScoreMeasureLayout>(scoreMeasureLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element);
             transaction.Enqueue(command);
         }
 
@@ -156,13 +156,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(InstrumentRibbonEditorProxy instrumentRibbon, InstrumentRibbonLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<InstrumentRibbonLayout> command = new(instrumentRibbonLayoutDictionary, instrumentRibbon.Guid, layout);
+            var command = new LayoutCommand<InstrumentRibbonLayout>(instrumentRibbonLayoutDictionary, instrumentRibbon.Guid, layout).ThenInvalidate(notifyEntityChanged, instrumentRibbon.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(InstrumentRibbonEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<InstrumentRibbonLayout> command = new(instrumentRibbonLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<InstrumentRibbonLayout>(instrumentRibbonLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -171,13 +171,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(StaffGroupEditorProxy staffGroup, StaffGroupLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<StaffGroupLayout> command = new(staffGroupLayoutDictionary, staffGroup.Guid, layout);
+            var command = new LayoutCommand<StaffGroupLayout>(staffGroupLayoutDictionary, staffGroup.Guid, layout).ThenInvalidate(notifyEntityChanged, staffGroup.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(StaffGroupEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<StaffGroupLayout> command = new(staffGroupLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<StaffGroupLayout>(staffGroupLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -186,13 +186,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(StaffEditorProxy staff, StaffLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<StaffLayout> command = new(staffLayoutDictionary, staff.Guid, layout);
+            var command = new LayoutCommand<StaffLayout>(staffLayoutDictionary, staff.Guid, layout).ThenInvalidate(notifyEntityChanged, staff.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(StaffEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<StaffLayout> command = new(staffLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<StaffLayout>(staffLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
 
@@ -200,15 +200,16 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Apply(StaffSystemEditorProxy staffSystem, StaffSystemLayout layout)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            LayoutCommand<StaffSystemLayout> command = new(staffSystemLayoutDictionary, staffSystem.Guid, layout);
+            var command = new LayoutCommand<StaffSystemLayout>(staffSystemLayoutDictionary, staffSystem.Guid, layout).ThenInvalidate(notifyEntityChanged, staffSystem.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
         public void Restore(StaffSystemEditorProxy element)
         {
             ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-            RemoveLayoutCommand<StaffSystemLayout> command = new(staffSystemLayoutDictionary, element.Guid);
+            var command = new RemoveLayoutCommand<StaffSystemLayout>(staffSystemLayoutDictionary, element.Guid).ThenInvalidate(notifyEntityChanged, element.HostScoreDocument.Proxy());
             transaction.Enqueue(command);
         }
+
 
         public void Clean()
         {

@@ -11,6 +11,8 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
 
+        public InstrumentMeasure HostMeasure => source.HostMeasure;
+
         public bool Grace => source.Grace;
 
         public Position Position => source.Position;

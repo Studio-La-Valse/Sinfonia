@@ -21,6 +21,7 @@ internal class StaffGroupEditorProxy(StaffGroup staffGroup, ScoreLayoutDictionar
     public int Id => staffGroup.Id;
 
 
+    public ScoreDocumentCore HostScoreDocument => staffGroup.HostScoreDocument;
 
 
     public IEnumerable<IInstrumentMeasureEditor> EnumerateMeasures()

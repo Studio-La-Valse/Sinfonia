@@ -9,6 +9,8 @@ internal class PageEditorProxy : IPageEditor, IUniqueScoreElement
 
     public int Id => page.Id;
 
+    public ScoreDocumentCore HostScoreDocument => page.HostScoreDocument;
+
     public PageEditorProxy(Page page, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
     {
         this.page = page;

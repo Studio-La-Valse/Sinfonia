@@ -8,6 +8,8 @@
 
         public IList<ScoreMeasure> ScoreMeasures { get; } = [];
 
+        public ScoreDocumentCore HostScoreDocument => scoreDocument;
+
         public StaffSystem(ScoreDocumentCore scoreDocument, IKeyGenerator<int> keyGenerator, Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups) : base(id, guid)
         {
 

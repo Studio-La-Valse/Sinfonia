@@ -13,7 +13,7 @@
 
         public int Id => staffSystem.Id;
 
-
+        public ScoreDocumentCore HostScoreDocument => staffSystem.HostScoreDocument;
 
 
         public StaffSystemEditorProxy(StaffSystem staffSystem, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)

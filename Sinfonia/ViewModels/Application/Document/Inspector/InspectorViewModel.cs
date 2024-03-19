@@ -52,6 +52,16 @@
             PropertiesViewModel = firstItem switch
             {
                 INoteReader _ => new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder, scoreLayoutDictionary),
+                IChordReader _ => new ChordPropertiesViewModel(selectedElements.OfType<IChordReader>(), scoreBuilder, scoreLayoutDictionary),
+                IMeasureBlockReader _ => new MeasureBlockPropertiesViewModel(selectedElements.OfType<IMeasureBlockReader>(), scoreBuilder, scoreLayoutDictionary),
+                IInstrumentMeasureReader _ => new InstrumentMeasurePropertiesViewModel(selectedElements.OfType<IInstrumentMeasureReader>(), scoreBuilder, scoreLayoutDictionary),
+                IScoreMeasureReader _ => new ScoreMeasurePropertiesViewModel(selectedElements.OfType<IScoreMeasureReader>(), scoreBuilder, scoreLayoutDictionary),
+                IInstrumentRibbonReader _ => new InstrumentRibbonPropertiesViewModel(selectedElements.OfType<IInstrumentRibbonReader>(), scoreBuilder, scoreLayoutDictionary),
+                IStaffReader _ => new StaffPropertiesViewModel(selectedElements.OfType<IStaffReader>(), scoreBuilder, scoreLayoutDictionary),
+                IStaffGroupReader _ => new StaffGroupPropertiesViewModel(selectedElements.OfType<IStaffGroupReader>(), scoreBuilder, scoreLayoutDictionary),
+                IStaffSystemReader _ => new StaffSystemPropertiesViewModel(selectedElements.OfType<IStaffSystemReader>(), scoreBuilder, scoreLayoutDictionary),
+                IPageReader _ => new PagePropertiesViewModel(selectedElements.OfType<IPageReader>(), scoreBuilder, scoreLayoutDictionary),
+                IScoreDocumentReader _ => new ScoreDocumentPropertiesViewModel(selectedElements.OfType<IScoreDocumentReader>(), scoreBuilder, scoreLayoutDictionary),
                 _ => null
             };
         }

@@ -36,20 +36,20 @@ namespace Sinfonia.Implementations.ScoreDocument
             throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        private Page GetOrCreate(int index)
+        private Page GetOrCreate(int index, ScoreDocumentCore scoreDocument)
         {
             if (pages.TryGetValue(index, out var page))
             {
                 return page;
             }
 
-            pages[index] = new Page(index, keyGenerator.Generate(), Guid.NewGuid());
-            return GetOrCreate(index);
+            pages[index] = new Page(index, scoreDocument, keyGenerator.Generate(), Guid.NewGuid());
+            return GetOrCreate(index, scoreDocument);
         }
 
         public IEnumerable<Page> Generate(ScoreDocumentCore scoreDocument)
         {
-            var currentpage = GetOrCreate(0);
+            var currentpage = GetOrCreate(0, scoreDocument);
             currentpage.StaffSystems.Clear();
             var currentSystem = GetAppendOrThrow(0, scoreDocument);
             currentpage.StaffSystems.Add(currentSystem);
@@ -82,7 +82,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     if (currentSystemCanvasBottom > currentLowestAllowedPoint)
                     {
                         yield return currentpage;
-                        currentpage = GetOrCreate(pageIndex);
+                        currentpage = GetOrCreate(pageIndex, scoreDocument);
                         currentpage.StaffSystems.Clear();
                         pageLayout = scoreLayoutProvider.PageLayout(currentpage.Proxy());
                         pageWidth = pageLayout.PageWidth;

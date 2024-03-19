@@ -14,6 +14,7 @@ internal class StaffEditorProxy(Staff staff, ScoreLayoutDictionary scoreLayoutDi
 
     public int Id => staff.Id;
 
+    public ScoreDocumentCore HostScoreDocument => staff.HostScoreDocument;
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {

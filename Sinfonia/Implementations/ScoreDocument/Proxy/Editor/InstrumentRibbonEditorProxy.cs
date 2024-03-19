@@ -1,6 +1,6 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class InstrumentRibbonEditorProxy : IInstrumentRibbonEditor, IUniqueScoreElement
+    internal class InstrumentRibbonEditorProxy : IInstrumentRibbonEditor
     {
         private readonly InstrumentRibbon source;
         private readonly ScoreLayoutDictionary scoreLayoutDictionary;
@@ -9,6 +9,7 @@
 
 
 
+        public ScoreDocumentCore HostScoreDocument => source.HostScoreDocument;
 
         public int IndexInScore => source.IndexInScore;
 
@@ -16,7 +17,6 @@
 
         public Guid Guid => source.Guid;
 
-        public int Id => source.Id;
 
         public InstrumentRibbonEditorProxy(InstrumentRibbon source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
