@@ -39,12 +39,12 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (IScoreMeasureReader ribbon in ReadScoreMeasures())
+            foreach (var ribbon in ReadScoreMeasures())
             {
                 yield return ribbon;
             }
 
-            foreach (IInstrumentRibbonReader measure in ReadInstrumentRibbons())
+            foreach (var measure in ReadInstrumentRibbons())
             {
                 yield return measure;
             }

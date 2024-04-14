@@ -20,11 +20,11 @@ namespace Sinfonia.ViewModels.Application.Menu
 
         public void LoadMusicXml()
         {
-            if (browseToFile.BrowseToFile(".musicxml", "Music XML Files(*.musicxml)|*musicxml|XML Files(*.xml)|*xml", out string? filepath))
+            if (browseToFile.BrowseToFile(".musicxml", "Music XML Files(*.musicxml)|*musicxml|XML Files(*.xml)|*xml", out var filepath))
             {
                 using FileStream fileStream = new(filepath, FileMode.Open);
-                XDocument document = XDocument.Load(fileStream);
-                DocumentViewModel documentViewModel = documentViewModelFactory.Create();
+                var document = XDocument.Load(fileStream);
+                var documentViewModel = documentViewModelFactory.Create();
                 var layout = documentViewModel.PageViewLayout;
                 _ = documentViewModel.ScoreBuilder.Edit(e =>
                 {

@@ -27,13 +27,13 @@ namespace Sinfonia.Implementations
 
         public DocumentViewModel Create()
         {
-            INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
 
-            ICommandManager commandManager = CommandManager.CreateGreedy();
-            IKeyGenerator<int> keyGenerator = keyGeneratorFactory.CreateKeyGenerator();
+            var commandManager = CommandManager.CreateGreedy();
+            var keyGenerator = keyGeneratorFactory.CreateKeyGenerator();
 
             var style = new ScoreDocumentStyleTemplate();
-            (IScoreBuilder scoreBuilder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var scoreBuilder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
             ScoreElementViewModel scoreDocumentViewModel = new(reader);
             scoreDocumentViewModel.Rebuild();
@@ -46,7 +46,7 @@ namespace Sinfonia.Implementations
             // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
             _ = notifyEntityChanged.Subscribe(inspectorViewModel);
 
-            ISelectionManager<IUniqueScoreElement> selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
+            var selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
                 .AddChangedHandler(inspectorViewModel.Update, e => e.Id)
                 .OnChangedNotify(notifyEntityChanged, e => e.Id);
 
@@ -55,15 +55,16 @@ namespace Sinfonia.Implementations
             VisualNoteFactory noteFactory = new(selectionManager, layout);
             VisualRestFactory restFactory = new(selectionManager);
             VisualNoteGroupFactory noteGroupFactory = new(noteFactory, restFactory, layout);
-            VisualStaffMeasureFactory staffMeasusureFactory = new(selectionManager, noteGroupFactory, layout);
+            VisualStaffGroupMeasureFactory staffMeasusureFactory = new(selectionManager, noteGroupFactory, layout);
             VisualSystemMeasureFactory systemMeasureFactory = new(selectionManager, staffMeasusureFactory, layout);
             VisualStaffSystemFactory staffSystemFactory = new(systemMeasureFactory, selectionManager, layout);
-            PageViewSceneFactory sceneFactory = new(staffSystemFactory, 20, 30, ColorARGB.Black, ColorARGB.White, layout);
+            PageViewSceneFactory sceneFactory = new(staffSystemFactory, 20, 30, layout);
             VisualScoreDocumentScene scene = new(sceneFactory, reader);
-            SceneManager<IUniqueScoreElement, int> sceneManager = new(scene, e => e.Id);
+            var sceneManager = new SceneManager<IUniqueScoreElement, int>(scene, e => e.Id).WithBackground(ColorARGB.Transparant);
 
             CanvasViewModel canvasViewModel = new(notifyEntityChanged, reader, selectionManager, sceneManager, selectionBorder, style);
 
+            ScoreDocumentViewModel scoreViewModel = new(canvasViewModel);
             PageViewModel pageViewModel = new(canvasViewModel);
             StaffSystemViewModel staffSystemViewModel = new(canvasViewModel);
             StaffGroupViewModel staffGroupViewModel = new(canvasViewModel);
@@ -76,6 +77,7 @@ namespace Sinfonia.Implementations
             NoteViewModel noteViewModel = new(canvasViewModel);
             DocumentStyleEditorViewModel styleEditorViewModel = new(
                 canvasViewModel,
+                scoreViewModel,
                 pageViewModel,
                 staffSystemViewModel,
                 staffGroupViewModel,

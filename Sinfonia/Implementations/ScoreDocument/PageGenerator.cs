@@ -10,6 +10,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly IScoreDocumentLayout scoreLayoutProvider;
         private readonly IList<(Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups)> staffSystems = [];
 
+
         public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreDocumentLayout scoreLayoutProvider)
         {
             this.keyGenerator = keyGenerator;
@@ -22,13 +23,13 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             if (index < staffSystems.Count)
             {
-                var (guid, id, staffGroups) = staffSystems[index];
+                (var guid, var id, var staffGroups) = staffSystems[index];
                 return new StaffSystem(scoreDocument, keyGenerator, guid, id, staffGroups);
             }
 
             if (index == staffSystems.Count)
             {
-                var (guid, id, staffGroups) = (Guid.NewGuid(), keyGenerator.Generate(), new Dictionary<Guid, (Guid guid, int id, IList<(Guid, int)>)>());
+                (var guid, var id, var staffGroups) = (Guid.NewGuid(), keyGenerator.Generate(), new Dictionary<Guid, (Guid guid, int id, IList<(Guid, int)>)>());
                 staffSystems.Add((guid, id, staffGroups));
                 return new StaffSystem(scoreDocument, keyGenerator, guid, id, staffGroups);
             }
@@ -62,6 +63,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             var systemIndex = 1;
             var pageIndex = 1;
             var currentSystemCanvasTop = pageLayout.MarginTop;
+            var lineSpacing = 1.2;
+
             foreach (var measure in scoreDocument.EnumerateMeasuresCore())
             {
                 currentSystem.ScoreMeasures.Add(measure);
@@ -71,12 +74,12 @@ namespace Sinfonia.Implementations.ScoreDocument
                 // Need to add a new system.
                 if (currentSystemLength > currentAvailableWidth)
                 {
-                    var previousSystemHeight = currentSystem.Proxy().CalculateHeight(scoreLayoutProvider);
+                    var previousSystemHeight = currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
                     var previousSystemMarginBottom = scoreLayoutProvider.StaffSystemLayout(currentSystem.Proxy()).PaddingBottom;
                     currentSystem = GetAppendOrThrow(systemIndex, scoreDocument);
                     currentSystemCanvasTop += previousSystemHeight + previousSystemMarginBottom;
 
-                    var currentSystemCanvasBottom = currentSystemCanvasTop + currentSystem.Proxy().CalculateHeight(scoreLayoutProvider);
+                    var currentSystemCanvasBottom = currentSystemCanvasTop + currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
                     var currentLowestAllowedPoint = pageHeight - pageMarginBottom;
                     // Need to add a new page.
                     if (currentSystemCanvasBottom > currentLowestAllowedPoint)

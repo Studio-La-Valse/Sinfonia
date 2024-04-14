@@ -14,7 +14,7 @@
 
         public override void Do()
         {
-            if (!noteLayoutDictionary.TryGetValue(element, out TLayout? oldLayout))
+            if (!noteLayoutDictionary.TryGetValue(element, out var oldLayout))
             {
                 return;
             }

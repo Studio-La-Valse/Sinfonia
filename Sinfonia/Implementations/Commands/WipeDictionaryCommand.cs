@@ -24,7 +24,7 @@
         {
             oldLayout.Clear();
 
-            foreach (KeyValuePair<TKey, TValue> kv in noteLayoutDictionary)
+            foreach (var kv in noteLayoutDictionary)
             {
                 oldLayout.Add(kv.Key, copy(kv.Value));
             }
@@ -36,7 +36,7 @@
         {
             noteLayoutDictionary.Clear();
 
-            foreach (KeyValuePair<TKey, TValue> kv in oldLayout)
+            foreach (var kv in oldLayout)
             {
                 noteLayoutDictionary.Add(kv.Key, copy(kv.Value));
             }

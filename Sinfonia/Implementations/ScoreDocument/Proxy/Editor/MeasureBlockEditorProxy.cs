@@ -28,21 +28,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void AppendChord(RythmicDuration rythmicDuration)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.AppendChord(rythmicDuration));
             transaction.Enqueue(command);
         }
 
         public void Splice(int index)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.Splice(index));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlock, MeasureBlockMemento> command = new(source, (s) => s.Clear());
             transaction.Enqueue(command);
         }
@@ -50,7 +50,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public bool TryReadNext([NotNullWhen(true)] out IMeasureBlockEditor? right)
         {
             right = null;
-            if (source.TryReadNext(out MeasureBlock? _right))
+            if (source.TryReadNext(out var _right))
             {
                 right = _right.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             }
@@ -60,7 +60,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public bool TryReadPrevious([NotNullWhen(true)] out IMeasureBlockEditor? previous)
         {
             previous = null;
-            if (source.TryReadNext(out MeasureBlock? _prev))
+            if (source.TryReadNext(out var _prev))
             {
                 previous = _prev.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             }

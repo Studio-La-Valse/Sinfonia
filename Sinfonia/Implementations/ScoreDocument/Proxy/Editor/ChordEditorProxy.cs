@@ -38,21 +38,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void Add(params Pitch[] pitches)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<Chord, ChordMemento> command = new(source, s => s.Add(pitches));
             transaction.Enqueue(command);
         }
 
         public void Set(params Pitch[] pitches)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<Chord, ChordMemento> command = new(source, s => s.Set(pitches));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<Chord, ChordMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }

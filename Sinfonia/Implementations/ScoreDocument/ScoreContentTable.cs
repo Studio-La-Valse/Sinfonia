@@ -39,9 +39,9 @@
 
             IList<InstrumentMeasure> values = [];
 
-            foreach (ScoreMeasure column in scoreMeasures)
+            foreach (var column in scoreMeasures)
             {
-                InstrumentMeasure cell = cellFactory.Create(column, identifier);
+                var cell = cellFactory.Create(column, identifier);
                 values.Add(cell);
             }
 
@@ -56,9 +56,9 @@
 
             IList<InstrumentMeasure> values = [];
 
-            foreach (ScoreMeasure column in scoreMeasures)
+            foreach (var column in scoreMeasures)
             {
-                InstrumentMeasure cell = cellFactory.Create(column, identifier);
+                var cell = cellFactory.Create(column, identifier);
                 values.Add(cell);
             }
 
@@ -71,7 +71,7 @@
                 throw new Exception($"Cannot add a column at {index}, provide an index smaller than or equal to width {Width}");
             }
 
-            int existingIndex = scoreMeasures.IndexOf(identifier);
+            var existingIndex = scoreMeasures.IndexOf(identifier);
             if (existingIndex != -1)
             {
                 throw new Exception($"Column already exists in table, position: {existingIndex}");
@@ -79,15 +79,15 @@
 
             scoreMeasures.Insert(index, identifier);
 
-            foreach ((InstrumentRibbon header, IList<InstrumentMeasure> cells) in instrumentRibbons)
+            foreach ((var header, var cells) in instrumentRibbons)
             {
-                InstrumentMeasure cell = cellFactory.Create(identifier, header);
+                var cell = cellFactory.Create(identifier, header);
                 cells.Insert(index, cell);
             }
         }
         public void AddScoreMeasure(ScoreMeasure identifier)
         {
-            int existingIndex = scoreMeasures.IndexOf(identifier);
+            var existingIndex = scoreMeasures.IndexOf(identifier);
 
             if (existingIndex != -1)
             {
@@ -96,9 +96,9 @@
 
             scoreMeasures.Add(identifier);
 
-            foreach ((InstrumentRibbon header, IList<InstrumentMeasure> cells) in instrumentRibbons)
+            foreach ((var header, var cells) in instrumentRibbons)
             {
-                InstrumentMeasure cell = cellFactory.Create(identifier, header);
+                var cell = cellFactory.Create(identifier, header);
                 cells.Add(cell);
             }
         }
@@ -157,7 +157,7 @@
         public void RemoveScoreMeasure(int index)
         {
             scoreMeasures.RemoveAt(index);
-            foreach ((_, IList<InstrumentMeasure> instrumentMeasures) in instrumentRibbons)
+            foreach ((_, var instrumentMeasures) in instrumentRibbons)
             {
                 instrumentMeasures.RemoveAt(index);
             }

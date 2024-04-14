@@ -122,7 +122,6 @@
             Properties.Add(Create(l => l.Collapsed, (l, v) => l.Collapsed = v, "Collapsed"));
             Properties.Add(Create(l => l.NumberOfStaves, (l, v) => l.NumberOfStaves = v, "Number of Staves"));
             Properties.Add(Create(l => l.DistanceToNext, (l, v) => l.DistanceToNext = v, "Margin Below"));
-            Properties.Add(Create(l => l.LineSpacing, (l, v) => l.LineSpacing = v, "Line Spacing"));
         }
 
         public override string Header => "Staff Group Properties";
@@ -179,7 +178,7 @@
 
         public override ScoreDocumentLayout GetLayout(IScoreDocumentLayout scoreLayoutProvider, IScoreDocumentReader entity)
         {
-            return scoreLayoutProvider.DocumentLayout(entity);
+            return scoreLayoutProvider.DocumentLayout();
         }
     }
 }

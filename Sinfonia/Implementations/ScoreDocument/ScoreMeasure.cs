@@ -38,7 +38,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public IEnumerable<InstrumentMeasure> EnumerateMeasuresCore()
         {
-            IEnumerable<InstrumentMeasure> measures = score.contentTable.GetInstrumentMeasuresInScoreMeasure(IndexInScore);
+            var measures = score.contentTable.GetInstrumentMeasuresInScoreMeasure(IndexInScore);
             return measures;
         }
         public InstrumentMeasure GetMeasureCore(int ribbonIndex)
@@ -93,9 +93,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void ApplyMemento(ScoreMeasureMemento memento)
         {
-            foreach (InstrumentMeasureMemento measureMemento in memento.Measures)
+            foreach (var measureMemento in memento.Measures)
             {
-                InstrumentMeasure measure = GetMeasureCore(measureMemento.RibbonIndex);
+                var measure = GetMeasureCore(measureMemento.RibbonIndex);
                 measure.ApplyMemento(measureMemento);
             }
         }

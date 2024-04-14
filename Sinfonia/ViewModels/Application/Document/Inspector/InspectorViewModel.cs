@@ -20,12 +20,12 @@
 
         public void Update(IEnumerable<IUniqueScoreElement> selected, IEnumerable<IUniqueScoreElement> unselected)
         {
-            foreach (IUniqueScoreElement item in unselected)
+            foreach (var item in unselected)
             {
                 _ = selectedElements.Remove(item);
             }
 
-            foreach (IUniqueScoreElement item in selected)
+            foreach (var item in selected)
             {
                 _ = selectedElements.Add(item);
             }
@@ -41,8 +41,8 @@
                 return;
             }
 
-            IUniqueScoreElement firstItem = selectedElements.Last();
-            Type firstType = firstItem.GetType();
+            var firstItem = selectedElements.Last();
+            var firstType = firstItem.GetType();
             if (!selectedElements.All(e => e.GetType().Name == firstType.Name))
             {
                 PropertiesViewModel = null;

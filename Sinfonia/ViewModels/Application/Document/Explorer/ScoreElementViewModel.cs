@@ -28,7 +28,7 @@
         {
             ScoreElements.Clear();
 
-            foreach (IScoreElement child in UniqueScoreElement.EnumerateChildren())
+            foreach (var child in UniqueScoreElement.EnumerateChildren())
             {
                 ScoreElementViewModel vm = new(child);
                 vm.Rebuild();

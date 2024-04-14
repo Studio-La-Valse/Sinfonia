@@ -10,18 +10,23 @@
 
   <ItemGroup>
     <None Remove="Resources\Bravura.otf" />
-    <None Remove="Resources\BravuraText.otf" />
     <None Remove="Resources\Kortjakje.musicxml" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
     <PackageReference Include="StudioLaValse.DependencyInjection.Microsoft" Version="1.0.0" />
     <PackageReference Include="StudioLaValse.Drawable" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Drawable.WPF" Version="2.0.4" />
+    <PackageReference Include="StudioLaValse.Geometry" Version="1.0.0" />
     <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.1.39" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="25.1.39" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="25.1.39" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="YamlDotNet" Version="15.1.2" />
   </ItemGroup>
 
@@ -37,7 +42,6 @@
 
   <ItemGroup>
     <Resource Include="Resources\Bravura.otf" />
-    <Resource Include="Resources\BravuraText.otf" />
     <EmbeddedResource Include="Resources\Kortjakje.musicxml" />
   </ItemGroup>
 

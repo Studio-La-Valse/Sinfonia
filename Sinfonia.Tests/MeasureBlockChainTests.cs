@@ -16,7 +16,7 @@ namespace Sinfonia.Tests
         private readonly IScoreBuilderFactory scoreBuilderFactory;
         public MeasureBlockChainTests()
         {
-            IServiceProvider serviceProvider = App.CreateHostBuilder([]).Build().Services;
+            var serviceProvider = App.CreateHostBuilder([]).Build().Services;
             scoreBuilderFactory = serviceProvider.GetRequiredService<IScoreBuilderFactory>();
         }
 
@@ -34,28 +34,28 @@ namespace Sinfonia.Tests
 
         private void _Assert(TimeSignature timeSignature, int[] values, RythmicDuration[] expectedLenghts)
         {
-            ICommandManager commandManager = CommandManager.CreateGreedy();
-            INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            var commandManager = CommandManager.CreateGreedy();
+            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
-            StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
+            var score = builder
                 .Edit(editor =>
                 {
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
 
-                    StudioLaValse.ScoreDocument.Builder.IInstrumentMeasureEditor measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
+                    var measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
                     measure.AddVoice(0);
 
-                    StudioLaValse.ScoreDocument.Builder.IMeasureBlockChainEditor chain = measure.ReadBlockChainAt(0);
+                    var chain = measure.ReadBlockChainAt(0);
                     chain.Divide(values);
                 })
                 .Build();
 
-            IMeasureBlockChainReader outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
-            RythmicDuration[] lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
+            var outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));
         }
@@ -71,22 +71,22 @@ namespace Sinfonia.Tests
 
         private void _AssertException(TimeSignature timeSignature, int[] values)
         {
-            ICommandManager commandManager = CommandManager.CreateGreedy();
-            INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            var commandManager = CommandManager.CreateGreedy();
+            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
-            StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
+            var score = builder
                 .Edit(editor =>
                 {
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
 
-                    StudioLaValse.ScoreDocument.Builder.IInstrumentMeasureEditor measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
+                    var measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
                     measure.AddVoice(0);
 
-                    StudioLaValse.ScoreDocument.Builder.IMeasureBlockChainEditor chain = measure.ReadBlockChainAt(0);
+                    var chain = measure.ReadBlockChainAt(0);
                     _ = Assert.ThrowsException<InvalidOperationException>(() => chain.Divide(values));
                 })
                 .Build();
@@ -105,28 +105,28 @@ namespace Sinfonia.Tests
 
         private void _AssertEqual(TimeSignature timeSignature, int number, RythmicDuration[] expectedLenghts)
         {
-            ICommandManager commandManager = CommandManager.CreateGreedy();
-            INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            var commandManager = CommandManager.CreateGreedy();
+            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder, IScoreDocumentReader reader, IScoreDocumentLayout layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
 
-            StudioLaValse.ScoreDocument.Builder.IScoreBuilder score = builder
+            var score = builder
                 .Edit(editor =>
                 {
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
 
-                    StudioLaValse.ScoreDocument.Builder.IInstrumentMeasureEditor measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
+                    var measure = editor.ReadScoreMeasure(0).ReadMeasure(0);
                     measure.AddVoice(0);
 
-                    StudioLaValse.ScoreDocument.Builder.IMeasureBlockChainEditor chain = measure.ReadBlockChainAt(0);
+                    var chain = measure.ReadBlockChainAt(0);
                     chain.DivideEqual(number);
                 })
                 .Build();
 
-            IMeasureBlockChainReader outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
-            RythmicDuration[] lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
+            var outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));
         }

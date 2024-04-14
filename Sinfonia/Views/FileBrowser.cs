@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
 
-namespace Sinfonia.Implementations
+namespace Sinfonia.Views
 {
     internal class FileBrowser : IBrowseToFile
     {

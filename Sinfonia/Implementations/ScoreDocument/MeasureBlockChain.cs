@@ -26,39 +26,39 @@
 
         public MeasureBlock? BlockRight(MeasureBlock block)
         {
-            int index = IndexOfOrThrow(block);
+            var index = IndexOfOrThrow(block);
             return blocks.ElementAtOrDefault(index + 1);
         }
         public MeasureBlock? BlockLeft(MeasureBlock block)
         {
-            int index = IndexOfOrThrow(block);
+            var index = IndexOfOrThrow(block);
             return blocks.ElementAtOrDefault(index - 1);
         }
 
 
         public int IndexOfOrThrow(MeasureBlock block)
         {
-            int index = blocks.IndexOf(block);
+            var index = blocks.IndexOf(block);
             return index == -1 ? throw new Exception("Measure block does not exist in this measure chain") : index;
         }
 
 
         public void Divide(params int[] steps)
         {
-            IEnumerable<RythmicDuration> stepsAsRythmicDurations = TimeSignature.Divide(steps);
+            var stepsAsRythmicDurations = TimeSignature.Divide(steps);
 
             Clear();
-            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
                 Append(rythmicDuration, false);
             }
         }
         public void DivideEqual(int number)
         {
-            IEnumerable<RythmicDuration> stepsAsRythmicDurations = TimeSignature.DivideEqual(number);
+            var stepsAsRythmicDurations = TimeSignature.DivideEqual(number);
 
             Clear();
-            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
                 Append(rythmicDuration, false);
             }
@@ -67,7 +67,7 @@
         {
             if (!grace)
             {
-                Duration newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
+                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
                 if (newLength > RibbonMeasure.TimeSignature)
                 {
                     throw new Exception("New measure block cannot fit in this measure.");
@@ -81,7 +81,7 @@
         {
             if (!grace)
             {
-                Duration newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
+                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
                 if (newLength > RibbonMeasure.TimeSignature)
                 {
                     throw new Exception("New measure block cannot fit in this measure.");
@@ -95,16 +95,16 @@
         {
             if (!grace)
             {
-                Duration newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
+                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
                 if (newLength > RibbonMeasure.TimeSignature)
                 {
                     throw new Exception("New measure block cannot fit in this measure.");
                 }
             }
 
-            for (int i = 0; i < blocks.Count; i++)
+            for (var i = 0; i < blocks.Count; i++)
             {
-                MeasureBlock block = blocks[i];
+                var block = blocks[i];
                 if (block.Position == position)
                 {
                     MeasureBlock newBlock = new(duration, this, grace, keyGenerator, Guid.NewGuid());
@@ -140,13 +140,13 @@
         public void ApplyMemento(RibbonMeasureVoiceMemento memento)
         {
             Clear();
-            foreach (MeasureBlockMemento block in memento.MeasureBlocks)
+            foreach (var block in memento.MeasureBlocks)
             {
-                RythmicDuration duration = block.Duration;
+                var duration = block.Duration;
 
                 if (!block.Grace)
                 {
-                    Duration newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
+                    var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
                     if (newLength > RibbonMeasure.TimeSignature)
                     {
                         throw new Exception("New measure block cannot fit in this measure.");

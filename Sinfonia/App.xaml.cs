@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Syncfusion.SfSkinManager;
 using System.Windows;
 
 namespace Sinfonia
@@ -11,10 +12,12 @@ namespace Sinfonia
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            IHost host = CreateHostBuilder(e.Args).Build();
+            SfSkinManager.ApplyStylesOnApplication = true;
+
+            var host = CreateHostBuilder(e.Args).Build();
             host.Start();
 
-            MainWindow mainWindow = host.Services.GetRequiredService<MainWindow>();
+            var mainWindow = host.Services.GetRequiredService<MainWindow>();
             _ = mainWindow.ShowDialog();
         }
 

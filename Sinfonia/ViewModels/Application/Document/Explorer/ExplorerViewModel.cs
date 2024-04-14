@@ -33,9 +33,9 @@
         {
             while (queue.Count > 0)
             {
-                IUniqueScoreElement element = queue.Dequeue();
-                IEnumerable<ScoreElementViewModel> viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
-                foreach (ScoreElementViewModel? viewModel in viewModels)
+                var element = queue.Dequeue();
+                var viewModels = ScoreDocument.SelectRecursive(c => c.ScoreElements).Where(c => c.UniqueScoreElement.Equals(element));
+                foreach (var viewModel in viewModels)
                 {
                     viewModel.Rebuild();
                 }

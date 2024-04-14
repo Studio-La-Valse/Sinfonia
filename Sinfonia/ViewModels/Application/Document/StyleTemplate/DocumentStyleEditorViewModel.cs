@@ -1,6 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Layout.Templates;
-using System.IO;
-using YamlDotNet.Serialization;
+﻿using System.IO;
 using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
@@ -8,6 +6,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
     public class DocumentStyleEditorViewModel : BaseViewModel
     {
         private readonly CanvasViewModel canvasViewModel;
+        private readonly ScoreDocumentViewModel scoreDocumentViewModel;
         private readonly PageViewModel pageViewModel;
         private readonly StaffSystemViewModel staffSystemViewModel;
         private readonly StaffGroupViewModel staffGroupViewModel;
@@ -18,7 +17,6 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         private readonly MeasureBlockViewModel measureBlockViewModel;
         private readonly ChordViewModel chordViewModel;
         private readonly NoteViewModel noteViewModel;
-        private readonly ICommandFactory commandFactory;
         private readonly IYamlConverter yamlConverter;
         private readonly IBrowseToFile browseToFile;
         private readonly ISaveFile saveFile;
@@ -42,6 +40,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         }
 
         public DocumentStyleEditorViewModel(CanvasViewModel canvasViewModel,
+                                            ScoreDocumentViewModel scoreDocumentViewModel,
                                             PageViewModel pageViewModel,
                                             StaffSystemViewModel staffSystemViewModel,
                                             StaffGroupViewModel staffGroupViewModel,
@@ -57,8 +56,9 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
                                             IBrowseToFile browseToFile,
                                             ISaveFile saveFile)
         {
-            
+
             this.canvasViewModel = canvasViewModel;
+            this.scoreDocumentViewModel = scoreDocumentViewModel;
             this.pageViewModel = pageViewModel;
             this.staffSystemViewModel = staffSystemViewModel;
             this.staffGroupViewModel = staffGroupViewModel;
@@ -69,7 +69,6 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             this.measureBlockViewModel = measureBlockViewModel;
             this.chordViewModel = chordViewModel;
             this.noteViewModel = noteViewModel;
-            this.commandFactory = commandFactory;
             this.yamlConverter = yamlConverter;
             this.browseToFile = browseToFile;
             this.saveFile = saveFile;
@@ -81,20 +80,21 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         public void Rebuild()
         {
             Templates.Clear();
+            Templates.Add(scoreDocumentViewModel);
             Templates.Add(pageViewModel);
             Templates.Add(staffSystemViewModel);
             Templates.Add(staffGroupViewModel);
             Templates.Add(staffViewModel);
             Templates.Add(instrumentRibbonViewModel);
             Templates.Add(scoreMeasureViewModel);
-            Templates.Add(instrumentMeasureViewModel); 
+            Templates.Add(instrumentMeasureViewModel);
             Templates.Add(measureBlockViewModel);
             Templates.Add(chordViewModel);
             Templates.Add(noteViewModel);
         }
         public void LoadYaml()
         {
-            if(browseToFile.BrowseToFile(".yaml", "Yaml Files(*.yaml)|*.yaml|Yaml Files(*.yml)|*.yml", out var filePath))
+            if (browseToFile.BrowseToFile(".yaml", "Yaml Files(*.yaml)|*.yaml|Yaml Files(*.yml)|*.yml", out var filePath))
             {
                 using var reader = File.OpenText(filePath);
                 var yaml = yamlConverter.FromYaml(reader);
@@ -112,6 +112,24 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
                 using var writer = File.CreateText(filePath);
                 writer.Write(yaml);
             }
+        }
+    }
+
+    public class ScoreDocumentViewModel : PropertyCollectionViewModel
+    {
+        public override string Header { get; } = "Document Template";
+
+        public ScoreDocumentViewModel(CanvasViewModel canvasViewModel)
+        {
+            var template = canvasViewModel.ScoreDocumentStyle;
+
+            Properties.Add(new PropertyViewModel<double>(() => template.Scale, v => { template.Scale = v; canvasViewModel.Rerender(); }, "Scale"));
+            Properties.Add(new PropertyViewModel<double>(() => template.HorizontalStaffLineThickness, v => { template.HorizontalStaffLineThickness = v; canvasViewModel.Rerender(); }, "Horizontal Line Thickness"));
+            Properties.Add(new PropertyViewModel<double>(() => template.VerticalStaffLineThickness, v => { template.VerticalStaffLineThickness = v; canvasViewModel.Rerender(); }, "Vertical Line Thickness"));
+            Properties.Add(new PropertyViewModel<double>(() => template.StemLineThickness, v => { template.StemLineThickness = v; canvasViewModel.Rerender(); }, "Stem Line Thickness"));
+            Properties.Add(new PropertyViewModel<double>(() => template.FirstSystemIndent, v => { template.FirstSystemIndent = v; canvasViewModel.Rerender(); }, "First System Indent"));
+            Properties.Add(new PropertyViewModel<ColorARGB>(() => template.PageColor, v => { template.PageColor = v; canvasViewModel.Rerender(); }, "Page Color"));
+            Properties.Add(new PropertyViewModel<ColorARGB>(() => template.ForegroundColor, v => { template.ForegroundColor = v; canvasViewModel.Rerender(); }, "Foreground Color"));
         }
     }
 
@@ -155,7 +173,6 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         {
             var template = canvasViewModel.ScoreDocumentStyle.StaffGroupStyleTemplate;
 
-            Properties.Add(new PropertyViewModel<double>(() => template.LineSpacing, v => { template.LineSpacing = v; canvasViewModel.Rerender(); }, "Line Spacing"));
             Properties.Add(new PropertyViewModel<double>(() => template.DistanceToNext, v => { template.DistanceToNext = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
         }
     }

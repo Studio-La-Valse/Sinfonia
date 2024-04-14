@@ -2,10 +2,9 @@
 {
     public class MenuViewModel : BaseMenuViewModel
     {
-        public MenuViewModel(FileMenuViewModel fileMenuViewModel, ViewMenuViewModel viewMenuViewModel)
+        public MenuViewModel(FileMenuViewModel fileMenuViewModel)
         {
             MenuItems.Add(fileMenuViewModel);
-            MenuItems.Add(viewMenuViewModel);
         }
     }
 }

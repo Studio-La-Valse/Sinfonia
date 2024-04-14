@@ -17,7 +17,7 @@
 
         public void CloseDocument()
         {
-            DocumentViewModel? openDocument = documentCollection.Documents.FirstOrDefault(d => d.IsActive);
+            var openDocument = documentCollection.Documents.FirstOrDefault(d => d.IsActive);
             if (openDocument is null)
             {
                 return;
@@ -28,9 +28,9 @@
 
         public void Exit()
         {
-            for (int i = documentCollection.Documents.Count - 1; i >= 0; i--)
+            for (var i = documentCollection.Documents.Count - 1; i >= 0; i--)
             {
-                DocumentViewModel document = documentCollection.Documents[i];
+                var document = documentCollection.Documents[i];
                 documentCollection.Close(document);
             }
 

@@ -15,7 +15,7 @@ namespace Sinfonia.Implementations
 
         public IDocument? ActiveDocument()
         {
-            DocumentViewModel? viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
+            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
             if (viewModel == null)
             {
                 return null;
@@ -26,7 +26,7 @@ namespace Sinfonia.Implementations
 
         public IDocument ActiveDocumentOrThrow()
         {
-            DocumentViewModel? viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
+            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
             if (viewModel == null)
             {
                 throw new Exception("No document open.");
@@ -38,7 +38,7 @@ namespace Sinfonia.Implementations
         public bool TryGetActiveDocument([NotNullWhen(true)] out IDocument? activeDocument)
         {
             activeDocument = null;
-            DocumentViewModel? viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
+            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
             if (viewModel == null)
             {
                 return false;

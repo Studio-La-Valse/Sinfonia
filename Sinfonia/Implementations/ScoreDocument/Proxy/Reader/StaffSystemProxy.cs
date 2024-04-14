@@ -21,12 +21,12 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (IScoreMeasureReader scoreMeasure in EnumerateMeasures())
+            foreach (var scoreMeasure in EnumerateMeasures())
             {
                 yield return scoreMeasure;
             }
 
-            foreach (IStaffGroupReader staffGroup in EnumerateStaffGroups())
+            foreach (var staffGroup in EnumerateStaffGroups())
             {
                 yield return staffGroup;
             }

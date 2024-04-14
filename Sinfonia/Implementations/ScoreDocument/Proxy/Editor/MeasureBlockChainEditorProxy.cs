@@ -31,21 +31,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void Append(RythmicDuration duration, bool grace)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Append(duration, grace));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }
 
         public void Divide(params int[] steps)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Divide(steps));
             transaction.Enqueue(command);
 
@@ -53,21 +53,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void DivideEqual(int number)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.DivideEqual(number));
             transaction.Enqueue(command);
         }
 
         public void Insert(Position position, RythmicDuration duration, bool grace)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Insert(position, duration, grace));
             transaction.Enqueue(command);
         }
 
         public void Prepend(RythmicDuration duration, bool grace)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Prepend(duration, grace));
             transaction.Enqueue(command);
         }

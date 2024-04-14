@@ -21,14 +21,14 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
 
     public void AddInstrumentRibbon(Instrument instrument)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.AddInstrumentRibbon(instrument));
         transaction.Enqueue(command);
     }
 
     public void RemoveInstrumentRibbon(int indexInScore)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.RemoveInstrumentRibbon(indexInScore));
         transaction.Enqueue(command);
     }
@@ -36,28 +36,28 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
 
     public void AppendScoreMeasure(TimeSignature? timeSignature = null)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.AppendScoreMeasure(timeSignature));
         transaction.Enqueue(command);
     }
 
     public void InsertScoreMeasure(int index, TimeSignature? timeSignature = null)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.InsertScoreMeasure(index, timeSignature));
         transaction.Enqueue(command);
     }
 
     public void RemoveScoreMeasure(int index)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.RemoveScoreMeasure(index));
         transaction.Enqueue(command);
     }
 
     public void Clear()
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
         MementoCommand<ScoreDocumentCore, ScoreDocumentMemento> command = new(score, s => s.Clear());
         transaction.Enqueue(command);
     }
@@ -84,17 +84,17 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
-        foreach (IInstrumentRibbonEditor ribbon in ReadInstrumentRibbons())
+        foreach (var ribbon in ReadInstrumentRibbons())
         {
             yield return ribbon;
         }
 
-        foreach (IScoreMeasureEditor measure in ReadScoreMeasures())
+        foreach (var measure in ReadScoreMeasures())
         {
             yield return measure;
         }
 
-        foreach (IPageEditor system in EnumeratePages())
+        foreach (var system in EnumeratePages())
         {
             yield return system;
         }
@@ -102,7 +102,7 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ScoreLayoutDict
 
     public ScoreDocumentLayout ReadLayout()
     {
-        return scoreLayoutDictionary.DocumentLayout(this);
+        return scoreLayoutDictionary.DocumentLayout();
     }
 
     public void Apply(ScoreDocumentLayout layout)

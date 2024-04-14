@@ -27,21 +27,21 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ScoreLayoutDictionar
 
     public void EditKeySignature(KeySignature keySignature)
     {
-        ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
-        BaseCommand command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.EditKeySignature(keySignature)).ThenInvalidate(notifyEntityChanged, this);
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.EditKeySignature(keySignature)).ThenInvalidate(notifyEntityChanged, this);
         transaction.Enqueue(command);
     }
 
     public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureEditor? next)
     {
-        _ = source.TryReadNext(out ScoreMeasure? _next);
+        _ = source.TryReadNext(out var _next);
         next = _next?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
         return next != null;
     }
 
     public bool TryReadPrevious([NotNullWhen(true)] out IScoreMeasureEditor? previous)
     {
-        _ = source.TryReadPrevious(out ScoreMeasure? _previous);
+        _ = source.TryReadPrevious(out var _previous);
         previous = _previous?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
         return previous != null;
     }

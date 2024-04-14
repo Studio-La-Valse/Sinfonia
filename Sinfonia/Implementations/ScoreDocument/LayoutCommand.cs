@@ -16,7 +16,7 @@
 
         public override void Do()
         {
-            _ = noteLayoutDictionary.TryGetValue(element, out TLayout? _oldLayout);
+            _ = noteLayoutDictionary.TryGetValue(element, out var _oldLayout);
 
             oldLayout = _oldLayout?.Copy();
 

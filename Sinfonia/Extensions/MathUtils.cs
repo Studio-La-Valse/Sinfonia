@@ -4,8 +4,8 @@
     {
         public static IList<double> Map(IList<double> list, double newMin, double newMax)
         {
-            double listMin = list.Min();
-            double listMax = list.Max();
+            var listMin = list.Min();
+            var listMax = list.Max();
 
             if (listMax - listMin == 0)
             {
@@ -14,9 +14,9 @@
 
             List<double> newList = [];
 
-            foreach (double value in list)
+            foreach (var value in list)
             {
-                double newValue = Map(value, listMin, listMax, newMin, newMax);
+                var newValue = Map(value, listMin, listMax, newMin, newMax);
 
                 newList.Add((float)newValue);
             }
@@ -25,8 +25,8 @@
         }
         public static IList<float> Map(IList<float> list, float newMin, float newMax)
         {
-            float listMin = list.Min();
-            float listMax = list.Max();
+            var listMin = list.Min();
+            var listMax = list.Max();
 
             if (listMax - listMin == 0)
             {
@@ -35,9 +35,9 @@
 
             List<float> newList = [];
 
-            foreach (float value in list)
+            foreach (var value in list)
             {
-                double newValue = Map(value, listMin, listMax, newMin, newMax);
+                var newValue = Map(value, listMin, listMax, newMin, newMax);
 
                 newList.Add((float)newValue);
             }
@@ -51,18 +51,18 @@
                 return new double[0];
             }
 
-            int originalCount = values.Count();
+            var originalCount = values.Count();
 
             if (newLength == originalCount)
             {
                 return values.ToArray();
             }
 
-            double[] newArray = new double[newLength];
+            var newArray = new double[newLength];
 
-            for (int i = 0; i < newLength; i++)
+            for (var i = 0; i < newLength; i++)
             {
-                int indexInOriginalCollection = (int)Math.Floor(Map(i, 0d, newLength, 0, originalCount));
+                var indexInOriginalCollection = (int)Math.Floor(Map(i, 0d, newLength, 0, originalCount));
                 newArray[i] = values.ElementAt(indexInOriginalCollection);
             }
 
@@ -75,18 +75,18 @@
                 return new float[0];
             }
 
-            int originalCount = values.Count();
+            var originalCount = values.Count();
 
             if (newLength == originalCount)
             {
                 return values.ToArray();
             }
 
-            float[] newArray = new float[newLength];
+            var newArray = new float[newLength];
 
-            for (int i = 0; i < newLength; i++)
+            for (var i = 0; i < newLength; i++)
             {
-                int indexInOriginalCollection = (int)Math.Floor(Map(i, 0d, newLength, 0, originalCount));
+                var indexInOriginalCollection = (int)Math.Floor(Map(i, 0d, newLength, 0, originalCount));
                 newArray[i] = values.ElementAt(indexInOriginalCollection);
             }
 
@@ -94,36 +94,36 @@
         }
         public static double Map(double value, double minStart, double maxStart, double minEnd, double maxEnd)
         {
-            double fraction = maxStart - minStart;
+            var fraction = maxStart - minStart;
 
             return fraction == 0 ? throw new ArgumentOutOfRangeException() : minEnd + ((maxEnd - minEnd) * ((value - minStart) / fraction));
         }
         public static decimal Map(decimal value, decimal minStart, decimal maxStart, decimal minEnd, decimal maxEnd)
         {
-            decimal fraction = maxStart - minStart;
+            var fraction = maxStart - minStart;
 
             return fraction == 0 ? throw new ArgumentOutOfRangeException() : minEnd + ((maxEnd - minEnd) * ((value - minStart) / fraction));
         }
         public static double Clamp(double value, double minValue, double maxValue)
         {
-            double trueMin = Math.Min(minValue, maxValue);
-            double trueMax = Math.Max(minValue, maxValue);
+            var trueMin = Math.Min(minValue, maxValue);
+            var trueMax = Math.Max(minValue, maxValue);
 
             return Math.Clamp(value, trueMin, trueMax);
         }
         public static decimal Clamp(decimal value, decimal minValue, decimal maxValue)
         {
-            decimal trueMin = Math.Min(minValue, maxValue);
+            var trueMin = Math.Min(minValue, maxValue);
 
-            decimal trueMax = Math.Max(minValue, maxValue);
+            var trueMax = Math.Max(minValue, maxValue);
 
             return Math.Clamp(value, trueMin, trueMax);
         }
         public static int Clamp(int value, int minValue, int maxValue)
         {
-            int trueMin = Math.Min(minValue, maxValue);
+            var trueMin = Math.Min(minValue, maxValue);
 
-            int trueMax = Math.Max(minValue, maxValue);
+            var trueMax = Math.Max(minValue, maxValue);
 
             return Math.Clamp(value, trueMin, trueMax);
         }
@@ -150,7 +150,7 @@
                 value += max;
             }
 
-            int unsignedValue = value % max;
+            var unsignedValue = value % max;
 
             return unsignedValue;
         }

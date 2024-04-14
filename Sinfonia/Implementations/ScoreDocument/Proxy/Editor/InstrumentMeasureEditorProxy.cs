@@ -39,21 +39,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public void AddVoice(int voice)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.AddVoice(voice));
             transaction.Enqueue(command);
         }
 
         public void RemoveVoice(int voice)
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.RemoveVoice(voice));
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
-            ITransaction transaction = commandManager.ThrowIfNoTransactionOpen();
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
             MementoCommand<InstrumentMeasure, InstrumentMeasureMemento> command = new(source, s => s.Clear());
             transaction.Enqueue(command);
         }
@@ -65,14 +65,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureEditor? previous)
         {
-            _ = source.TryReadPrevious(out InstrumentMeasure? _previous);
+            _ = source.TryReadPrevious(out var _previous);
             previous = _previous?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return previous != null;
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureEditor? next)
         {
-            _ = source.TryReadNext(out InstrumentMeasure? _next);
+            _ = source.TryReadNext(out var _next);
             next = _next?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
             return next != null;
         }

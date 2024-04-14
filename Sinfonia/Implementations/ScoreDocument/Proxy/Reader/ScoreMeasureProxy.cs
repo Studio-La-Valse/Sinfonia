@@ -31,14 +31,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureReader? next)
         {
-            _ = source.TryReadNext(out ScoreMeasure? _next);
+            _ = source.TryReadNext(out var _next);
             next = _next?.Proxy();
             return next != null;
         }
 
         public bool TryReadPrevious([NotNullWhen(true)] out IScoreMeasureReader? previous)
         {
-            _ = source.TryReadPrevious(out ScoreMeasure? _previous);
+            _ = source.TryReadPrevious(out var _previous);
             previous = _previous?.Proxy();
             return previous != null;
         }

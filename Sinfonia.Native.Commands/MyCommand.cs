@@ -34,16 +34,16 @@ namespace Sinfonia.Native.Commands
 
         public void ExecuteCommand()
         {
-            IDocument document = application.ActiveDocumentOrThrow();
+            var document = application.ActiveDocumentOrThrow();
 
-            StudioLaValse.ScoreDocument.Builder.IScoreBuilder builder = document.ScoreBuilder
+            var builder = document.ScoreBuilder
                 .Edit(editor =>
                 {
                     editor.AddInstrumentRibbon(Instrument.Violin);
                 })
                 .Edit(editor =>
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         editor.AppendScoreMeasure();
                     }

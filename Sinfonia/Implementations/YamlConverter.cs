@@ -10,7 +10,7 @@ namespace Sinfonia.Implementations
         private readonly DeserializerBuilder deserializerBuilder = new DeserializerBuilder();
         public YamlConverter()
         {
-            
+
         }
         public ScoreDocumentStyleTemplate FromYaml(TextReader yaml)
         {

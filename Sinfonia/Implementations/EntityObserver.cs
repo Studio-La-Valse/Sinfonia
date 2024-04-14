@@ -15,7 +15,7 @@ namespace Sinfonia.Implementations
 
         public void OnCompleted()
         {
-            SceneManager<IUniqueScoreElement, int>? sceneManager = SceneManager();
+            var sceneManager = SceneManager();
 
             if (sceneManager is null)
             {
@@ -30,7 +30,7 @@ namespace Sinfonia.Implementations
         }
         public void OnNext(IUniqueScoreElement value)
         {
-            SceneManager<IUniqueScoreElement, int>? sceneManager = SceneManager();
+            var sceneManager = SceneManager();
 
             if (sceneManager is null)
             {

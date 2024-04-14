@@ -34,7 +34,7 @@
                     continue;
                 }
 
-                var (newGuid, newId, newStaves) = (Guid.NewGuid(), keyGenerator.Generate(), new List<(Guid, int)>());
+                (var newGuid, var newId, var newStaves) = (Guid.NewGuid(), keyGenerator.Generate(), new List<(Guid, int)>());
                 staffGroups[instrumentRibbon.Guid] = (newGuid, newId, newStaves);
                 yield return new StaffGroup(instrumentRibbon, ScoreMeasures, keyGenerator, newGuid, newId, newStaves);
             }

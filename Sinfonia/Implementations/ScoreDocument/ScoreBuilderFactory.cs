@@ -12,19 +12,19 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public (IScoreBuilder builder, IScoreDocumentReader document, IScoreDocumentLayout layout) Create(ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged, ScoreDocumentStyleTemplate scoreStyleTemplate)
         {
-            IKeyGenerator<int> keyGenerator = new IncrementalIntGeneratorFactory().CreateKeyGenerator();
+            var keyGenerator = new IncrementalIntGeneratorFactory().CreateKeyGenerator();
 
             InstrumentMeasureFactory cellFactory = new(keyGenerator);
             ScoreContentTable contentTable = new(cellFactory);
-            Guid guid = Guid.NewGuid();
+            var guid = Guid.NewGuid();
 
             ScoreLayoutDictionary layout = new(scoreStyleTemplate, commandManager, notifyEntityChanged);
             PageGenerator pageGenerator = new(keyGenerator, layout);
 
             ScoreDocumentCore score = new(contentTable, pageGenerator, keyGenerator, guid);
 
-            ScoreDocumentReaderProxy scoreReader = score.Proxy();
-            ScoreDocumentEditorProxy scoreEditor = score.ProxyEditor(layout, commandManager, notifyEntityChanged);
+            var scoreReader = score.Proxy();
+            var scoreEditor = score.ProxyEditor(layout, commandManager, notifyEntityChanged);
 
             ScoreBuilder builder = new(scoreEditor, commandManager, notifyEntityChanged);
 

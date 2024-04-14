@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 
-namespace Sinfonia.Implementations
+namespace Sinfonia.Views
 {
     internal class SaveFile : ISaveFile
     {

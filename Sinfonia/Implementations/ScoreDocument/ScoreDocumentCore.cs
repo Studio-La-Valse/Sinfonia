@@ -43,12 +43,12 @@
                 throw new Exception("Please construct an instrument ribbon first");
             }
 
-            ScoreMeasure? previousElement = contentTable.ColumnHeaders.LastOrDefault();
+            var previousElement = contentTable.ColumnHeaders.LastOrDefault();
             timeSignature ??= previousElement is not null ?
                     previousElement.TimeSignature :
                     new TimeSignature(4, 4);
 
-            KeySignature keySignature = previousElement is not null ?
+            var keySignature = previousElement is not null ?
                     previousElement.KeySignature :
                     new KeySignature(Step.C, MajorOrMinor.Major);
 
@@ -57,12 +57,12 @@
         }
         public void AppendScoreMeasure(TimeSignature? timeSignature = null)
         {
-            ScoreMeasure scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
             contentTable.AddScoreMeasure(scoreMeasure);
         }
         public void InsertScoreMeasure(int index, TimeSignature? timeSignature = null)
         {
-            ScoreMeasure scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
             contentTable.InsertScoreMeasure(scoreMeasure, index);
         }
         public void RemoveScoreMeasure(int indexInScore)
@@ -118,7 +118,7 @@
         {
             Clear();
 
-            foreach (InstrumentRibbonMemento instrumentMemento in memento.InstrumentRibbons)
+            foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
                 InstrumentRibbon instrumentRibbon = new(this, instrumentMemento.Instrument, keyGenerator, instrumentMemento.Guid);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
@@ -126,9 +126,9 @@
                 instrumentRibbon.ApplyMemento(instrumentMemento);
             }
 
-            foreach (ScoreMeasureMemento scoreMeasureMemento in memento.ScoreMeasures)
+            foreach (var scoreMeasureMemento in memento.ScoreMeasures)
             {
-                ScoreMeasure scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Guid, scoreMeasureMemento.TimeSignature);
+                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Guid, scoreMeasureMemento.TimeSignature);
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);

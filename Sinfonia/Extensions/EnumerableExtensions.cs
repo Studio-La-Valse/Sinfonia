@@ -4,7 +4,7 @@
     {
         public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
         {
-            foreach (T? item in values)
+            foreach (var item in values)
             {
                 action(item);
             }
@@ -17,9 +17,9 @@
 
             while (stillToProcess.Count > 0)
             {
-                T item = stillToProcess.Dequeue();
+                var item = stillToProcess.Dequeue();
                 yield return item;
-                foreach (T child in selector(item))
+                foreach (var child in selector(item))
                 {
                     stillToProcess.Enqueue(child);
                 }

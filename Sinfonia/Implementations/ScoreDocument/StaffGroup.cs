@@ -24,7 +24,7 @@
 
         public IEnumerable<Staff> EnumerateStaves()
         {
-            for (int i = 0; i < staves.Count; i++)
+            for (var i = 0; i < staves.Count; i++)
             {
                 yield return new Staff(i, HostScoreDocument, staves[i].id, staves[i].guid);
             }
@@ -32,16 +32,16 @@
 
         public IEnumerable<Staff> EnumerateStaves(int numberOfStaves)
         {
-            for (int i = 0; i < numberOfStaves; i++)
+            for (var i = 0; i < numberOfStaves; i++)
             {
                 if (staves.Count > i)
                 {
-                    var (guid, id) = staves[i];
+                    (var guid, var id) = staves[i];
                     yield return new Staff(i, HostScoreDocument, id, guid);
                     continue;
                 }
 
-                var (newGuid, newId) = (Guid.NewGuid(), keyGenerator.Generate());
+                (var newGuid, var newId) = (Guid.NewGuid(), keyGenerator.Generate());
                 staves.Add((newGuid, newId));
                 yield return new Staff(i, HostScoreDocument, newId, newGuid);
             }

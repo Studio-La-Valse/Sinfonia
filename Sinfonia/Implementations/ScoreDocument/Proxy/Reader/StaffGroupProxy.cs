@@ -29,12 +29,12 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (IInstrumentMeasureReader measure in EnumerateMeasures())
+            foreach (var measure in EnumerateMeasures())
             {
                 yield return measure;
             }
 
-            foreach (Staff staff in staffGroup.EnumerateStaves())
+            foreach (var staff in staffGroup.EnumerateStaves())
             {
                 yield return staff.Proxy();
             }

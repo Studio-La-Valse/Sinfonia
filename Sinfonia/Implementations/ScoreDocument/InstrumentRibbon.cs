@@ -43,9 +43,9 @@
         }
         public void ApplyMemento(InstrumentRibbonMemento memento)
         {
-            foreach (InstrumentMeasureMemento measureMemento in memento.Measures)
+            foreach (var measureMemento in memento.Measures)
             {
-                InstrumentMeasure measure = GetMeasureCore(measureMemento.MeasureIndex);
+                var measure = GetMeasureCore(measureMemento.MeasureIndex);
                 measure.ApplyMemento(measureMemento);
             }
         }

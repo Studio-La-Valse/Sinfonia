@@ -16,7 +16,7 @@ namespace Sinfonia.ViewModels.Application.Document
             get => GetValue(() => Invalidator);
             set => SetValue(() => Invalidator, value);
         }
-        public SceneManager<IUniqueScoreElement, int>? Scene
+        public SceneManager<IUniqueScoreElement, int> Scene
         {
             get => GetValue(() => Scene);
             set => SetValue(() => Scene, value);
@@ -41,15 +41,16 @@ namespace Sinfonia.ViewModels.Application.Document
 
         public CanvasViewModel(INotifyEntityChanged<IUniqueScoreElement> observable, IScoreDocumentReader scoreDocumentReader, ISelectionManager<IUniqueScoreElement> selection, SceneManager<IUniqueScoreElement, int> sceneManager, ObservableBoundingBox observableBoundingBox, ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
         {
-            Invalidator = observable;
             this.scoreDocumentReader = scoreDocumentReader;
+
+            Invalidator = observable;
             Selection = selection;
             EnablePan = true;
             Scene = sceneManager;
             SelectionBorder = observableBoundingBox;
             ScoreDocumentStyle = scoreDocumentStyleTemplate;
             Pipe = Pipeline.DoNothing()
-                .InterceptKeys(selection, out ISelectionManager<IUniqueScoreElement>? _selectionManager)
+                .InterceptKeys(selection, out var _selectionManager)
                 .ThenHandleDefaultMouseInteraction(Scene.VisualParents, Invalidator)
                 .ThenHandleMouseHover(Scene.VisualParents, Invalidator)
                 .ThenHandleDefaultClick(Scene.VisualParents, _selectionManager)

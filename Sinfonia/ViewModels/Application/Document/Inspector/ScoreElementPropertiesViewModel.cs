@@ -32,8 +32,8 @@
                 }
 
                 var entities = notes;
-                TEntity firstEntity = entities.First();
-                TProperty firstValue = getProperty(firstEntity);
+                var firstEntity = entities.First();
+                var firstValue = getProperty(firstEntity);
                 return !entities.All(m => getProperty(m)!.Equals(firstValue)) ? default! : firstValue;
             },
             (val) =>

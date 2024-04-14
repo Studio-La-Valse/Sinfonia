@@ -24,13 +24,13 @@
         {
             void _action(IScoreDocumentEditor editor)
             {
-                IEnumerable<TElement> children = ((IScoreElement)editor).SelectRecursive(e => e.EnumerateChildren())
+                var children = ((IScoreElement)editor).SelectRecursive(e => e.EnumerateChildren())
                     .OfType<IUniqueScoreElement>()
                     .Distinct(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id))
                     .Where(e => elementIds.Contains(e.Id))
                     .OfType<TElement>();
 
-                foreach (TElement child in children)
+                foreach (var child in children)
                 {
                     action(child);
                 }
@@ -45,8 +45,8 @@
         {
             while (pendingEdits.Count > 0)
             {
-                Action<IScoreDocumentEditor> pendingAction = pendingEdits.Dequeue();
-                using ITransaction transaction = commandManager.OpenTransaction("Generic score document edit");
+                var pendingAction = pendingEdits.Dequeue();
+                using var transaction = commandManager.OpenTransaction("Generic score document edit");
                 pendingAction.Invoke(scoreDocument);
             }
 

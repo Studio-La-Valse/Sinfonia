@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -14,11 +13,11 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             get
             {
-                int index = host.IndexOfOrThrow(this);
+                var index = host.IndexOfOrThrow(this);
 
                 Position position = new(0, 4);
 
-                foreach (MeasureBlock? block in host.GetBlocksCore().Take(index))
+                foreach (var block in host.GetBlocksCore().Take(index))
                 {
                     if (block.Grace)
                     {
@@ -39,7 +38,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             get
             {
-                RythmicDuration[] groupLength = Containers.Select(e => e.RythmicDuration).ToArray();
+                var groupLength = Containers.Select(e => e.RythmicDuration).ToArray();
                 return new Tuplet(RythmicDuration, groupLength);
             }
         }
@@ -69,19 +68,19 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public Chord? ContainerRight(Chord elementContainer)
         {
-            int index = IndexOfOrThrow(elementContainer);
+            var index = IndexOfOrThrow(elementContainer);
             return index - 1 < chords.Count ? chords[index + 1] : null;
         }
         public Chord? ContainerLeft(Chord elementContainer)
         {
-            int index = IndexOfOrThrow(elementContainer);
+            var index = IndexOfOrThrow(elementContainer);
             return index > 0 ? chords[index - 1] : null;
         }
 
 
         public int IndexOfOrThrow(Chord container)
         {
-            int index = chords.IndexOf(container);
+            var index = chords.IndexOf(container);
 
             return index == -1 ? throw new Exception("Measure element container does not exist in this measure block") : index;
         }
@@ -120,20 +119,20 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void Divide(params int[] steps)
         {
-            IEnumerable<RythmicDuration> stepsAsRythmicDurations = RythmicDuration.Divide(steps);
+            var stepsAsRythmicDurations = RythmicDuration.Divide(steps);
 
             Clear();
-            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
                 AppendChord(rythmicDuration);
             }
         }
         public void DivideEqual(int number)
         {
-            IEnumerable<RythmicDuration> stepsAsRythmicDurations = RythmicDuration.DivideEqual(number);
+            var stepsAsRythmicDurations = RythmicDuration.DivideEqual(number);
 
             Clear();
-            foreach (RythmicDuration rythmicDuration in stepsAsRythmicDurations)
+            foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
                 AppendChord(rythmicDuration);
             }
@@ -143,29 +142,29 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void Rebeam()
         {
-            foreach (Chord chord in chords)
+            foreach (var chord in chords)
             {
                 chord.ClearBeams();
             }
 
-            for (int i = 8; i <= 64; i *= 2)
+            for (var i = 8; i <= 64; i *= 2)
             {
-                decimal duration = 1M / i;
+                var duration = 1M / i;
 
-                for (int j = 0; j < chords.Count; j++)
+                for (var j = 0; j < chords.Count; j++)
                 {
-                    Chord? leftChord = j >= 1 ? chords[j - 1] : null;
-                    Chord middleChord = chords[j];
-                    Chord? rightChord = j < chords.Count - 1 ? chords[j + 1] : null;
-                    IEnumerable<(BeamType beam, PowerOfTwo duration)> middleChordBeams = middleChord.GetBeamTypes();
+                    var leftChord = j >= 1 ? chords[j - 1] : null;
+                    var middleChord = chords[j];
+                    var rightChord = j < chords.Count - 1 ? chords[j + 1] : null;
+                    var middleChordBeams = middleChord.GetBeamTypes();
 
                     if (middleChord.RythmicDuration.PowerOfTwo < 1 / duration)
                     {
                         continue;
                     }
 
-                    bool receives = leftChord is not null && leftChord.RythmicDuration.PowerOfTwo >= 1 / duration;
-                    bool sends = rightChord is not null && rightChord.RythmicDuration.PowerOfTwo >= 1 / duration;
+                    var receives = leftChord is not null && leftChord.RythmicDuration.PowerOfTwo >= 1 / duration;
+                    var sends = rightChord is not null && rightChord.RythmicDuration.PowerOfTwo >= 1 / duration;
 
                     if (leftChord is null && rightChord is null)
                     {
@@ -200,12 +199,12 @@ namespace Sinfonia.Implementations.ScoreDocument
                     }
                     else
                     {
-                        if (!middleChord.TryGetBeamType(i / 2, out BeamType? beamUp))
+                        if (!middleChord.TryGetBeamType(i / 2, out var beamUp))
                         {
                             throw new UnreachableException("Incoherent beaming strategy");
                         }
 
-                        BeamType toAdd = beamUp switch
+                        var toAdd = beamUp switch
                         {
                             BeamType.Continue => BeamType.HookStart,
                             BeamType.End => BeamType.HookEnd,
@@ -246,7 +245,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(MeasureBlockMemento memento)
         {
             Clear();
-            foreach (ChordMemento chordMemento in memento.Chords)
+            foreach (var chordMemento in memento.Chords)
             {
                 Chord chord = new(this, chordMemento.RythmicDuration, keyGenerator, chordMemento.Guid);
                 chords.Add(chord);

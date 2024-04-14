@@ -36,12 +36,12 @@ internal class StaffGroupEditorProxy(StaffGroup staffGroup, ScoreLayoutDictionar
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
-        foreach (IInstrumentMeasureEditor measure in EnumerateMeasures())
+        foreach (var measure in EnumerateMeasures())
         {
             yield return measure;
         }
 
-        foreach (StaffEditorProxy? staff in staffGroup.EnumerateStaves().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged)))
+        foreach (var staff in staffGroup.EnumerateStaves().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged)))
         {
             yield return staff;
         }

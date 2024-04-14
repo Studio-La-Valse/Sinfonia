@@ -39,7 +39,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public MeasureBlockChain GetBlockChainOrThrowCore(int voice)
         {
-            return blockChains.TryGetValue(voice, out MeasureBlockChain? chain) ? chain : throw new Exception($"No voice {voice} found.");
+            return blockChains.TryGetValue(voice, out var chain) ? chain : throw new Exception($"No voice {voice} found.");
         }
 
 
@@ -53,7 +53,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void AddVoice(int voice)
         {
-            Guid guid = Guid.NewGuid();
+            var guid = Guid.NewGuid();
             _ = blockChains.TryAdd(voice, new MeasureBlockChain(this, voice, keyGenerator, guid));
         }
 
@@ -74,7 +74,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool TryReadPrevious([NotNullWhen(true)] out InstrumentMeasure? previous)
         {
             previous = null;
-            if (scoreMeasure.TryReadPrevious(out ScoreMeasure? previousScoreMeasure))
+            if (scoreMeasure.TryReadPrevious(out var previousScoreMeasure))
             {
                 previous = previousScoreMeasure.GetMeasureCore(RibbonIndex);
                 return true;
@@ -84,7 +84,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool TryReadNext([NotNullWhen(true)] out InstrumentMeasure? next)
         {
             next = null;
-            if (scoreMeasure.TryReadNext(out ScoreMeasure? nextScoreMeasure))
+            if (scoreMeasure.TryReadNext(out var nextScoreMeasure))
             {
                 next = nextScoreMeasure.GetMeasureCore(RibbonIndex);
                 return true;
@@ -110,9 +110,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(InstrumentMeasureMemento memento)
         {
             Clear();
-            foreach (RibbonMeasureVoiceMemento voiceGroup in memento.VoiceGroups)
+            foreach (var voiceGroup in memento.VoiceGroups)
             {
-                MeasureBlockChain blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
+                var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
                 blockChain.ApplyMemento(voiceGroup);
             }
         }

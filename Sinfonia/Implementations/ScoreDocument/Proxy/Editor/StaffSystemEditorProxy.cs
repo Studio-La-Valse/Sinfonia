@@ -39,12 +39,12 @@
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            foreach (IScoreMeasureEditor measure in EnumerateMeasures())
+            foreach (var measure in EnumerateMeasures())
             {
                 yield return measure;
             }
 
-            foreach (IStaffGroupEditor staffGroup in EnumerateStaffGroups())
+            foreach (var staffGroup in EnumerateStaffGroups())
             {
                 yield return staffGroup;
             }
