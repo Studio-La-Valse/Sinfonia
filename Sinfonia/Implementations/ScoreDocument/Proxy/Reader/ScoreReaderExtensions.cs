@@ -2,7 +2,7 @@
 {
     internal static class ScoreReaderExtensions
     {
-        public static ScoreDocumentReaderProxy Proxy(this ScoreDocumentCore editor)
+        public static ScoreDocumentReaderProxy ProxyReader(this ScoreDocumentCore editor)
         {
             return new ScoreDocumentReaderProxy(editor);
         }
@@ -12,17 +12,17 @@
         }
 
 
-        public static InstrumentRibbonReaderProxy Proxy(this InstrumentRibbon instrumentRibbon)
+        public static InstrumentRibbonReaderProxy ProxyReader(this InstrumentRibbon instrumentRibbon)
         {
             return new InstrumentRibbonReaderProxy(instrumentRibbon);
         }
 
-        public static ScoreMeasureReaderProxy Proxy(this ScoreMeasure measureEditor)
+        public static ScoreMeasureReaderProxy ProxyReader(this ScoreMeasure measureEditor)
         {
             return new ScoreMeasureReaderProxy(measureEditor);
         }
 
-        public static InstrumentMeasureReaderProxy Proxy(this InstrumentMeasure measureEditor)
+        public static InstrumentMeasureReaderProxy ProxyReader(this InstrumentMeasure measureEditor)
         {
             return new InstrumentMeasureReaderProxy(measureEditor);
         }
@@ -34,17 +34,17 @@
             return new MeasureBlockChainReaderProxy(measureEditor);
         }
 
-        public static MeasureBlockReaderProxy Proxy(this MeasureBlock chordGroup)
+        public static MeasureBlockReaderProxy ProxyReader(this MeasureBlock chordGroup)
         {
             return new MeasureBlockReaderProxy(chordGroup);
         }
 
-        public static ChordReaderProxy Proxy(this Chord chordEditor)
+        public static ChordReaderProxy ProxyReader(this Chord chordEditor)
         {
             return new ChordReaderProxy(chordEditor);
         }
 
-        public static NoteReaderProxy Proxy(this Note noteEditor)
+        public static NoteReaderProxy ProxyReader(this Note noteEditor)
         {
             return new NoteReaderProxy(noteEditor);
         }

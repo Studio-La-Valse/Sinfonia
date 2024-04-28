@@ -1,61 +1,31 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Layout.Extensions;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Reader.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class PageGenerator
     {
-        private readonly Dictionary<int, Page> pages = [];
         private readonly IKeyGenerator<int> keyGenerator;
         private readonly IScoreDocumentLayout scoreLayoutProvider;
-        private readonly IList<(Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups)> staffSystems = [];
+        private readonly ScoreDocumentStyleTemplate styleTemplate;
 
 
-        public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreDocumentLayout scoreLayoutProvider)
+        public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreDocumentLayout scoreLayoutProvider, ScoreDocumentStyleTemplate styleTemplate)
         {
             this.keyGenerator = keyGenerator;
             this.scoreLayoutProvider = scoreLayoutProvider;
-        }
-
-        private StaffSystem GetAppendOrThrow(int index, ScoreDocumentCore scoreDocument)
-        {
-            ArgumentOutOfRangeException.ThrowIfNegative(index, nameof(index));
-
-            if (index < staffSystems.Count)
-            {
-                (var guid, var id, var staffGroups) = staffSystems[index];
-                return new StaffSystem(scoreDocument, keyGenerator, guid, id, staffGroups);
-            }
-
-            if (index == staffSystems.Count)
-            {
-                (var guid, var id, var staffGroups) = (Guid.NewGuid(), keyGenerator.Generate(), new Dictionary<Guid, (Guid guid, int id, IList<(Guid, int)>)>());
-                staffSystems.Add((guid, id, staffGroups));
-                return new StaffSystem(scoreDocument, keyGenerator, guid, id, staffGroups);
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(index));
-        }
-
-        private Page GetOrCreate(int index, ScoreDocumentCore scoreDocument)
-        {
-            if (pages.TryGetValue(index, out var page))
-            {
-                return page;
-            }
-
-            pages[index] = new Page(index, scoreDocument, keyGenerator.Generate(), Guid.NewGuid());
-            return GetOrCreate(index, scoreDocument);
+            this.styleTemplate = styleTemplate;
         }
 
         public IEnumerable<Page> Generate(ScoreDocumentCore scoreDocument)
         {
-            var currentpage = GetOrCreate(0, scoreDocument);
+            var currentpage = new Page(0, scoreDocument, styleTemplate);
             currentpage.StaffSystems.Clear();
-            var currentSystem = GetAppendOrThrow(0, scoreDocument);
+            var currentSystem = new StaffSystem(scoreDocument, styleTemplate);
             currentpage.StaffSystems.Add(currentSystem);
 
-            var pageLayout = scoreLayoutProvider.PageLayout(currentpage.Proxy());
+            var pageLayout = currentpage.Layout;
             var pageWidth = pageLayout.PageWidth;
             var pageHeight = pageLayout.PageHeight;
             var pageMarginBottom = pageLayout.MarginBottom;
@@ -69,14 +39,14 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 currentSystem.ScoreMeasures.Add(measure);
 
-                var currentSystemLength = currentSystem.ScoreMeasures.Select(m => scoreLayoutProvider.ScoreMeasureLayout(m.Proxy()).Width).Sum();
+                var currentSystemLength = currentSystem.ScoreMeasures.Select(m => m.Layout.Width).Sum();
                 var currentAvailableWidth = pageWidth - pageLayout.MarginLeft - pageLayout.MarginRight;
                 // Need to add a new system.
                 if (currentSystemLength > currentAvailableWidth)
                 {
                     var previousSystemHeight = currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
-                    var previousSystemMarginBottom = scoreLayoutProvider.StaffSystemLayout(currentSystem.Proxy()).PaddingBottom;
-                    currentSystem = GetAppendOrThrow(systemIndex, scoreDocument);
+                    var previousSystemMarginBottom = currentSystem.Layout.PaddingBottom;
+                    currentSystem = new StaffSystem(scoreDocument, styleTemplate);
                     currentSystemCanvasTop += previousSystemHeight + previousSystemMarginBottom;
 
                     var currentSystemCanvasBottom = currentSystemCanvasTop + currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
@@ -85,9 +55,9 @@ namespace Sinfonia.Implementations.ScoreDocument
                     if (currentSystemCanvasBottom > currentLowestAllowedPoint)
                     {
                         yield return currentpage;
-                        currentpage = GetOrCreate(pageIndex, scoreDocument);
+                        currentpage = new Page(pageIndex, scoreDocument, styleTemplate);
                         currentpage.StaffSystems.Clear();
-                        pageLayout = scoreLayoutProvider.PageLayout(currentpage.Proxy());
+                        pageLayout = currentpage.Layout;
                         pageWidth = pageLayout.PageWidth;
                         pageHeight = pageLayout.PageHeight;
                         pageMarginBottom = pageLayout.MarginBottom;

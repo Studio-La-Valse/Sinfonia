@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.ViewModels.Application.Document
 {

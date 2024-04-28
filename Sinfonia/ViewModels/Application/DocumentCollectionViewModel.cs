@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.ViewModels.Application
+﻿using Sinfonia.ViewModels.Base;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Sinfonia.ViewModels.Application
 {
     public class DocumentCollectionViewModel : BaseViewModel
     {
@@ -14,6 +17,18 @@
             Documents = [];
             SetActiveCommand = commandFactory.Create<DocumentViewModel>(SetActive, (d) => true);
             CloseCommand = commandFactory.Create<DocumentViewModel>(Close, (d) => true);
+        }
+
+        public DocumentViewModel ActiveDocumentOrThrow()
+        {
+            return Documents.First(d => d.IsActive);    
+        }
+
+        public bool TryGetActiveDocument([NotNullWhen(true)] out DocumentViewModel? activeDocument)
+        {
+            activeDocument = Documents.FirstOrDefault(d => d.IsActive);
+
+            return activeDocument != null;
         }
 
         public void Add(DocumentViewModel document)

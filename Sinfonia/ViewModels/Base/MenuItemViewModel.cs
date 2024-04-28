@@ -1,4 +1,4 @@
-﻿namespace Sinfonia.ViewModels
+﻿namespace Sinfonia.ViewModels.Base
 {
     public class MenuItemViewModel : BaseViewModel
     {

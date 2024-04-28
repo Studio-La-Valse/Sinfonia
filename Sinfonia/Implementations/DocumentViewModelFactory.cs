@@ -1,4 +1,9 @@
-﻿using Sinfonia.ViewModels.Application.Document.StyleTemplate;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Sinfonia.Implementations.ScoreDocument;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using CommandManager = StudioLaValse.CommandManager.CommandManager;
@@ -6,96 +11,143 @@ using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
 
 namespace Sinfonia.Implementations
 {
-    internal class DocumentViewModelFactory : IDocumentViewModelFactory
+    public class DocumentViewModelFactory : IDocumentViewModelFactory
     {
         private readonly ICommandFactory commandFactory;
         private readonly IKeyGeneratorFactory<int> keyGeneratorFactory;
-        private readonly IScoreBuilderFactory scoreBuilderFactory;
         private readonly IBrowseToFile browseToFile;
         private readonly ISaveFile saveFile;
         private readonly IYamlConverter yamlConverter;
 
-        public DocumentViewModelFactory(ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IScoreBuilderFactory scoreBuilderFactory, IBrowseToFile browseToFile, ISaveFile saveFile, IYamlConverter yamlConverter)
+        public DocumentViewModelFactory(ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IBrowseToFile browseToFile, ISaveFile saveFile, IYamlConverter yamlConverter)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
-            this.scoreBuilderFactory = scoreBuilderFactory;
             this.browseToFile = browseToFile;
             this.saveFile = saveFile;
             this.yamlConverter = yamlConverter;
         }
 
-        public DocumentViewModel Create()
+        public DocumentViewModel Create(ScoreDocumentMemento scoreDocument)
         {
-            var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
+            var hostBuilder = Host.CreateDefaultBuilder().ConfigureServices(services =>
+            {
+                services
+                    .AddSingleton(commandFactory)
+                    .AddSingleton(browseToFile)
+                    .AddSingleton(saveFile)
+                    .AddSingleton(yamlConverter)
+                    .AddSingleton(keyGeneratorFactory.CreateKeyGenerator())
+                    .AddSingleton(CommandManager.CreateGreedy())
+                    .AddScoreDocument(scoreDocument)
+                    .AddSelection()
+                    .AddScene()
+                    .AddViewModels();
+            });
 
-            var commandManager = CommandManager.CreateGreedy();
-            var keyGenerator = keyGeneratorFactory.CreateKeyGenerator();
+            var host = hostBuilder.Build();
+            host.Start();
 
-            var style = new ScoreDocumentStyleTemplate();
-            (var scoreBuilder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
-
-            ScoreElementViewModel scoreDocumentViewModel = new(reader);
-            scoreDocumentViewModel.Rebuild();
-
-            ExplorerViewModel explorerViewModel = new(reader, scoreDocumentViewModel, commandFactory);
-            // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
-            _ = notifyEntityChanged.Subscribe(explorerViewModel);
-
-            InspectorViewModel inspectorViewModel = new(scoreBuilder, layout);
-            // todo: UNSUBSCRIBE WHEN DOCUMENT CLOSES
-            _ = notifyEntityChanged.Subscribe(inspectorViewModel);
-
-            var selectionManager = SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
-                .AddChangedHandler(inspectorViewModel.Update, e => e.Id)
-                .OnChangedNotify(notifyEntityChanged, e => e.Id);
-
-            ObservableBoundingBox selectionBorder = new();
-
-            VisualNoteFactory noteFactory = new(selectionManager, layout);
-            VisualRestFactory restFactory = new(selectionManager);
-            VisualNoteGroupFactory noteGroupFactory = new(noteFactory, restFactory, layout);
-            VisualStaffGroupMeasureFactory staffMeasusureFactory = new(selectionManager, noteGroupFactory, layout);
-            VisualSystemMeasureFactory systemMeasureFactory = new(selectionManager, staffMeasusureFactory, layout);
-            VisualStaffSystemFactory staffSystemFactory = new(systemMeasureFactory, selectionManager, layout);
-            PageViewSceneFactory sceneFactory = new(staffSystemFactory, 20, 30, layout);
-            VisualScoreDocumentScene scene = new(sceneFactory, reader);
-            var sceneManager = new SceneManager<IUniqueScoreElement, int>(scene, e => e.Id).WithBackground(ColorARGB.Transparant);
-
-            CanvasViewModel canvasViewModel = new(notifyEntityChanged, reader, selectionManager, sceneManager, selectionBorder, style);
-
-            ScoreDocumentViewModel scoreViewModel = new(canvasViewModel);
-            PageViewModel pageViewModel = new(canvasViewModel);
-            StaffSystemViewModel staffSystemViewModel = new(canvasViewModel);
-            StaffGroupViewModel staffGroupViewModel = new(canvasViewModel);
-            StaffViewModel staffViewModel = new(canvasViewModel);
-            ScoreMeasureViewModel scoreMeasureViewModel = new(canvasViewModel);
-            InstrumentRibbonViewModel instrumentRibbonViewModel = new(canvasViewModel);
-            InstrumentMeasureViewModel instrumentMeasureViewModel = new(canvasViewModel);
-            MeasureBlockViewModel measureBlockViewModel = new(canvasViewModel);
-            ChordViewModel chordViewModel = new(canvasViewModel);
-            NoteViewModel noteViewModel = new(canvasViewModel);
-            DocumentStyleEditorViewModel styleEditorViewModel = new(
-                canvasViewModel,
-                scoreViewModel,
-                pageViewModel,
-                staffSystemViewModel,
-                staffGroupViewModel,
-                staffViewModel,
-                scoreMeasureViewModel,
-                instrumentRibbonViewModel,
-                instrumentMeasureViewModel,
-                measureBlockViewModel,
-                chordViewModel,
-                noteViewModel,
-                commandFactory,
-                yamlConverter,
-                browseToFile,
-                saveFile);
-            styleEditorViewModel.Rebuild();
-
-            DocumentViewModel documentViewModel = new(canvasViewModel, explorerViewModel, inspectorViewModel, styleEditorViewModel, selectionManager, scoreBuilder, reader, layout, keyGenerator);
+            var documentViewModel = host.Services.GetRequiredService<DocumentViewModel>();
             return documentViewModel;
+        }
+    }
+
+    file static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddSelection(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton(services =>
+                {
+                    var inspectorViewModel = services.GetRequiredService<InspectorViewModel>();
+                    var notifyEntityChanged = services.GetRequiredService<INotifyEntityChanged<IUniqueScoreElement>>();
+                    return SelectionManager<IUniqueScoreElement>.CreateDefault(e => e.Id)
+                        .AddChangedHandler(inspectorViewModel.Update, e => e.Id)
+                        .OnChangedNotify(notifyEntityChanged, e => e.Id);
+                })
+                .AddSingleton<ISelection<IUniqueScoreElement>>(services =>
+                {
+                    return services.GetRequiredService<ISelectionManager<IUniqueScoreElement>>();
+                });
+            
+        }
+
+        public static IServiceCollection AddScoreDocument(this IServiceCollection services, ScoreDocumentMemento scoreDocumentMemento)
+        {
+            return services
+                .AddSingleton<ScoreDocumentStyleTemplate>()
+                .AddSingleton<InstrumentMeasureFactory>()
+                .AddSingleton<ScoreContentTable>()
+                .AddSingleton<ScoreLayoutDictionary>()
+                .AddSingleton<IScoreDocumentLayout>(services =>
+                {
+                    return services.GetRequiredService<ScoreLayoutDictionary>();
+                })
+                .AddSingleton<PageGenerator>()
+                .AddSingleton(services =>
+                {
+                    var contentTable = services.GetRequiredService<ScoreContentTable>();
+                    var pageGenerator = services.GetRequiredService<PageGenerator>();
+                    var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
+                    var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
+
+                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, keyGenerator, scoreDocumentMemento.Guid);
+                    scoreDocument.ApplyMemento(scoreDocumentMemento);
+
+                    return scoreDocument;
+                })
+                .AddSingleton<IScoreBuilder, ScoreBuilder>()
+                .AddSingleton<IScoreDocumentReader, ScoreDocumentReaderProxy>()
+                .AddTransient<IScoreDocumentEditor, ScoreDocumentEditorProxy>();
+        }
+
+        public static IServiceCollection AddViewModels(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<ScoreDocumentTreeViewViewModel>()
+                .AddSingleton<ScoreElementViewModel>()
+                .AddSingleton<ExplorerViewModel>()
+                .AddSingleton<InspectorViewModel>()
+                .AddSingleton<CanvasViewModel>()
+                .AddSingleton<ScoreDocumentViewModel>()
+                .AddSingleton<PageViewModel>()
+                .AddSingleton<StaffSystemViewModel>()
+                .AddSingleton<StaffGroupViewModel>()
+                .AddSingleton<StaffViewModel>()
+                .AddSingleton<ScoreMeasureViewModel>()
+                .AddSingleton<InstrumentRibbonViewModel>()
+                .AddSingleton<InstrumentMeasureViewModel>()
+                .AddSingleton<MeasureBlockViewModel>()
+                .AddSingleton<ChordViewModel>()
+                .AddSingleton<NoteViewModel>()
+                .AddSingleton<DocumentStyleEditorViewModel>()
+                .AddSingleton<DocumentViewModel>();
+        }
+
+        public static IServiceCollection AddScene(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<ObservableBoundingBox>()
+                .AddSingleton<IVisualNoteFactory, VisualNoteFactory>()
+                .AddSingleton<IVisualRestFactory, VisualRestFactory>()
+                .AddSingleton<IVisualNoteGroupFactory, VisualNoteGroupFactory>()
+                .AddSingleton<IVisualInstrumentMeasureFactory, VisualInstrumentMeasureFactory>()
+                .AddSingleton<IVisualSystemMeasureFactory, VisualSystemMeasureFactory>()
+                .AddSingleton<IVisualStaffSystemFactory, VisualStaffSystemFactory>()
+                .AddSingleton<IVisualScoreDocumentContentFactory, PageViewSceneFactory>(services =>
+                {
+                    var staffSystemContentFactory = services.GetRequiredService<IVisualStaffSystemFactory>();
+                    var layout = services.GetRequiredService<IScoreDocumentLayout>();
+                    return new PageViewSceneFactory(staffSystemContentFactory, 20, 50, layout);
+                })
+                .AddSingleton<VisualScoreDocumentScene>()
+                .AddSingleton(services =>
+                {
+                    var scene = services.GetRequiredService<VisualScoreDocumentScene>();
+                    return new SceneManager<IUniqueScoreElement, int>(scene, e => e.Id).WithBackground(ColorARGB.Transparant);
+                })
+                .AddSingleton(SceneManager<IUniqueScoreElement, int>.CreateObservable());
         }
     }
 }

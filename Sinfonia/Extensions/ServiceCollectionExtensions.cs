@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Sinfonia.EntityFramework;
 using Sinfonia.Implementations;
-using Sinfonia.Implementations.ScoreDocument;
+using Sinfonia.Implementations.Addin;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Views;
@@ -15,8 +17,17 @@ namespace Sinfonia.Extensions
         {
             return services.AddSingleton<IShellMethods, ShellMethods>()
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
-                .AddSingleton<IScoreBuilderFactory, EmptyScoreBuilderFactory>()
                 .AddTransient<IYamlConverter, YamlConverter>();
+        }
+
+        public static IServiceCollection AddDbContext(this IServiceCollection services)
+        {
+            return services
+                .AddDbContext<ScoreDocumentContext>(options =>
+                {
+                    options.UseSqlite("DataSource=file::memory:?cache=shared");
+                })
+                .AddScoped<IScoreDocumentRepository, ScoreDocumentRepository>();
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
@@ -27,6 +38,7 @@ namespace Sinfonia.Extensions
                 .AddSingleton<FileMenuViewModel>()
                 .AddSingleton<MenuViewModel>()
                 .AddSingleton<DocumentCollectionViewModel>()
+                .AddSingleton<DocumentMenuViewModel>()
                 .AddSingleton<MainViewModel>();
         }
 

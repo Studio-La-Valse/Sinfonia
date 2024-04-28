@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -8,21 +10,23 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public TimeSignature TimeSignature { get; }
         public KeySignature KeySignature { get; set; }
+        public ScoreMeasureLayout Layout { get; }
 
 
         public int IndexInScore =>
-            score.contentTable.IndexOf(this);
+            score.IndexOf(this);
         public bool IsLastInScore =>
             IndexInScore == score.NumberOfMeasures - 1;
 
 
-
-        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, KeySignature keySignature, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreMeasureStyleTemplate styleTemplate, KeySignature keySignature, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
 
             TimeSignature = timeSignature;
             KeySignature = keySignature;
+
+            Layout = new ScoreMeasureLayout(styleTemplate, this);
         }
 
 
@@ -38,12 +42,12 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public IEnumerable<InstrumentMeasure> EnumerateMeasuresCore()
         {
-            var measures = score.contentTable.GetInstrumentMeasuresInScoreMeasure(IndexInScore);
+            var measures = score.EnumerateScoreMeasuresCore(this);
             return measures;
         }
         public InstrumentMeasure GetMeasureCore(int ribbonIndex)
         {
-            return score.contentTable.GetInstrumentMeasure(IndexInScore, ribbonIndex);
+            return score.GetMeasureCore(IndexInScore, ribbonIndex);
         }
         public bool TryReadPrevious([NotNullWhen(true)] out ScoreMeasure? previous)
         {
@@ -55,7 +59,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             try
             {
-                previous = score.contentTable.ScoreMeasureAt(IndexInScore - 1);
+                previous = score.GetScoreMeasureCore(IndexInScore - 1);
             }
             catch
             {
@@ -74,7 +78,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             try
             {
-                next = score.contentTable.ScoreMeasureAt(IndexInScore + 1);
+                next = score.GetScoreMeasureCore(IndexInScore + 1);
             }
             catch { }
 
@@ -88,7 +92,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 Measures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
                 TimeSignature = TimeSignature,
-                Guid = Guid
+                Guid = Guid,
+                IndexInScore = IndexInScore,
             };
         }
         public void ApplyMemento(ScoreMeasureMemento memento)

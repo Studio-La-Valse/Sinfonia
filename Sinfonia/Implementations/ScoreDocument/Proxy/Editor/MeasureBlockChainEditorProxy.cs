@@ -5,7 +5,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
     internal class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor, IUniqueScoreElement
     {
         private readonly MeasureBlockChain source;
-        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
@@ -18,10 +17,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public int Id => source.Id;
 
 
-        public MeasureBlockChainEditorProxy(MeasureBlockChain source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public MeasureBlockChainEditorProxy(MeasureBlockChain source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
-            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
@@ -74,7 +72,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IEnumerable<IMeasureBlockEditor> ReadBlocks()
         {
-            return source.GetBlocksCore().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+            return source.GetBlocksCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()

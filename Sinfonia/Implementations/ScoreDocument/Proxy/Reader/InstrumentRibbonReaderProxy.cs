@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class InstrumentRibbonReaderProxy : IInstrumentRibbonReader
     {
@@ -27,17 +30,26 @@
 
         public IInstrumentMeasureReader ReadMeasure(int measureIndex)
         {
-            return source.GetMeasureCore(measureIndex).Proxy();
+            return source.GetMeasureCore(measureIndex).ProxyReader();
         }
 
         public IEnumerable<IInstrumentMeasureReader> ReadMeasures()
         {
-            return source.EnumerateMeasuresCore().Select(e => e.Proxy());
+            return source.EnumerateMeasuresCore().Select(e => e.ProxyReader());
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadMeasures();
+        }
+        public override string ToString()
+        {
+            return $"Instrument Ribbon : [{Guid}]";
+        }
+
+        public IInstrumentRibbonLayout ReadLayout()
+        {
+            return source.Layout;
         }
     }
 }

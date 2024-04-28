@@ -1,21 +1,44 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Primitives;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class StaffSystem : ScoreElement
+    internal class StaffSystem 
     {
         private readonly ScoreDocumentCore scoreDocument;
-        private readonly IKeyGenerator<int> keyGenerator;
-        private readonly Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups;
+        private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
 
         public IList<ScoreMeasure> ScoreMeasures { get; } = [];
-
-        public ScoreDocumentCore HostScoreDocument => scoreDocument;
-
-        public StaffSystem(ScoreDocumentCore scoreDocument, IKeyGenerator<int> keyGenerator, Guid guid, int id, Dictionary<Guid, (Guid guid, int id, IList<(Guid guid, int id)> staves)> staffGroups) : base(id, guid)
+        public StaffSystemLayout Layout
         {
+            get
+            {
+                double? paddingBottom = null;
+                foreach(var measure in ScoreMeasures)
+                {
+                    var measurePaddingBottom = measure.Layout.PaddingBottom;
+                    if(measurePaddingBottom.HasValue)
+                    {
+                        if (paddingBottom.HasValue)
+                        {
+                            paddingBottom = Math.Max(paddingBottom.Value, measurePaddingBottom.Value);
+                        }
+                        else
+                        {
+                            paddingBottom = measurePaddingBottom.Value;
+                        }
+                    }
+                }
+                return new StaffSystemLayout(documentStyleTemplate.StaffSystemStyleTemplate, paddingBottom);
+            }
+        }
 
+
+        public StaffSystem(ScoreDocumentCore scoreDocument, ScoreDocumentStyleTemplate documentStyleTemplate)
+        {
             this.scoreDocument = scoreDocument;
-            this.keyGenerator = keyGenerator;
-            this.staffGroups = staffGroups;
+            this.documentStyleTemplate = documentStyleTemplate;
         }
 
 
@@ -26,18 +49,7 @@
 
         public IEnumerable<StaffGroup> EnumerateStaffGroups()
         {
-            foreach (var instrumentRibbon in scoreDocument.EnumerateRibbonsCore())
-            {
-                if (staffGroups.TryGetValue(instrumentRibbon.Guid, out var groupGenerator))
-                {
-                    yield return new StaffGroup(instrumentRibbon, ScoreMeasures, keyGenerator, groupGenerator.guid, groupGenerator.id, groupGenerator.staves);
-                    continue;
-                }
-
-                (var newGuid, var newId, var newStaves) = (Guid.NewGuid(), keyGenerator.Generate(), new List<(Guid, int)>());
-                staffGroups[instrumentRibbon.Guid] = (newGuid, newId, newStaves);
-                yield return new StaffGroup(instrumentRibbon, ScoreMeasures, keyGenerator, newGuid, newId, newStaves);
-            }
+            return scoreDocument.EnumerateRibbonsCore().Select(r => new StaffGroup(r, documentStyleTemplate, ScoreMeasures));
         }
     }
 }

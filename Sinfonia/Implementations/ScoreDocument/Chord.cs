@@ -1,4 +1,6 @@
-﻿using StudioLaValse.ScoreDocument.Core.Primitives.Extensions;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Primitives.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -6,11 +8,13 @@ namespace Sinfonia.Implementations.ScoreDocument
     {
         private readonly List<Note> measureElements;
         private readonly MeasureBlock hostBlock;
+        private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
         private readonly Dictionary<int, BeamType> beamTypes = [];
 
 
         public RythmicDuration RythmicDuration { get; }
+        public ChordLayout Layout { get; }
 
 
         public Tuplet Tuplet =>
@@ -41,15 +45,16 @@ namespace Sinfonia.Implementations.ScoreDocument
             hostBlock.RibbonMeasure;
 
 
-
-        public Chord(MeasureBlock hostBlock, RythmicDuration displayDuration, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public Chord(MeasureBlock hostBlock, RythmicDuration displayDuration, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.hostBlock = hostBlock;
             this.keyGenerator = keyGenerator;
-
-            RythmicDuration = displayDuration;
+            this.documentStyleTemplate = documentStyleTemplate;
 
             measureElements = [];
+
+            RythmicDuration = displayDuration;
+            Layout = new ChordLayout(documentStyleTemplate.ChordStyleTemplate);
         }
 
 
@@ -69,7 +74,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     continue;
                 }
 
-                Note noteInMeasure = new(pitch, this, keyGenerator, Guid.NewGuid());
+                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, Guid.NewGuid());
                 measureElements.Add(noteInMeasure);
             }
         }
@@ -104,7 +109,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             foreach (var noteMemento in memento.Notes)
             {
                 var pitch = noteMemento.Pitch;
-                Note noteInMeasure = new(pitch, this, keyGenerator, noteMemento.Guid);
+                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, noteMemento.Guid);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);
             }

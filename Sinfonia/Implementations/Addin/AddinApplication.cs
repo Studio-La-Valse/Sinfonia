@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 
 
-namespace Sinfonia.Implementations
+namespace Sinfonia.Implementations.Addin
 {
     internal class AddinApplication : IApplication
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Syncfusion.SfSkinManager;
+using Sinfonia.EntityFramework;
 using System.Windows;
 
 namespace Sinfonia
@@ -12,10 +12,12 @@ namespace Sinfonia
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            SfSkinManager.ApplyStylesOnApplication = true;
-
             var host = CreateHostBuilder(e.Args).Build();
             host.Start();
+
+            using var dbContextScope = host.Services.CreateScope();
+            var dbContext = host.Services.GetRequiredService<ScoreDocumentContext>();
+            dbContext.Database.EnsureCreated();
 
             var mainWindow = host.Services.GetRequiredService<MainWindow>();
             _ = mainWindow.ShowDialog();
@@ -28,6 +30,7 @@ namespace Sinfonia
                 {
                     _ = services
                         .AddModels()
+                        .AddDbContext()
                         .AddViewModels()
                         .AddViews()
                         .RegisterExternalAddins();

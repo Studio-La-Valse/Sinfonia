@@ -25,5 +25,10 @@
                 }
             }
         }
+
+        public static T Chain<T>(this T value, Func<T, T> func)
+        {
+            return func(value);
+        }
     }
 }

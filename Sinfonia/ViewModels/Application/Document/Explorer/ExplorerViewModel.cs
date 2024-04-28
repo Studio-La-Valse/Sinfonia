@@ -1,8 +1,10 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Explorer
+﻿using Sinfonia.ViewModels.Application.Document.StyleTemplate;
+using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Document.Explorer
 {
     public class ExplorerViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {
-        private readonly IScoreDocumentReader scoreDocument;
         private readonly Queue<IUniqueScoreElement> queue = [];
 
         public ScoreElementViewModel ScoreDocument
@@ -17,9 +19,8 @@
             set => SetValue(() => RebuildCommand, value);
         }
 
-        public ExplorerViewModel(IScoreDocumentReader scoreDocument, ScoreElementViewModel scoreDocumentViewModel, ICommandFactory commandFactory)
+        public ExplorerViewModel(ScoreDocumentTreeViewViewModel scoreDocumentViewModel, ICommandFactory commandFactory)
         {
-            this.scoreDocument = scoreDocument;
             ScoreDocument = scoreDocumentViewModel;
             RebuildCommand = commandFactory.Create(Rebuild, () => true);
         }
@@ -50,6 +51,14 @@
         public void OnNext(IUniqueScoreElement value)
         {
             queue.Enqueue(value);
+        }
+    }
+
+    public class ScoreDocumentTreeViewViewModel : ScoreElementViewModel
+    {
+        public ScoreDocumentTreeViewViewModel(IScoreDocumentReader scoreDocumentReader) : base(scoreDocumentReader)
+        {
+             
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Sinfonia.Implementations
+﻿namespace Sinfonia.Implementations.Addin
 {
     internal class AddinDocumentUI : IDocumentUI
     {

@@ -1,12 +1,16 @@
-﻿using Sinfonia.Implementations.Commands;
+﻿using Sinfonia.Extensions;
+using Sinfonia.Implementations.Commands;
+using Sinfonia.Implementations.ScoreDocument.Layout;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using StudioLaValse.ScoreDocument.Core;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
-internal class ScoreMeasureEditorProxy(ScoreMeasure source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreMeasureEditor, IUniqueScoreElement
+internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreMeasureEditor, IUniqueScoreElement
 {
     private readonly ScoreMeasure source = source;
-    private readonly ScoreLayoutDictionary scoreLayoutDictionary = scoreLayoutDictionary;
     private readonly ICommandManager commandManager = commandManager;
     private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
@@ -35,25 +39,25 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ScoreLayoutDictionar
     public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureEditor? next)
     {
         _ = source.TryReadNext(out var _next);
-        next = _next?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
+        next = _next?.ProxyEditor(commandManager, notifyEntityChanged);
         return next != null;
     }
 
     public bool TryReadPrevious([NotNullWhen(true)] out IScoreMeasureEditor? previous)
     {
         _ = source.TryReadPrevious(out var _previous);
-        previous = _previous?.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
+        previous = _previous?.ProxyEditor(commandManager, notifyEntityChanged);
         return previous != null;
     }
 
     public IInstrumentMeasureEditor ReadMeasure(int ribbonIndex)
     {
-        return source.GetMeasureCore(ribbonIndex).ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
+        return source.GetMeasureCore(ribbonIndex).ProxyEditor(commandManager, notifyEntityChanged);
     }
 
     public IEnumerable<IInstrumentMeasureEditor> ReadMeasures()
     {
-        return source.EnumerateMeasuresCore().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        return source.EnumerateMeasuresCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
     }
 
     public IEnumerable<IScoreElement> EnumerateChildren()
@@ -61,18 +65,15 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ScoreLayoutDictionar
         return ReadMeasures();
     }
 
-    public ScoreMeasureLayout ReadLayout()
+    public IScoreMeasureLayout ReadLayout()
     {
-        return scoreLayoutDictionary.ScoreMeasureLayout(this);
-    }
-
-    public void Apply(ScoreMeasureLayout layout)
-    {
-        scoreLayoutDictionary.Apply(this, layout);
+        return source.Layout;
     }
 
     public void RemoveLayout()
     {
-        scoreLayoutDictionary.Restore(this);
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new RestoreLayoutCommand<ScoreMeasureLayout, ScoreMeasureLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+        transaction.Enqueue(command);
     }
 }

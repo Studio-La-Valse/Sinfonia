@@ -1,12 +1,19 @@
-﻿
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+
 namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class Note : ScoreElement, IMementoElement<NoteMemento>
     {
         private readonly Chord container;
 
-        public InstrumentMeasure HostMeasure => container.HostMeasure;
+
         public Pitch Pitch { get; set; }
+        public NoteLayout Layout { get; }
+
+
+        public InstrumentMeasure HostMeasure => 
+            container.HostMeasure;
         public bool Grace =>
             container.Grace;
         public Position Position =>
@@ -17,12 +24,12 @@ namespace Sinfonia.Implementations.ScoreDocument
             container.Tuplet;
 
 
-
-        internal Note(Pitch pitch, Chord container, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal Note(Pitch pitch, Chord container, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.container = container;
 
             Pitch = pitch;
+            Layout = new(documentStyleTemplate.NoteStyleTemplate, Grace);
         }
 
 
@@ -34,12 +41,18 @@ namespace Sinfonia.Implementations.ScoreDocument
             return new NoteMemento
             {
                 Pitch = Pitch,
-                Guid = Guid
+                Guid = Guid,
+                Layout = Layout.Copy()
             };
         }
         public void ApplyMemento(NoteMemento memento)
         {
             Pitch = memento.Pitch;
+
+            if(memento.Layout is not null)
+            {
+                Layout.Apply(memento.Layout);
+            }
         }
     }
 }

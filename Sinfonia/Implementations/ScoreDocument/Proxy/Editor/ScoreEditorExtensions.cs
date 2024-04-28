@@ -2,54 +2,50 @@
 {
     internal static class ScoreEditorExtensions
     {
-        public static ScoreDocumentEditorProxy ProxyEditor(this ScoreDocumentCore editor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static PageEditorProxy ProxyEditor(this Page page, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new ScoreDocumentEditorProxy(editor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
-        }
-        public static PageEditorProxy ProxyEditor(this Page page, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
-        {
-            return new PageEditorProxy(page, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new PageEditorProxy(page, commandManager, notifyEntityChanged);
         }
 
 
 
-        public static InstrumentRibbonEditorProxy ProxyEditor(this InstrumentRibbon instrumentRibbon, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static InstrumentRibbonEditorProxy ProxyEditor(this InstrumentRibbon instrumentRibbon, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new InstrumentRibbonEditorProxy(instrumentRibbon, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new InstrumentRibbonEditorProxy(instrumentRibbon, commandManager, notifyEntityChanged);
         }
 
-        public static ScoreMeasureEditorProxy ProxyEditor(this ScoreMeasure measureEditor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static ScoreMeasureEditorProxy ProxyEditor(this ScoreMeasure measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new ScoreMeasureEditorProxy(measureEditor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new ScoreMeasureEditorProxy(measureEditor, commandManager, notifyEntityChanged);
         }
 
-        public static InstrumentMeasureEditorProxy ProxyEditor(this InstrumentMeasure measureEditor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static InstrumentMeasureEditorProxy ProxyEditor(this InstrumentMeasure measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new InstrumentMeasureEditorProxy(measureEditor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new InstrumentMeasureEditorProxy(measureEditor, commandManager, notifyEntityChanged);
         }
 
 
 
 
 
-        public static MeasureBlockChainEditorProxy ProxyEditor(this MeasureBlockChain measureEditor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static MeasureBlockChainEditorProxy ProxyEditor(this MeasureBlockChain measureEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new MeasureBlockChainEditorProxy(measureEditor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new MeasureBlockChainEditorProxy(measureEditor, commandManager, notifyEntityChanged);
         }
 
-        public static MeasureBlockEditorProxy ProxyEditor(this MeasureBlock chordGroup, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static MeasureBlockEditorProxy ProxyEditor(this MeasureBlock chordGroup, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new MeasureBlockEditorProxy(chordGroup, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new MeasureBlockEditorProxy(chordGroup, commandManager, notifyEntityChanged);
         }
 
-        public static ChordEditorProxy ProxyEditor(this Chord chordEditor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static ChordEditorProxy ProxyEditor(this Chord chordEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new ChordEditorProxy(chordEditor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new ChordEditorProxy(chordEditor, commandManager, notifyEntityChanged);
         }
 
-        public static NoteEditorProxy ProxyEditor(this Note noteEditor, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static NoteEditorProxy ProxyEditor(this Note noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new NoteEditorProxy(noteEditor, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new NoteEditorProxy(noteEditor, commandManager, notifyEntityChanged);
         }
 
 
@@ -57,19 +53,19 @@
 
 
 
-        public static StaffSystemEditorProxy ProxyEditor(this StaffSystem staff, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static StaffSystemEditorProxy ProxyEditor(this StaffSystem staff, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new StaffSystemEditorProxy(staff, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new StaffSystemEditorProxy(staff, commandManager, notifyEntityChanged);
         }
 
-        public static StaffGroupEditorProxy ProxyEditor(this StaffGroup staff, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static StaffGroupEditorProxy ProxyEditor(this StaffGroup staff, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
-            return new StaffGroupEditorProxy(staff, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new StaffGroupEditorProxy(staff, commandManager, notifyEntityChanged);
         }
 
-        public static StaffEditorProxy ProxyEditor(this Staff staff, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public static StaffEditorProxy ProxyEditor(this Staff staff)
         {
-            return new StaffEditorProxy(staff, scoreLayoutDictionary, commandManager, notifyEntityChanged);
+            return new StaffEditorProxy(staff);
         }
     }
 }

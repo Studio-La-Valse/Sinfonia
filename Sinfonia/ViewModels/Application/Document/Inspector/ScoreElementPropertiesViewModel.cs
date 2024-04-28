@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor, TLayout> : PropertyCollectionViewModel
             where TEntity : IScoreEntity, IUniqueScoreElement

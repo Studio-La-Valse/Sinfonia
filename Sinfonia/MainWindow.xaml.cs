@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Sinfonia.ViewModels.Application;
+using System.Windows;
 
 namespace Sinfonia
 {

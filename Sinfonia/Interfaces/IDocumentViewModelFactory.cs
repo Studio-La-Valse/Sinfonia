@@ -2,6 +2,6 @@
 {
     public interface IDocumentViewModelFactory
     {
-        DocumentViewModel Create();
+        DocumentViewModel Create(ScoreDocumentMemento scoreDocument);
     }
 }

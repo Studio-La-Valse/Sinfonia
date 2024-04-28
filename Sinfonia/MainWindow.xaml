@@ -13,11 +13,12 @@
         MinHeight="400"
         MinWidth="600"
         Title="Sinfonia"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
-        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
-        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=MaterialDark}">
+        Style="{StaticResource CustomWindowStyle}">
 
     <Window.Resources>
+
+        <DropShadowBitmapEffect x:Key="NormalShadow" ShadowDepth="2" Softness="0.2" Opacity="0.64"/>
+
         <Style x:Key="HiddenGridStyle" TargetType="Grid">
             <Setter Property="Visibility" Value="Collapsed"/>
             <Style.Triggers>
@@ -39,34 +40,41 @@
         <datatemplateselectors:PropertyTemplateSelector x:Key="PropertyTemplateSelector"/>
 
         <DataTemplate x:Key="DefaultTemplate">
-            <Grid Height="15">
+            <Grid Height="25">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" 
                                       SharedSizeGroup="Key" />
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Description}" 
                            FontWeight="Bold"/>
-                <TextBox Grid.Column="1" 
+                <GridSplitter Grid.Column="1"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"/>
+                <TextBox Grid.Column="2" 
                          Text="{Binding Value}"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DoubleTemplate">
-            <Grid Height="15">
+            <Grid Height="25">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" 
                                       SharedSizeGroup="Key" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Description}" 
-                           FontWeight="Bold"/>
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
                 <TextBox Grid.Column="1" 
-                         Text="{Binding Value}"/>
+                         Text="{Binding Value}"
+                         VerticalAlignment="Stretch"
+                         VerticalContentAlignment="Center"/>
             </Grid>
         </DataTemplate>
 
-        <valueconverters:ColorHexToStringConverter x:Key="ColorConverter"/>
+        <valueconverters:ColorValueConverter x:Key="ColorConverter"/>
         
         <DataTemplate x:Key="ColorTemplate">
             <Grid Height="25">
@@ -77,9 +85,8 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Description}" 
                            FontWeight="Bold"/>
-                <syncfusion:ColorPicker Grid.Column="1"
-                                        Color="{Binding Value, Converter={StaticResource ColorConverter}, Mode=TwoWay}"
-                                        EnableSolidToGradientSwitch="false"/>
+                <xctk:ColorPicker SelectedColor="{Binding Value, Converter={StaticResource ColorConverter}}"
+                                  Grid.Column="1"/>
             </Grid>
         </DataTemplate>
         
@@ -125,10 +132,10 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button Grid.Column="0"
-            IsEnabled="{Binding CanActivate}"
-            CommandParameter="{Binding}"
-            Command="{Binding ElementName=DocumentCollection, Path=DataContext.SetActiveCommand}"
-            Content="{Binding Header}">
+                                        IsEnabled="{Binding CanActivate}"
+                                        CommandParameter="{Binding}"
+                                        Command="{Binding ElementName=DocumentCollection, Path=DataContext.SetActiveCommand}"
+                                        Content="{Binding Header}">
                                 </Button>
                                 <Button Grid.Column="1"
             CommandParameter="{Binding}"
@@ -168,16 +175,14 @@
                                     <GroupBox Header="Canvas" Grid.Column="0" Margin="3">
                                         <!--canvas-->
                                         <usercontrols:CanvasUserControl DataContext="{Binding CanvasViewModel}" 
-                    SceneManager="{Binding Scene, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    SelectionBorder="{Binding SelectionBorder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    EnablePan="{Binding EnablePan, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    Pipe="{Binding Pipe, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    Invalidator="{Binding Invalidator, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                                                        SceneManager="{Binding Scene, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                        SelectionBorder="{Binding SelectionBorder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                        EnablePan="{Binding EnablePan, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                        Pipe="{Binding Pipe, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                        Invalidator="{Binding Invalidator, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                                     </GroupBox>
 
-                                    <GridSplitter Grid.Column="1"
-HorizontalAlignment="Stretch"
-VerticalAlignment="Stretch"/>
+                                    <GridSplitter Grid.Column="1"/>
 
                                     <Grid Grid.Column="2">
                                         <Grid.RowDefinitions>
@@ -190,39 +195,32 @@ VerticalAlignment="Stretch"/>
 
                                         <!--navigator-->
                                         <GroupBox Header="Navigator" DataContext="{Binding Explorer}" Margin="3">
-                                            <StackPanel>
-                                                <Button Command="{Binding RebuildCommand}"
-    Content="Rebuild"/>
-                                                <TreeView DataContext="{Binding ScoreDocument}"
-        ItemsSource="{Binding ScoreElements}">
+                                            <DockPanel>
+                                                <Button Command="{Binding RebuildCommand}" Content="Rebuild" DockPanel.Dock="Top"/>
+                                                <TreeView DataContext="{Binding ScoreDocument}" ItemsSource="{Binding ScoreElements}">
                                                     <TreeView.ItemTemplate>
                                                         <HierarchicalDataTemplate ItemsSource="{Binding ScoreElements}">
                                                             <TextBlock Text="{Binding Name}"/>
                                                         </HierarchicalDataTemplate>
                                                     </TreeView.ItemTemplate>
                                                 </TreeView>
-                                            </StackPanel>
+                                            </DockPanel>
+                                            
                                         </GroupBox>
 
-                                        <GridSplitter Grid.Row="1"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"/>
+                                        <GridSplitter Grid.Row="1"/>
 
                                         <!--template editor-->
                                         <GroupBox Header="Template Editor" Grid.Row="2" Margin="3"
-DataContext="{Binding DocumentStyleEditorViewModel}">
+                                                  DataContext="{Binding DocumentStyleEditorViewModel}">
                                             <StackPanel>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition/>
                                                         <ColumnDefinition/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Button Command="{Binding LoadYamlCommand}"
-        Content="Load Yaml"
-        Grid.Column="0"/>
-                                                    <Button Command="{Binding SaveYamlCommand}"
-        Content="Save Yaml"
-        Grid.Column="1"/>
+                                                    <Button Command="{Binding LoadYamlCommand}" Content="Load Yaml" Grid.Column="0"/>
+                                                    <Button Command="{Binding SaveYamlCommand}"  Content="Save Yaml" Grid.Column="1"/>
                                                 </Grid>
                                                 <ItemsControl ItemsSource="{Binding Templates}">
                                                     <ItemsControl.ItemsPanel>
@@ -232,14 +230,13 @@ DataContext="{Binding DocumentStyleEditorViewModel}">
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Expander Header="{Binding Header}"
-                    DataContext="{Binding}">
-                                                                <ListBox ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}"
-                        ItemTemplateSelector="{StaticResource PropertyTemplateSelector}"
-                        Grid.IsSharedSizeScope="True"
-                        HorizontalContentAlignment="Stretch"
-                        Height="auto"
-                        Padding="10">
+                                                            <Expander Header="{Binding Header}" DataContext="{Binding}">
+                                                                <ListBox ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}" 
+                                                                         ItemTemplateSelector="{StaticResource PropertyTemplateSelector}"
+                                                                         Grid.IsSharedSizeScope="True"
+                                                                         HorizontalContentAlignment="Stretch"
+                                                                         Height="auto"
+                                                                         Padding="10">
                                                                 </ListBox>
                                                             </Expander>
                                                         </DataTemplate>
@@ -248,9 +245,7 @@ DataContext="{Binding DocumentStyleEditorViewModel}">
                                             </StackPanel>
                                         </GroupBox>
 
-                                        <GridSplitter Grid.Row="3"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"/>
+                                        <GridSplitter Grid.Row="3"/>
 
                                         <!--Inspector-->
                                         <GroupBox Header="Inspector" Grid.Row="4" Margin="3"

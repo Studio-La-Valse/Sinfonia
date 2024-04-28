@@ -1,23 +1,27 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class MeasureBlockChain : ScoreElement, IMementoElement<RibbonMeasureVoiceMemento>
     {
         private readonly List<MeasureBlock> blocks;
+        private readonly ScoreDocumentStyleTemplate scoreDocumentStyle;
         private readonly IKeyGenerator<int> keyGenerator;
 
         public InstrumentMeasure RibbonMeasure { get; }
         public int Voice { get; }
         public TimeSignature TimeSignature => RibbonMeasure.TimeSignature;
+        
 
 
-
-        public MeasureBlockChain(InstrumentMeasure ribbonMeasure, int voice, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public MeasureBlockChain(InstrumentMeasure ribbonMeasure, ScoreDocumentStyleTemplate scoreDocumentStyle, int voice, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.keyGenerator = keyGenerator;
 
             blocks = [];
 
             RibbonMeasure = ribbonMeasure;
+            this.scoreDocumentStyle = scoreDocumentStyle;
             Voice = voice;
         }
 
@@ -74,10 +78,14 @@
                 }
             }
 
-            MeasureBlock newBlock = new(duration, this, grace, keyGenerator, Guid.NewGuid());
+            MeasureBlock newBlock = new(duration, this, scoreDocumentStyle, grace, keyGenerator, Guid.NewGuid());
             blocks.Insert(0, newBlock);
         }
         public void Append(RythmicDuration duration, bool grace)
+        {
+            Append(duration, grace, Guid.NewGuid());
+        }
+        public void Append(RythmicDuration duration, bool grace, Guid guid)
         {
             if (!grace)
             {
@@ -88,7 +96,7 @@
                 }
             }
 
-            MeasureBlock newBlock = new(duration, this, grace, keyGenerator, Guid.NewGuid());
+            MeasureBlock newBlock = new(duration, this, scoreDocumentStyle, grace, keyGenerator, guid);
             blocks.Add(newBlock);
         }
         public void Insert(Position position, RythmicDuration duration, bool grace)
@@ -107,7 +115,7 @@
                 var block = blocks[i];
                 if (block.Position == position)
                 {
-                    MeasureBlock newBlock = new(duration, this, grace, keyGenerator, Guid.NewGuid());
+                    MeasureBlock newBlock = new(duration, this, scoreDocumentStyle, grace, keyGenerator, Guid.NewGuid());
                     blocks.Insert(i, newBlock);
                     return;
                 }
@@ -142,20 +150,8 @@
             Clear();
             foreach (var block in memento.MeasureBlocks)
             {
-                var duration = block.Duration;
-
-                if (!block.Grace)
-                {
-                    var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
-                    if (newLength > RibbonMeasure.TimeSignature)
-                    {
-                        throw new Exception("New measure block cannot fit in this measure.");
-                    }
-                }
-
-                MeasureBlock newBlock = new(duration, this, block.Grace, keyGenerator, block.Guid);
-                blocks.Add(newBlock);
-
+                Append(block.Duration, block.Grace, block.Guid);
+                var newBlock = blocks.Last();
                 newBlock.ApplyMemento(block);
             }
         }

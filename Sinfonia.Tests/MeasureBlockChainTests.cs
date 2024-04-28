@@ -37,7 +37,7 @@ namespace Sinfonia.Tests
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create();
 
             var score = builder
                 .Edit(editor =>
@@ -74,7 +74,7 @@ namespace Sinfonia.Tests
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create();
 
             var score = builder
                 .Edit(editor =>
@@ -108,7 +108,7 @@ namespace Sinfonia.Tests
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
             ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            (var builder, var reader, var layout) = scoreBuilderFactory.Create();
 
             var score = builder
                 .Edit(editor =>

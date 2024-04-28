@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -7,6 +9,7 @@ namespace Sinfonia.Implementations.ScoreDocument
     {
         private readonly List<Chord> chords;
         private readonly MeasureBlockChain host;
+        private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
 
         public Position Position
@@ -46,16 +49,18 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public bool Grace { get; }
         public RythmicDuration RythmicDuration { get; }
+        public MeasureBlockLayout Layout { get; }
 
-
-        public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, ScoreDocumentStyleTemplate documentStyleTemplate, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.host = host;
-            Grace = grace;
+            this.documentStyleTemplate = documentStyleTemplate;
             this.keyGenerator = keyGenerator;
-            RythmicDuration = duration;
-
             chords = [];
+
+            Grace = grace;
+            RythmicDuration = duration;
+            Layout = new MeasureBlockLayout(documentStyleTemplate.MeasureBlockStyleTemplate);
         }
 
 
@@ -106,7 +111,12 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void AppendChord(RythmicDuration rythmicDuration)
         {
-            Chord chord = new(this, rythmicDuration, keyGenerator, Guid.NewGuid());
+            var guid = Guid.NewGuid();
+            AppendChord(rythmicDuration, guid);
+        }
+        public void AppendChord(RythmicDuration rythmicDuration, Guid guid)
+        {
+            Chord chord = new(this, rythmicDuration, documentStyleTemplate, keyGenerator, guid);
             chords.Add(chord);
             Rebeam();
         }
@@ -247,9 +257,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             Clear();
             foreach (var chordMemento in memento.Chords)
             {
-                Chord chord = new(this, chordMemento.RythmicDuration, keyGenerator, chordMemento.Guid);
-                chords.Add(chord);
-
+                AppendChord(chordMemento.RythmicDuration, chordMemento.Guid);
+                var chord = chords.Last();
                 chord.ApplyMemento(chordMemento);
             }
         }

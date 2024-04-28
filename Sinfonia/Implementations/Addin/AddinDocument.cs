@@ -1,5 +1,4 @@
-﻿
-namespace Sinfonia.Implementations
+﻿namespace Sinfonia.Implementations.Addin
 {
     internal class AddinDocument : IDocument
     {

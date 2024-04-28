@@ -1,9 +1,13 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
     {
-        internal readonly ScoreContentTable contentTable;
+        private readonly ScoreContentTable contentTable;
         private readonly PageGenerator pageGenerator;
+        private readonly ScoreDocumentStyleTemplate styleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
 
 
@@ -13,13 +17,17 @@
             contentTable.Height;
 
 
+        public ScoreDocumentLayout Layout { get; }
 
 
-        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, ScoreDocumentStyleTemplate styleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.contentTable = contentTable;
             this.pageGenerator = pageGenerator;
+            this.styleTemplate = styleTemplate;
             this.keyGenerator = keyGenerator;
+
+            Layout = new ScoreDocumentLayout(styleTemplate);
         }
 
 
@@ -33,6 +41,15 @@
         public void RemoveInstrumentRibbon(int indexInScore)
         {
             contentTable.RemoveInstrumentRibbon(indexInScore);
+        }
+
+        public int IndexOf(ScoreMeasure scoreMeasure)
+        {
+            return contentTable.IndexOf(scoreMeasure);
+        }
+        public int IndexOf(InstrumentRibbon instrumentRibbon)
+        {
+            return contentTable.IndexOf(instrumentRibbon);
         }
 
 
@@ -89,6 +106,18 @@
         {
             return contentTable.ColumnHeaders;
         }
+        public IEnumerable<InstrumentMeasure> EnumerateScoreMeasuresCore(ScoreMeasure scoreMeasure)
+        {
+            return contentTable.GetInstrumentMeasuresInScoreMeasure(scoreMeasure.IndexInScore);
+        }
+        public IEnumerable<InstrumentMeasure> EnumerateScoreMeasuresCore(InstrumentRibbon instrumentRibbon)
+        {
+            return contentTable.GetInstrumentMeasuresInInstrumentRibbon(instrumentRibbon.IndexInScore);
+        }
+        public InstrumentMeasure GetMeasureCore(int scoreMeasureIndex, int ribbonIndex)
+        {
+            return contentTable.GetInstrumentMeasure(scoreMeasureIndex, ribbonIndex);
+        }
         public IEnumerable<InstrumentRibbon> EnumerateRibbonsCore()
         {
             return contentTable.RowHeaders;
@@ -110,6 +139,8 @@
         {
             return new ScoreDocumentMemento
             {
+                Guid = Guid,
+                Layout = Layout.GetMemento(),
                 InstrumentRibbons = EnumerateRibbonsCore().Select(e => e.GetMemento()).ToList(),
                 ScoreMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList()
             };
@@ -120,10 +151,8 @@
 
             foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
-                InstrumentRibbon instrumentRibbon = new(this, instrumentMemento.Instrument, keyGenerator, instrumentMemento.Guid);
+                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, keyGenerator, instrumentMemento.Guid);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
-
-                instrumentRibbon.ApplyMemento(instrumentMemento);
             }
 
             foreach (var scoreMeasureMemento in memento.ScoreMeasures)
@@ -133,6 +162,8 @@
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);
             }
+
+            Layout.ApplyMemento(memento.Layout);
         }
 
         public IEnumerable<Page> GeneratePages()

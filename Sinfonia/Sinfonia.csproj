@@ -15,17 +15,15 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
     <PackageReference Include="StudioLaValse.DependencyInjection.Microsoft" Version="1.0.0" />
     <PackageReference Include="StudioLaValse.Drawable" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Drawable.WPF" Version="2.0.4" />
-    <PackageReference Include="StudioLaValse.Geometry" Version="1.0.0" />
     <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.1.39" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="25.1.39" />
-    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="25.1.39" />
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="YamlDotNet" Version="15.1.2" />
   </ItemGroup>
@@ -36,8 +34,10 @@
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Layout\StudioLaValse.ScoreDocument.Layout.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Reader\StudioLaValse.ScoreDocument.Reader.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
+    <ProjectReference Include="..\Sinfonia.EntityFramework\Sinfonia.EntityFramework.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using Sinfonia.ViewModels.Application.Document.StyleTemplate;
+using Sinfonia.ViewModels.Base;
 
 namespace Sinfonia.ViewModels.Application.Document
 {
@@ -33,7 +34,7 @@ namespace Sinfonia.ViewModels.Application.Document
         public InspectorViewModel Inspector { get; }
         public DocumentStyleEditorViewModel DocumentStyleEditorViewModel { get; }
 
-        internal DocumentViewModel(CanvasViewModel canvasViewModel, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel, DocumentStyleEditorViewModel documentStyleEditorViewModel, ISelection<IUniqueScoreElement> selection, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreDocumentLayout pageViewLayout, IKeyGenerator<int> keyGenerator)
+        public DocumentViewModel(CanvasViewModel canvasViewModel, ExplorerViewModel explorerViewModel, InspectorViewModel inspectorViewModel, DocumentStyleEditorViewModel documentStyleEditorViewModel, ISelection<IUniqueScoreElement> selection, IScoreBuilder scoreDocumentEditor, IScoreDocumentReader scoreDocumentReader, IScoreDocumentLayout pageViewLayout, IKeyGenerator<int> keyGenerator)
         {
             Selection = selection;
             CanvasViewModel = canvasViewModel;

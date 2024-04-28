@@ -1,12 +1,15 @@
-﻿using Sinfonia.Implementations.Commands;
+﻿using Sinfonia.Extensions;
+using Sinfonia.Implementations.Commands;
+using Sinfonia.Implementations.ScoreDocument.Layout;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
-    internal class MeasureBlockEditorProxy(MeasureBlock source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlockEditor, IUniqueScoreElement
+    internal class MeasureBlockEditorProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlockEditor, IUniqueScoreElement
     {
         private readonly MeasureBlock source = source;
-        private readonly ScoreLayoutDictionary scoreLayoutDictionary = scoreLayoutDictionary;
         private readonly ICommandManager commandManager = commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
@@ -52,7 +55,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             right = null;
             if (source.TryReadNext(out var _right))
             {
-                right = _right.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
+                right = _right.ProxyEditor(commandManager, notifyEntityChanged);
             }
             return right is not null;
         }
@@ -62,14 +65,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             previous = null;
             if (source.TryReadNext(out var _prev))
             {
-                previous = _prev.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged);
+                previous = _prev.ProxyEditor(commandManager, notifyEntityChanged);
             }
             return previous is not null;
         }
 
         public IEnumerable<IChordEditor> ReadChords()
         {
-            return source.GetChordsCore().Select(e => e.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+            return source.GetChordsCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
@@ -77,19 +80,16 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return ReadChords();
         }
 
-        public MeasureBlockLayout ReadLayout()
+        public IMeasureBlockLayout ReadLayout()
         {
-            return scoreLayoutDictionary.MeasureBlockLayout(this);
-        }
-
-        public void Apply(MeasureBlockLayout layout)
-        {
-            scoreLayoutDictionary.Apply(this, layout);
+            return source.Layout;
         }
 
         public void RemoveLayout()
         {
-            scoreLayoutDictionary.Restore(this);
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new RestoreLayoutCommand<MeasureBlockLayout, MeasureBlockLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
         }
     }
 }

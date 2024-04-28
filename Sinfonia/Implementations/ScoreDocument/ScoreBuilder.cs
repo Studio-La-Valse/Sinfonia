@@ -34,7 +34,6 @@
                 {
                     action(child);
                 }
-
             }
             pendingEdits.Enqueue(_action);
             return this;
@@ -54,6 +53,5 @@
 
             return this;
         }
-
     }
 }

@@ -1,12 +1,15 @@
 ﻿
 using Sinfonia.Implementations.Commands;
+using Sinfonia.Implementations.ScoreDocument.Layout;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using StudioLaValse.ScoreDocument.Core;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
     internal class ChordEditorProxy : IChordEditor, IUniqueScoreElement
     {
         private readonly Chord source;
-        private readonly ScoreLayoutDictionary scoreLayoutDictionary;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
@@ -26,10 +29,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public int Id => source.Id;
 
 
-        public ChordEditorProxy(Chord source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ChordEditorProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
-            this.scoreLayoutDictionary = scoreLayoutDictionary;
             this.commandManager = commandManager;
             this.notifyEntityChanged = notifyEntityChanged;
         }
@@ -59,7 +61,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IEnumerable<INoteEditor> ReadNotes()
         {
-            return source.EnumerateNotesCore().Select(n => n.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+            return source.EnumerateNotesCore().Select(n => n.ProxyEditor(commandManager, notifyEntityChanged));
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
@@ -67,19 +69,16 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
             return ReadNotes();
         }
 
-        public ChordLayout ReadLayout()
-        {
-            return scoreLayoutDictionary.ChordLayout(this);
-        }
-
-        public void Apply(ChordLayout layout)
-        {
-            scoreLayoutDictionary.Apply(this, layout);
-        }
-
         public void RemoveLayout()
         {
-            scoreLayoutDictionary.Restore(this);
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new RestoreLayoutCommand<ChordLayout, ChordLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
+        }
+
+        public IChordLayout ReadLayout()
+        {
+            return source.Layout;
         }
     }
 }

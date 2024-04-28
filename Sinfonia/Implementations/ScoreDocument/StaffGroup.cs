@@ -1,49 +1,58 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class StaffGroup : ScoreElement
+    internal class StaffGroup
     {
+        private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IList<ScoreMeasure> scoreMeasures;
-        private readonly IKeyGenerator<int> keyGenerator;
-        private readonly IList<(Guid guid, int id)> staves = [];
 
 
         public InstrumentRibbon InstrumentRibbon { get; }
-        public Instrument Instrument => InstrumentRibbon.Instrument;
-        public int IndexInSystem => InstrumentRibbon.IndexInScore;
-        public ScoreDocumentCore HostScoreDocument => InstrumentRibbon.HostScoreDocument;
-
-        public StaffGroup(InstrumentRibbon instrumentRibbon, IList<ScoreMeasure> scoreMeasures, IKeyGenerator<int> keyGenerator, Guid guid, int id, IList<(Guid guid, int id)> staves) : base(id, guid)
+        public StaffGroupLayout Layout
         {
-            this.scoreMeasures = scoreMeasures;
-            this.keyGenerator = keyGenerator;
-            this.staves = staves;
+            get
+            {
+                var numberOfStaves = EnumerateMeasures().Max(m => m.Layout.NumberOfStaves);
+                var distanceToNext = EnumerateMeasures().Max(m => m.Layout.PaddingBottom);
+                var collapsed = EnumerateMeasures().Any(m => m.Layout.Collapsed);
 
+                var layout = new StaffGroupLayout(documentStyleTemplate.StaffGroupStyleTemplate, Instrument, numberOfStaves, distanceToNext, collapsed);
+                return layout;
+            }
+        }
+
+
+        public Instrument Instrument => 
+            InstrumentRibbon.Instrument;
+        public int IndexInSystem => 
+            InstrumentRibbon.IndexInScore;
+        public ScoreDocumentCore HostScoreDocument => 
+            InstrumentRibbon.HostScoreDocument;
+
+
+        public StaffGroup(InstrumentRibbon instrumentRibbon, ScoreDocumentStyleTemplate documentStyleTemplate, IList<ScoreMeasure> scoreMeasures)
+        {
             InstrumentRibbon = instrumentRibbon;
+
+            this.scoreMeasures = scoreMeasures;
+            this.documentStyleTemplate = documentStyleTemplate;
         }
 
 
         public IEnumerable<Staff> EnumerateStaves()
         {
-            for (var i = 0; i < staves.Count; i++)
-            {
-                yield return new Staff(i, HostScoreDocument, staves[i].id, staves[i].guid);
-            }
+            var numberOfStaves = Layout.NumberOfStaves;
+
+            return EnumerateStaves(numberOfStaves);
         }
 
         public IEnumerable<Staff> EnumerateStaves(int numberOfStaves)
         {
-            for (var i = 0; i < numberOfStaves; i++)
+            for (var staffIndex = 0; staffIndex < numberOfStaves; staffIndex++)
             {
-                if (staves.Count > i)
-                {
-                    (var guid, var id) = staves[i];
-                    yield return new Staff(i, HostScoreDocument, id, guid);
-                    continue;
-                }
-
-                (var newGuid, var newId) = (Guid.NewGuid(), keyGenerator.Generate());
-                staves.Add((newGuid, newId));
-                yield return new Staff(i, HostScoreDocument, newId, newGuid);
+                yield return new Staff(staffIndex, documentStyleTemplate.StaffStyleTemplate, EnumerateMeasures());
             }
         }
 

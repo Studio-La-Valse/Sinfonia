@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public class InspectorViewModel : BaseViewModel, IObserver<IUniqueScoreElement>
     {
@@ -12,7 +14,7 @@
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        internal InspectorViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutDictionary)
+        public InspectorViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutDictionary)
         {
             this.scoreBuilder = scoreBuilder;
             this.scoreLayoutDictionary = scoreLayoutDictionary;

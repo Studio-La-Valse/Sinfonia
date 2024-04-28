@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -7,6 +9,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly Dictionary<int, MeasureBlockChain> blockChains;
         private readonly ScoreMeasure scoreMeasure;
         private readonly InstrumentRibbon hostRibbon;
+        private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
 
 
@@ -23,14 +26,19 @@ namespace Sinfonia.Implementations.ScoreDocument
             scoreMeasure.KeySignature;
 
 
+        public InstrumentMeasureLayout Layout { get; }
 
-        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+
+        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.scoreMeasure = scoreMeasure;
             this.hostRibbon = hostRibbon;
+            this.documentStyleTemplate = documentStyleTemplate;
             this.keyGenerator = keyGenerator;
 
             blockChains = [];
+
+            Layout = new InstrumentMeasureLayout(this);
         }
 
 
@@ -102,9 +110,8 @@ namespace Sinfonia.Implementations.ScoreDocument
                 Guid = Guid.NewGuid(),
                 MeasureIndex = MeasureIndex,
                 RibbonIndex = RibbonIndex,
-                VoiceGroups = blockChains.Values
-                    .Select(v => v.GetMemento())
-                    .ToList()
+                VoiceGroups = blockChains.Values.Select(v => v.GetMemento()).ToList(),
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(InstrumentMeasureMemento memento)
@@ -112,9 +119,11 @@ namespace Sinfonia.Implementations.ScoreDocument
             Clear();
             foreach (var voiceGroup in memento.VoiceGroups)
             {
+                AddVoice(voiceGroup.Voice);
                 var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
                 blockChain.ApplyMemento(voiceGroup);
             }
+            Layout.ApplyMemento(memento.Layout);
         }
     }
 }

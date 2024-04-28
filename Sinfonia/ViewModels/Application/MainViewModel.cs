@@ -1,7 +1,7 @@
-﻿using Sinfonia.ViewModels.Application;
-using Sinfonia.ViewModels.Application.Menu;
+﻿using Sinfonia.ViewModels.Application.Menu;
+using Sinfonia.ViewModels.Base;
 
-namespace Sinfonia.ViewModels
+namespace Sinfonia.ViewModels.Application
 {
     public class MainViewModel : BaseViewModel
     {

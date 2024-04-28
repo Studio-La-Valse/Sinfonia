@@ -1,9 +1,13 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+﻿using Sinfonia.Implementations.Commands;
+using Sinfonia.Implementations.ScoreDocument.Layout;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 
-internal class NoteEditorProxy(Note source, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : INoteEditor, IUniqueScoreElement
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+
+internal class NoteEditorProxy(Note source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : INoteEditor, IUniqueScoreElement
 {
     private readonly Note source = source;
-    private readonly ScoreLayoutDictionary scoreLayoutDictionary = scoreLayoutDictionary;
     private readonly ICommandManager commandManager = commandManager;
     private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
@@ -30,18 +34,20 @@ internal class NoteEditorProxy(Note source, ScoreLayoutDictionary scoreLayoutDic
         yield break;
     }
 
-    public void Apply(NoteLayout layout)
+    public INoteLayout ReadLayout()
     {
-        scoreLayoutDictionary.Apply(this, layout);
-    }
-
-    public NoteLayout ReadLayout()
-    {
-        return scoreLayoutDictionary.NoteLayout(this);
+        return source.Layout;
     }
 
     public void RemoveLayout()
     {
-        scoreLayoutDictionary.Restore(this);
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new RestoreLayoutCommand<NoteLayout, NoteLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+        transaction.Enqueue(command);
+    }
+
+    public void SetStaffIndex(int staffIndex)
+    {
+        source.Layout.StaffIndex = staffIndex;
     }
 }

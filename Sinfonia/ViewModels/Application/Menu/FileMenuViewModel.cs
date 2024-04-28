@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Application.Menu
+﻿using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Menu
 {
     public class FileMenuViewModel : MenuItemViewModel
     {

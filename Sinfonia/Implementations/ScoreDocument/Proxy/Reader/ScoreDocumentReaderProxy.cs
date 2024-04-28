@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class ScoreDocumentReaderProxy : IScoreDocumentReader
     {
@@ -24,17 +26,17 @@
 
         public IEnumerable<IScoreMeasureReader> ReadScoreMeasures()
         {
-            return source.EnumerateMeasuresCore().Select(e => e.Proxy());
+            return source.EnumerateMeasuresCore().Select(e => e.ProxyReader());
         }
 
         public IEnumerable<IInstrumentRibbonReader> ReadInstrumentRibbons()
         {
-            return source.EnumerateRibbonsCore().Select(e => e.Proxy());
+            return source.EnumerateRibbonsCore().Select(e => e.ProxyReader());
         }
 
         public IInstrumentRibbonReader ReadInstrumentRibbon(int indexInScore)
         {
-            return source.GetInstrumentRibbonCore(indexInScore).Proxy();
+            return source.GetInstrumentRibbonCore(indexInScore).ProxyReader();
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
@@ -57,12 +59,18 @@
 
         public IScoreMeasureReader ReadScoreMeasure(int indexInScore)
         {
-            return source.GetScoreMeasureCore(indexInScore).Proxy();
+            return source.GetScoreMeasureCore(indexInScore).ProxyReader();
         }
 
         public IEnumerable<IPageReader> GeneratePages()
         {
             return source.GeneratePages().Select(e => e.Proxy());
+        }
+
+
+        public override string ToString()
+        {
+            return $"Score Document : [{Guid}]";
         }
     }
 }

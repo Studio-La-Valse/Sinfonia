@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Explorer
+﻿using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Document.Explorer
 {
     public class ScoreElementViewModel : BaseViewModel
     {

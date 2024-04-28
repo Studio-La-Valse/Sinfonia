@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Sinfonia.ViewModels.Base;
+using System.IO;
 using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
@@ -72,9 +73,12 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             this.yamlConverter = yamlConverter;
             this.browseToFile = browseToFile;
             this.saveFile = saveFile;
+
             Templates = [];
             SaveYamlCommand = commandFactory.Create(SaveYaml);
             LoadYamlCommand = commandFactory.Create(LoadYaml);
+
+            Rebuild();
         }
 
         public void Rebuild()

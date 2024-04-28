@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class NoteReaderProxy : INoteReader
     {
@@ -34,6 +37,17 @@
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             yield break;
+        }
+
+
+        public override string ToString()
+        {
+            return $"Note : [{Guid}]";
+        }
+
+        public INoteLayout ReadLayout()
+        {
+            return source.Layout;
         }
     }
 }

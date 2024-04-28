@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class ChordReaderProxy : IChordReader
     {
@@ -33,7 +35,7 @@
 
         public IEnumerable<INoteReader> ReadNotes()
         {
-            return source.EnumerateNotesCore().Select(e => e.Proxy());
+            return source.EnumerateNotesCore().Select(e => e.ProxyReader());
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
@@ -49,6 +51,16 @@
         public BeamType? ReadBeamType(PowerOfTwo i)
         {
             return source.GetBeamType(i);
+        }
+
+        public override string ToString()
+        {
+            return $"Chord : [{Guid}]";
+        }
+
+        public IChordLayout ReadLayout()
+        {
+            return source.Layout;
         }
     }
 }

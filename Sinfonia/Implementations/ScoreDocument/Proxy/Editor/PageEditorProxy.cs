@@ -1,50 +1,31 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
-internal class PageEditorProxy : IPageEditor, IUniqueScoreElement
+internal class PageEditorProxy : IPageEditor
 {
     private readonly Page page;
-    private readonly ScoreLayoutDictionary scoreLayoutDictionary;
     private readonly ICommandManager commandManager;
     private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
-    public int Id => page.Id;
 
-    public ScoreDocumentCore HostScoreDocument => page.HostScoreDocument;
+    public int IndexInScore => page.IndexInScore;
 
-    public PageEditorProxy(Page page, ScoreLayoutDictionary scoreLayoutDictionary, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+
+
+    public PageEditorProxy(Page page, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
     {
         this.page = page;
-        this.scoreLayoutDictionary = scoreLayoutDictionary;
         this.commandManager = commandManager;
         this.notifyEntityChanged = notifyEntityChanged;
     }
 
-    public Guid Guid => page.Guid;
 
-    public int IndexInScore => page.IndexInScore;
-
-    public void Apply(PageLayout layout)
+    public IPageLayout ReadLayout()
     {
-        scoreLayoutDictionary.Apply(this, layout);
-    }
-
-    public IEnumerable<IScoreElement> EnumerateChildren()
-    {
-        return EnumerateStaffSystems();
-    }
-
-    public PageLayout ReadLayout()
-    {
-        return scoreLayoutDictionary.PageLayout(this);
-    }
-
-    public void RemoveLayout()
-    {
-        scoreLayoutDictionary.Restore(this);
+        return page.Layout;
     }
 
     public IEnumerable<IStaffSystemEditor> EnumerateStaffSystems()
     {
-        return page.StaffSystems.Where(s => s.ScoreMeasures.Count > 0).Select(s => s.ProxyEditor(scoreLayoutDictionary, commandManager, notifyEntityChanged));
+        return page.StaffSystems.Where(s => s.ScoreMeasures.Count > 0).Select(s => s.ProxyEditor(commandManager, notifyEntityChanged));
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class MeasureBlockChainReaderProxy : IMeasureBlockChainReader
     {
@@ -23,12 +26,17 @@
 
         public IEnumerable<IMeasureBlockReader> ReadBlocks()
         {
-            return source.GetBlocksCore().Select(e => e.Proxy());
+            return source.GetBlocksCore().Select(e => e.ProxyReader());
         }
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadBlocks();
+        }
+
+        public override string ToString()
+        {
+            return $"Measure Block Chain : [{Guid}]";
         }
     }
 }

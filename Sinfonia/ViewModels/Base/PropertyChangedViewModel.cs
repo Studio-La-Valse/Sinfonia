@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 
 
-namespace Sinfonia.ViewModels
+namespace Sinfonia.ViewModels.Base
 {
     /// <summary>
     /// An abstract class meant to be overriden by all viewmodels. Exposes the <see cref="GetValue{T}(Expression{Func{T}})"/> and <see cref="SetValue{T}(Expression{Func{T}}, T)"/> methods to simplify the property changed notifications.

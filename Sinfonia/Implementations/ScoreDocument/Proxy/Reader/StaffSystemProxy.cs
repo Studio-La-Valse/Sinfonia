@@ -1,14 +1,12 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
     internal class StaffSystemReaderProxy : IStaffSystemReader
     {
         private readonly StaffSystem staffSystem;
 
-
-
-        public int Id => staffSystem.Id;
-
-        public Guid Guid => staffSystem.Guid;
 
 
 
@@ -34,12 +32,17 @@
 
         public IEnumerable<IScoreMeasureReader> EnumerateMeasures()
         {
-            return staffSystem.EnumerateMeasures().Select(e => e.Proxy());
+            return staffSystem.EnumerateMeasures().Select(e => e.ProxyReader());
         }
 
         public IEnumerable<IStaffGroupReader> EnumerateStaffGroups()
         {
             return staffSystem.EnumerateStaffGroups().Select(e => e.Proxy());
+        }
+
+        public IStaffSystemLayout ReadLayout()
+        {
+            return staffSystem.Layout;
         }
     }
 }

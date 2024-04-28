@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Reader;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {
@@ -43,14 +45,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureReader? previous)
         {
             _ = source.TryReadPrevious(out var _previous);
-            previous = _previous?.Proxy();
+            previous = _previous?.ProxyReader();
             return previous != null;
         }
 
         public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureReader? next)
         {
             _ = source.TryReadNext(out var _next);
-            next = _next?.Proxy();
+            next = _next?.ProxyReader();
             return next != null;
         }
 
@@ -62,6 +64,16 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
             return ReadVoices().Select(ReadBlockChainAt);
+        }
+
+        public IInstrumentMeasureLayout ReadLayout()
+        {
+            return source.Layout;
+        }
+
+        public override string ToString()
+        {
+            return $"Instrument Measure : [{Guid}]";
         }
     }
 }
