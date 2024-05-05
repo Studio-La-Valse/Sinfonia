@@ -50,11 +50,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
             {
                 yield return measure;
             }
-
-            foreach (var page in GeneratePages())
-            {
-                yield return page;
-            }
         }
 
         public IScoreMeasureReader ReadScoreMeasure(int indexInScore)
@@ -71,6 +66,11 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public override string ToString()
         {
             return $"Score Document : [{Guid}]";
+        }
+
+        public IScoreDocumentLayout ReadLayout()
+        {
+            return source.Layout;
         }
     }
 }

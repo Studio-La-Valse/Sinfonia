@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Memento.Layout
+﻿using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
+
+namespace Sinfonia.Implementations.ScoreDocument.Memento.Layout
 {
     public class ScoreDocumentLayoutMemento
     {

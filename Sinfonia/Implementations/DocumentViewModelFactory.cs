@@ -3,11 +3,11 @@ using Microsoft.Extensions.Hosting;
 using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
-using CommandManager = StudioLaValse.CommandManager.CommandManager;
-using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
+using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations
 {
@@ -18,14 +18,16 @@ namespace Sinfonia.Implementations
         private readonly IBrowseToFile browseToFile;
         private readonly ISaveFile saveFile;
         private readonly IYamlConverter yamlConverter;
+        private readonly DocumentCollectionViewModel documentCollectionViewModel;
 
-        public DocumentViewModelFactory(ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IBrowseToFile browseToFile, ISaveFile saveFile, IYamlConverter yamlConverter)
+        public DocumentViewModelFactory(ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IBrowseToFile browseToFile, ISaveFile saveFile, IYamlConverter yamlConverter, DocumentCollectionViewModel documentCollectionViewModel)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
             this.browseToFile = browseToFile;
             this.saveFile = saveFile;
             this.yamlConverter = yamlConverter;
+            this.documentCollectionViewModel = documentCollectionViewModel;
         }
 
         public DocumentViewModel Create(ScoreDocumentMemento scoreDocument)
@@ -33,6 +35,7 @@ namespace Sinfonia.Implementations
             var hostBuilder = Host.CreateDefaultBuilder().ConfigureServices(services =>
             {
                 services
+                    .AddSingleton(documentCollectionViewModel)
                     .AddSingleton(commandFactory)
                     .AddSingleton(browseToFile)
                     .AddSingleton(saveFile)
@@ -45,8 +48,7 @@ namespace Sinfonia.Implementations
                     .AddViewModels();
             });
 
-            var host = hostBuilder.Build();
-            host.Start();
+            using var host = hostBuilder.Build();
 
             var documentViewModel = host.Services.GetRequiredService<DocumentViewModel>();
             return documentViewModel;
@@ -79,11 +81,6 @@ namespace Sinfonia.Implementations
                 .AddSingleton<ScoreDocumentStyleTemplate>()
                 .AddSingleton<InstrumentMeasureFactory>()
                 .AddSingleton<ScoreContentTable>()
-                .AddSingleton<ScoreLayoutDictionary>()
-                .AddSingleton<IScoreDocumentLayout>(services =>
-                {
-                    return services.GetRequiredService<ScoreLayoutDictionary>();
-                })
                 .AddSingleton<PageGenerator>()
                 .AddSingleton(services =>
                 {
@@ -97,6 +94,7 @@ namespace Sinfonia.Implementations
 
                     return scoreDocument;
                 })
+                .AddSingleton<IScoreDocumentLayout>(services => services.GetRequiredService<ScoreDocumentCore>().Layout)
                 .AddSingleton<IScoreBuilder, ScoreBuilder>()
                 .AddSingleton<IScoreDocumentReader, ScoreDocumentReaderProxy>()
                 .AddTransient<IScoreDocumentEditor, ScoreDocumentEditorProxy>();
@@ -145,7 +143,7 @@ namespace Sinfonia.Implementations
                 .AddSingleton(services =>
                 {
                     var scene = services.GetRequiredService<VisualScoreDocumentScene>();
-                    return new SceneManager<IUniqueScoreElement, int>(scene, e => e.Id).WithBackground(ColorARGB.Transparant);
+                    return new SceneManager<IUniqueScoreElement, int>(scene, e => e.Id).WithBackground(StudioLaValse.Geometry.ColorARGB.Transparant);
                 })
                 .AddSingleton(SceneManager<IUniqueScoreElement, int>.CreateObservable());
         }

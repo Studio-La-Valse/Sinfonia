@@ -1,5 +1,4 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
@@ -7,17 +6,24 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
     {
         private readonly HashSet<ClefChange> changeList = [];
         private readonly Dictionary<int, double> paddingBottomForStaves = [];
-        private readonly ValueTemplateProperty<int> numberOfStaves; 
+        private readonly ValueTemplateProperty<int> numberOfStaves;
+        private readonly InstrumentMeasure instrumentMeasure;
 
-        public IEnumerable<ClefChange> ClefChanges => changeList;
         public int? NumberOfStaves { get; set; }
         public double? PaddingBottom { get; set; }
         public bool Collapsed { get; set; }
 
 
+        public KeySignature KeySignature => 
+            instrumentMeasure.ScoreMeasure.Layout.KeySignature;
+        public IEnumerable<ClefChange> ClefChanges => 
+            changeList;
+
+
         public InstrumentMeasureLayout(InstrumentMeasure instrumentMeasure)
         {
             this.numberOfStaves = new ValueTemplateProperty<int>(() => instrumentMeasure.Instrument.NumberOfStaves);
+            this.instrumentMeasure = instrumentMeasure;
         }
 
         public void AddClefChange(ClefChange clefChange)
@@ -69,9 +75,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             };
         }
 
-        public void ApplyMemento(InstrumentMeasureLayoutMemento memento)
+        public void ApplyMemento(InstrumentMeasureLayoutMemento? memento)
         {
             Restore();
+
+            if (memento is null)
+            {
+                return;
+            }
 
             foreach (var clefChange in memento.ClefChanges)
             {

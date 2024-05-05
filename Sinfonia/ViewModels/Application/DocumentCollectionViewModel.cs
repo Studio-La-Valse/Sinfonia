@@ -5,52 +5,39 @@ namespace Sinfonia.ViewModels.Application
 {
     public class DocumentCollectionViewModel : BaseViewModel
     {
-        public ICommand SetActiveCommand { get; }
-        public ICommand CloseCommand { get; }
         public ObservableCollection<DocumentViewModel> Documents { get; }
 
 
+        public int SelectedIndex
+        {
+            get => GetValue(() =>  SelectedIndex);
+            set => SetValue(() => SelectedIndex, value);
+        }
 
 
         public DocumentCollectionViewModel(ICommandFactory commandFactory)
         {
             Documents = [];
-            SetActiveCommand = commandFactory.Create<DocumentViewModel>(SetActive, (d) => true);
-            CloseCommand = commandFactory.Create<DocumentViewModel>(Close, (d) => true);
         }
 
-        public DocumentViewModel ActiveDocumentOrThrow()
-        {
-            return Documents.First(d => d.IsActive);    
-        }
 
         public bool TryGetActiveDocument([NotNullWhen(true)] out DocumentViewModel? activeDocument)
         {
-            activeDocument = Documents.FirstOrDefault(d => d.IsActive);
+            activeDocument = Documents.ElementAtOrDefault(SelectedIndex);
 
             return activeDocument != null;
-        }
-
-        public void Add(DocumentViewModel document)
-        {
-            Documents.Add(document);
-            SetActive(document);
-        }
-
-        public void SetActive(DocumentViewModel document)
-        {
-            Documents.ForEach(d => d.SetInactive());
-            document.SetActive();
         }
 
         public void Close(DocumentViewModel documentViewModel)
         {
             _ = Documents.Remove(documentViewModel);
+        }
 
-            if (Documents.Count > 0)
-            {
-                SetActive(Documents.First());
-            }
+        public void Add(DocumentViewModel documentViewModel)
+        {
+            var newIndex = Documents.Count;
+            Documents.Add(documentViewModel);
+            SelectedIndex = newIndex;
         }
     }
 }

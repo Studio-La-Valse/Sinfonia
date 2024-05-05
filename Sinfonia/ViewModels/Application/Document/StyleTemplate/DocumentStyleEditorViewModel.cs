@@ -1,9 +1,33 @@
-﻿using Sinfonia.ViewModels.Base;
+﻿using Avalonia;
+using Avalonia.Media;
+using Sinfonia.ViewModels.Base;
 using System.IO;
+using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
 using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
+
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
 {
+    public static class ColorExtensions
+    {
+        public static Color T(this ColorARGB color)
+        {
+            return new Color((byte)color.A, (byte)color.R, (byte)color.G, (byte)color.B);
+        }
+
+        public static ColorARGB T(this Color color)
+        {
+            return new ColorARGB()
+            {
+                A = color.A,
+                R = color.R,
+                G = color.G,
+                B = color.B,
+            };
+        }
+    }
+
+
     public class DocumentStyleEditorViewModel : BaseViewModel
     {
         private readonly CanvasViewModel canvasViewModel;
@@ -132,8 +156,8 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.VerticalStaffLineThickness, v => { template.VerticalStaffLineThickness = v; canvasViewModel.Rerender(); }, "Vertical Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.StemLineThickness, v => { template.StemLineThickness = v; canvasViewModel.Rerender(); }, "Stem Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.FirstSystemIndent, v => { template.FirstSystemIndent = v; canvasViewModel.Rerender(); }, "First System Indent"));
-            Properties.Add(new PropertyViewModel<ColorARGB>(() => template.PageColor, v => { template.PageColor = v; canvasViewModel.Rerender(); }, "Page Color"));
-            Properties.Add(new PropertyViewModel<ColorARGB>(() => template.ForegroundColor, v => { template.ForegroundColor = v; canvasViewModel.Rerender(); }, "Foreground Color"));
+            Properties.Add(new PropertyViewModel<Color>(() => template.PageColor.T(), v => { template.PageColor = v.T(); canvasViewModel.Rerender(); }, "Page Color"));
+            Properties.Add(new PropertyViewModel<Color>(() => template.ForegroundColor.T(), v => { template.ForegroundColor = v.T(); canvasViewModel.Rerender(); }, "Foreground Color"));
         }
     }
 

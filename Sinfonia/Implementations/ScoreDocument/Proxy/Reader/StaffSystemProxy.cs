@@ -23,11 +23,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
             {
                 yield return scoreMeasure;
             }
-
-            foreach (var staffGroup in EnumerateStaffGroups())
-            {
-                yield return staffGroup;
-            }
         }
 
         public IEnumerable<IScoreMeasureReader> EnumerateMeasures()

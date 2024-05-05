@@ -6,20 +6,18 @@ namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class PageGenerator
     {
-        private readonly IKeyGenerator<int> keyGenerator;
-        private readonly IScoreDocumentLayout scoreLayoutProvider;
         private readonly ScoreDocumentStyleTemplate styleTemplate;
 
 
-        public PageGenerator(IKeyGenerator<int> keyGenerator, IScoreDocumentLayout scoreLayoutProvider, ScoreDocumentStyleTemplate styleTemplate)
+        public PageGenerator(ScoreDocumentStyleTemplate styleTemplate)
         {
-            this.keyGenerator = keyGenerator;
-            this.scoreLayoutProvider = scoreLayoutProvider;
             this.styleTemplate = styleTemplate;
         }
 
         public IEnumerable<Page> Generate(ScoreDocumentCore scoreDocument)
         {
+            var scoreDocumentLayout = scoreDocument.Layout;
+
             var currentpage = new Page(0, scoreDocument, styleTemplate);
             currentpage.StaffSystems.Clear();
             var currentSystem = new StaffSystem(scoreDocument, styleTemplate);
@@ -44,12 +42,12 @@ namespace Sinfonia.Implementations.ScoreDocument
                 // Need to add a new system.
                 if (currentSystemLength > currentAvailableWidth)
                 {
-                    var previousSystemHeight = currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
+                    var previousSystemHeight = currentSystem.Proxy().CalculateHeight(lineSpacing, scoreDocumentLayout);
                     var previousSystemMarginBottom = currentSystem.Layout.PaddingBottom;
                     currentSystem = new StaffSystem(scoreDocument, styleTemplate);
                     currentSystemCanvasTop += previousSystemHeight + previousSystemMarginBottom;
 
-                    var currentSystemCanvasBottom = currentSystemCanvasTop + currentSystem.Proxy().CalculateHeight(lineSpacing, scoreLayoutProvider);
+                    var currentSystemCanvasBottom = currentSystemCanvasTop + currentSystem.Proxy().CalculateHeight(lineSpacing, scoreDocumentLayout);
                     var currentLowestAllowedPoint = pageHeight - pageMarginBottom;
                     // Need to add a new page.
                     if (currentSystemCanvasBottom > currentLowestAllowedPoint)

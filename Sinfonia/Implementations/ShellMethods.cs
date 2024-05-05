@@ -1,12 +1,20 @@
-﻿using System.Windows;
+﻿using Sinfonia.Windows;
+using System.Windows;
 
 namespace Sinfonia.Implementations
 {
     internal class ShellMethods : IShellMethods
     {
+        private readonly MainWindow mainWindow;
+
+        public ShellMethods(MainWindow mainWindow)
+        {
+            this.mainWindow = mainWindow;
+        }
+
         public void Exit()
         {
-            Application.Current.Shutdown();
+            mainWindow.Close();
         }
     }
 }

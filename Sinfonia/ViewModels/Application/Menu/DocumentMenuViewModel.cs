@@ -13,12 +13,12 @@ namespace Sinfonia.ViewModels.Application.Menu
             this.documentCollectionViewModel = documentCollectionViewModel;
             this.scoreDocumentContext = scoreDocumentContext;
 
-            MenuItems.Add(new MenuItemViewModel("Upload", commandFactory.Create(Upload, () => documentCollectionViewModel.TryGetActiveDocument(out _))));
+            Items.Add(new MenuItemViewModel("Upload", commandFactory.Create(Upload, () => documentCollectionViewModel.TryGetActiveDocument(out _))));
         }
 
         public void Upload()
         {
-            var activeDocument = documentCollectionViewModel.ActiveDocumentOrThrow().ScoreDocumentReader;
+            var activeDocument = documentCollectionViewModel.Documents.ElementAt(documentCollectionViewModel.SelectedIndex).ScoreDocumentReader;
             scoreDocumentContext.Upload(activeDocument);
         }
     }

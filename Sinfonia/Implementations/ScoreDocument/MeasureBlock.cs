@@ -50,6 +50,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool Grace { get; }
         public RythmicDuration RythmicDuration { get; }
         public MeasureBlockLayout Layout { get; }
+        public InstrumentMeasure InstrumentMeasure =>
+            host.RibbonMeasure;
 
         public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, ScoreDocumentStyleTemplate documentStyleTemplate, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
@@ -249,12 +251,14 @@ namespace Sinfonia.Implementations.ScoreDocument
                 Chords = chords.Select(c => c.GetMemento()).ToList(),
                 Duration = RythmicDuration,
                 Grace = Grace,
-                Guid = Guid
+                Guid = Guid,
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(MeasureBlockMemento memento)
         {
             Clear();
+            Layout.ApplyMemento(memento.Layout);
             foreach (var chordMemento in memento.Chords)
             {
                 AppendChord(chordMemento.RythmicDuration, chordMemento.Guid);

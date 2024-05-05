@@ -22,8 +22,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public Instrument Instrument => source.Instrument;
 
-        public KeySignature KeySignature => source.KeySignature;
-
         public Guid Guid => source.Guid;
 
         public int Id => source.Id;

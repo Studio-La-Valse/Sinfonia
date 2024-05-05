@@ -2,6 +2,11 @@
 {
     internal static class ScoreEditorExtensions
     {
+        public static ScoreDocumentEditorProxy ProxyEditor(this ScoreDocumentCore score, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        {
+            return new ScoreDocumentEditorProxy(score, commandManager, notifyEntityChanged);
+        }
+
         public static PageEditorProxy ProxyEditor(this Page page, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             return new PageEditorProxy(page, commandManager, notifyEntityChanged);

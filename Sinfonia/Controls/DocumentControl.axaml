@@ -1,0 +1,88 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="using:Sinfonia.Controls"
+			 xmlns:vm="using:Sinfonia.ViewModels.Application.Document"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:vme="using:Sinfonia.ViewModels.Application.Document.Explorer"
+			 xmlns:vms="using:Sinfonia.ViewModels.Application.Document.StyleTemplate"
+			 xmlns:vmi="using:Sinfonia.ViewModels.Application.Document.Inspector"
+			 xmlns:controls="using:Sinfonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sinfonia.Controls.DocumentControl"
+			 x:DataType="vm:DocumentViewModel">
+
+	<Grid ColumnDefinitions="* 5 400">
+
+		<local:CanvasControl Grid.Column="0"
+							 x:DataType="vm:CanvasViewModel"
+							 DataContext="{Binding CanvasViewModel}"
+							 SceneManager="{Binding SceneManager}"
+							 SelectionBorder="{Binding SelectionBorder}"
+							 EnablePan="{Binding EnablePan}"
+							 Invalidator="{Binding Invalidator}"
+							 Pipe="{Binding Pipe}"/>
+
+		<GridSplitter Grid.Column="1"/>
+
+		<Grid Grid.Column="2" RowDefinitions="* 5 * 5 *">
+			<DockPanel DataContext="{Binding Explorer}" x:DataType="vme:ExplorerViewModel" Grid.Row="0">
+				<Button Command="{Binding RebuildCommand}" Content="Rebuild" DockPanel.Dock="Top"/>
+				<TreeView Grid.Row="0" DataContext="{Binding ScoreDocument}" x:DataType="vme:ScoreElementViewModel" ItemsSource="{Binding ScoreElements}">
+					<TreeView.ItemTemplate>
+						<TreeDataTemplate ItemsSource="{Binding ScoreElements}">
+							<TextBlock Text="{Binding Name}"/>
+						</TreeDataTemplate>
+					</TreeView.ItemTemplate>
+				</TreeView>
+			</DockPanel>
+
+			<GridSplitter Grid.Row="1"/>
+
+			<ScrollViewer Grid.Row="2" Margin="3" DataContext="{Binding DocumentStyleEditorViewModel}" x:DataType="vms:DocumentStyleEditorViewModel">
+				<StackPanel>
+					<Grid ColumnDefinitions="* *">
+						<Button Command="{Binding LoadYamlCommand}" Content="Load Yaml" Grid.Column="0"/>
+						<Button Command="{Binding SaveYamlCommand}" Content="Save Yaml" Grid.Column="1"/>
+					</Grid>
+					<ItemsControl ItemsSource="{Binding Templates}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel/>
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+								<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+									<controls:PropertyCollectionControl/>
+								</Expander>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</StackPanel>
+			</ScrollViewer>
+
+			<GridSplitter Grid.Row="3"/>
+
+			<ScrollViewer Grid.Row="4" Margin="3" DataContext="{Binding Inspector}" x:DataType="vmi:InspectorViewModel">
+				<ItemsControl ItemsSource="{Binding PropertiesViewModel}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+							<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+								<controls:PropertyCollectionControl/>
+							</Expander>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+		</Grid>
+
+	</Grid>
+</UserControl>

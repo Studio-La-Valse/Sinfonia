@@ -1,6 +1,4 @@
-﻿using Sinfonia.Implementations.Commands;
-
-namespace Sinfonia.Extensions;
+﻿namespace Sinfonia.Extensions;
 
 public static class MementoCommandExtensions
 {

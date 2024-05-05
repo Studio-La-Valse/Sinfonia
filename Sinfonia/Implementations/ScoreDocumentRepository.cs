@@ -1,5 +1,7 @@
 ﻿using Sinfonia.EntityFramework;
 using Sinfonia.EntityFramework.Entities;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using StudioLaValse.ScoreDocument.Reader;
 using System;
 
 namespace Sinfonia.Implementations
@@ -43,7 +45,8 @@ namespace Sinfonia.Implementations
                     Guid = instrumentMeasureModel.Id,
                     MeasureIndex = instrumentMeasureModel.ScoreMeasure.IndexInScore,
                     RibbonIndex = instrumentMeasureModel.InstrumentRibbon.IndexInScore,
-                    VoiceGroups = voices
+                    VoiceGroups = voices,
+                    Layout = null
                 };
             }
 
@@ -54,7 +57,8 @@ namespace Sinfonia.Implementations
                     Guid = measureBlockModel.Id,
                     Chords = measureBlockModel.Chords.Select(chordFromSource).ToList(),
                     Duration = new RythmicDuration(measureBlockModel.Duration, measureBlockModel.Dots),
-                    Grace = false
+                    Grace = false,
+                    Layout = null
                 };
 
                 return memento;
@@ -77,7 +81,8 @@ namespace Sinfonia.Implementations
                 var note = new NoteMemento()
                 {
                     Guid = noteModel.Id,
-                    Pitch = new Pitch(new Step(noteModel.Step, noteModel.Shifts), noteModel.Octave)
+                    Pitch = new Pitch(new Step(noteModel.Step, noteModel.Shifts), noteModel.Octave),
+                    Layout = null
                 };
 
                 return note;
@@ -126,10 +131,7 @@ namespace Sinfonia.Implementations
                 InstrumentRibbons = scoreDocumentMemento.InstrumentRibbons,
                 Guid = scoreDocumentMemento.Guid,
                 ScoreMeasures = scoreDocumentMemento.ScoreMeasures,
-                Layout = new ScoreDocumentLayoutMemento()
-                {
-                    Scale = layout.Scale
-                }
+                Layout = null
             };
 
             return scoreDocumentMemento;

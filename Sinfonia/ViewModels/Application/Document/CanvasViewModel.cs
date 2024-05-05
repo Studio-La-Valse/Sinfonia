@@ -1,5 +1,6 @@
 ﻿using Sinfonia.ViewModels.Base;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.ViewModels.Application.Document
 {
@@ -17,10 +18,10 @@ namespace Sinfonia.ViewModels.Application.Document
             get => GetValue(() => Invalidator);
             set => SetValue(() => Invalidator, value);
         }
-        public SceneManager<IUniqueScoreElement, int> Scene
+        public SceneManager<IUniqueScoreElement, int> SceneManager
         {
-            get => GetValue(() => Scene);
-            set => SetValue(() => Scene, value);
+            get => GetValue(() => SceneManager);
+            set => SetValue(() => SceneManager, value);
         }
 
         public bool EnablePan
@@ -47,16 +48,16 @@ namespace Sinfonia.ViewModels.Application.Document
             Invalidator = observable;
             Selection = selection;
             EnablePan = true;
-            Scene = sceneManager;
+            SceneManager = sceneManager;
             SelectionBorder = observableBoundingBox;
             ScoreDocumentStyle = scoreDocumentStyleTemplate;
             Pipe = Pipeline.DoNothing()
                 .InterceptKeys(selection, out var _selectionManager)
-                .ThenHandleDefaultMouseInteraction(Scene.VisualParents, Invalidator)
-                .ThenHandleMouseHover(Scene.VisualParents, Invalidator)
-                .ThenHandleDefaultClick(Scene.VisualParents, _selectionManager)
-                .ThenHandleSelectionBorder(Scene.VisualParents, _selectionManager, SelectionBorder, Invalidator)
-                .ThenHandleTransformations(_selectionManager, Scene.VisualParents, Invalidator)
+                .ThenHandleDefaultMouseInteraction(SceneManager.VisualParents, Invalidator)
+                .ThenHandleMouseHover(SceneManager.VisualParents, Invalidator)
+                .ThenHandleDefaultClick(SceneManager.VisualParents, _selectionManager)
+                .ThenHandleSelectionBorder(SceneManager.VisualParents, _selectionManager, SelectionBorder, Invalidator)
+                .ThenHandleTransformations(_selectionManager, SceneManager.VisualParents, Invalidator)
                 .ThenRender(Invalidator); ;
         }
 

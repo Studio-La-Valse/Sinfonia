@@ -20,9 +20,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public int Id => source.Id;
 
-        public KeySignature KeySignature => source.KeySignature;
-
-
 
         public ScoreMeasureReaderProxy(ScoreMeasure source)
         {

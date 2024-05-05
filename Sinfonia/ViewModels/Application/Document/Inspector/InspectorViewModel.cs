@@ -1,4 +1,5 @@
 ﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
@@ -6,18 +7,18 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         private readonly HashSet<IUniqueScoreElement> selectedElements = new(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id));
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreDocumentLayout scoreLayoutDictionary;
 
-        public PropertyCollectionViewModel? PropertiesViewModel
+        public ObservableCollection<PropertyCollectionViewModel> PropertiesViewModel
         {
             get => GetValue(() => PropertiesViewModel);
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        public InspectorViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutDictionary)
+        public InspectorViewModel(IScoreBuilder scoreBuilder)
         {
             this.scoreBuilder = scoreBuilder;
-            this.scoreLayoutDictionary = scoreLayoutDictionary;
+
+            PropertiesViewModel = [];
         }
 
         public void Update(IEnumerable<IUniqueScoreElement> selected, IEnumerable<IUniqueScoreElement> unselected)
@@ -37,35 +38,54 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
 
         private void Update()
         {
+            PropertiesViewModel.Clear();
+
             if (selectedElements.Count == 0)
             {
-                PropertiesViewModel = null;
                 return;
             }
 
-            var firstItem = selectedElements.Last();
-            var firstType = firstItem.GetType();
-            if (!selectedElements.All(e => e.GetType().Name == firstType.Name))
+            var notes = selectedElements.OfType<INoteReader>();
+            if (notes.Any())
             {
-                PropertiesViewModel = null;
-                return;
+                PropertiesViewModel.Add(new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder));
             }
 
-            PropertiesViewModel = firstItem switch
+            var chords = selectedElements.OfType<IChordReader>();
+            if (chords.Any())
             {
-                INoteReader _ => new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder, scoreLayoutDictionary),
-                IChordReader _ => new ChordPropertiesViewModel(selectedElements.OfType<IChordReader>(), scoreBuilder, scoreLayoutDictionary),
-                IMeasureBlockReader _ => new MeasureBlockPropertiesViewModel(selectedElements.OfType<IMeasureBlockReader>(), scoreBuilder, scoreLayoutDictionary),
-                IInstrumentMeasureReader _ => new InstrumentMeasurePropertiesViewModel(selectedElements.OfType<IInstrumentMeasureReader>(), scoreBuilder, scoreLayoutDictionary),
-                IScoreMeasureReader _ => new ScoreMeasurePropertiesViewModel(selectedElements.OfType<IScoreMeasureReader>(), scoreBuilder, scoreLayoutDictionary),
-                IInstrumentRibbonReader _ => new InstrumentRibbonPropertiesViewModel(selectedElements.OfType<IInstrumentRibbonReader>(), scoreBuilder, scoreLayoutDictionary),
-                IStaffReader _ => new StaffPropertiesViewModel(selectedElements.OfType<IStaffReader>(), scoreBuilder, scoreLayoutDictionary),
-                IStaffGroupReader _ => new StaffGroupPropertiesViewModel(selectedElements.OfType<IStaffGroupReader>(), scoreBuilder, scoreLayoutDictionary),
-                IStaffSystemReader _ => new StaffSystemPropertiesViewModel(selectedElements.OfType<IStaffSystemReader>(), scoreBuilder, scoreLayoutDictionary),
-                IPageReader _ => new PagePropertiesViewModel(selectedElements.OfType<IPageReader>(), scoreBuilder, scoreLayoutDictionary),
-                IScoreDocumentReader _ => new ScoreDocumentPropertiesViewModel(selectedElements.OfType<IScoreDocumentReader>(), scoreBuilder, scoreLayoutDictionary),
-                _ => null
-            };
+                PropertiesViewModel.Add(new ChordPropertiesViewModel(selectedElements.OfType<IChordReader>(), scoreBuilder));
+            }
+
+            var blocks = selectedElements.OfType<IMeasureBlockReader>();
+            if (blocks.Any())
+            {
+                PropertiesViewModel.Add(new MeasureBlockPropertiesViewModel(selectedElements.OfType<IMeasureBlockReader>(), scoreBuilder));
+            }
+
+            var instrumentMeasures = selectedElements.OfType<IInstrumentMeasureReader>();
+            if (instrumentMeasures.Any())
+            {
+                PropertiesViewModel.Add(new InstrumentMeasurePropertiesViewModel(selectedElements.OfType<IInstrumentMeasureReader>(), scoreBuilder));
+            }
+
+            var scoreMeasures = selectedElements.OfType<IScoreMeasureReader>();
+            if (scoreMeasures.Any())
+            {
+                PropertiesViewModel.Add(new ScoreMeasurePropertiesViewModel(selectedElements.OfType<IScoreMeasureReader>(), scoreBuilder));
+            }
+
+            var ribbons = selectedElements.OfType<IInstrumentRibbonReader>();
+            if (ribbons.Any())
+            {
+                PropertiesViewModel.Add(new InstrumentRibbonPropertiesViewModel(selectedElements.OfType<IInstrumentRibbonReader>(), scoreBuilder));
+            }
+
+            var scores = selectedElements.OfType<IScoreDocumentReader>();
+            if (scores.Any())
+            {
+                PropertiesViewModel.Add(new ScoreDocumentPropertiesViewModel(selectedElements.OfType<IScoreDocumentReader>(), scoreBuilder));
+            }
         }
 
         private bool refreshOnNextInvalidation = false;
@@ -92,7 +112,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
                 return;
             }
 
-            if (PropertiesViewModel is null)
+            if (PropertiesViewModel.Count == 0)
             {
                 return;
             }

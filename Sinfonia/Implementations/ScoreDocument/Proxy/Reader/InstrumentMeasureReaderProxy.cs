@@ -22,8 +22,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public Guid Guid => source.Guid;
 
-        public KeySignature KeySignature => source.KeySignature;
-
 
 
 

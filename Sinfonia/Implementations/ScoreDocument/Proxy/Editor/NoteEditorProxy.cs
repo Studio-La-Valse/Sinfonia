@@ -2,6 +2,7 @@
 using Sinfonia.Implementations.ScoreDocument.Layout;
 using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using StudioLaValse.ScoreDocument.Core;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
@@ -42,12 +43,35 @@ internal class NoteEditorProxy(Note source, ICommandManager commandManager, INot
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<NoteLayout, NoteLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+        var command = new RestoreLayoutCommand<NoteLayout, NoteLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        transaction.Enqueue(command);
+    }
+
+    public void SetForceAccidental(AccidentalDisplay display)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.ForceAccidental = display).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        transaction.Enqueue(command);
+    }
+
+    public void SetScale(double scale)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.Scale = scale).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetStaffIndex(int staffIndex)
     {
-        source.Layout.StaffIndex = staffIndex;
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        transaction.Enqueue(command);
+    }
+
+    public void SetXOffset(double offset)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        transaction.Enqueue(command);
     }
 }

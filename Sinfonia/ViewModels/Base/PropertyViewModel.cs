@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Base
+﻿using Avalonia.Media;
+
+namespace Sinfonia.ViewModels.Base
 {
     public abstract class PropertyViewModel : BaseViewModel
     {
@@ -34,6 +36,39 @@
         {
             this.setValue = setValue;
             this.getValue = getValue;
+        }
+    }
+
+    public class PropertyViewModelDouble : PropertyViewModel<double>
+    {
+        public PropertyViewModelDouble(Func<double> getValue, Action<double> setValue, string description) : base(getValue, setValue, description)
+        {
+
+        }
+    }
+
+    public class PropertyViewModelInt : PropertyViewModel<int>
+    {
+        public PropertyViewModelInt(Func<int> getValue, Action<int> setValue, string description) : base(getValue, setValue, description)
+        {
+
+        }
+    }
+
+    public class PropertyViewModelString : PropertyViewModel<string>
+    {
+        public PropertyViewModelString(Func<string> getValue, Action<string> setValue, string description) : base(getValue, setValue, description)
+        {
+
+        }
+    }
+
+
+    public class PropertyViewModelColor : PropertyViewModel<Color>
+    {
+        public PropertyViewModelColor(Func<Color> getValue, Action<Color> setValue, string description) : base(getValue, setValue, description)
+        {
+
         }
     }
 }

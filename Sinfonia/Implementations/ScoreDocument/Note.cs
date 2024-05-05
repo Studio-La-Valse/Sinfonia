@@ -42,7 +42,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 Pitch = Pitch,
                 Guid = Guid,
-                Layout = Layout.Copy()
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(NoteMemento memento)
@@ -51,7 +51,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             if(memento.Layout is not null)
             {
-                Layout.Apply(memento.Layout);
+                Layout.ApplyMemento(memento.Layout);
             }
         }
     }

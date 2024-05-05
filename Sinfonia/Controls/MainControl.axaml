@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Sinfonia.ViewModels.Application"
+			 xmlns:vmd="using:Sinfonia.ViewModels.Application.Document"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:views="using:Sinfonia.Controls"
+			 xmlns:templates="using:Sinfonia.DataTemplates"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sinfonia.Controls.MainControl"
+             x:DataType="vm:MainViewModel">
+
+	<UserControl.Styles>
+		<Style Selector="Menu">
+			<Style.Setters>
+				<Setter Property="Height" Value="60"/>
+			</Style.Setters>
+		</Style>
+		<Style Selector="MenuItem">
+			<Style.Setters>
+				<Setter Property="Width" Value="120"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Styles>
+	
+	<UserControl.DataTemplates>
+		<templates:DocumentDataTemplate/>
+	</UserControl.DataTemplates>
+
+	<DockPanel>
+		<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" >
+			<Menu x:DataType="vm:MenuViewModel" DataContext="{Binding MenuViewModel}" ItemsSource="{Binding Items}" Grid.Column="1">
+				<Menu.Styles>
+					<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
+						<Setter Property="Header" Value="{Binding Header}"/>
+						<Setter Property="ItemsSource" Value="{Binding Items}"/>
+						<Setter Property="Command" Value="{Binding Command}"/>
+						<Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+						<Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+					</Style>
+				</Menu.Styles>
+			</Menu>
+		</Grid>
+		
+		
+		<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="100, 4, Auto">
+						<TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
+						<TextBlock Grid.Column="1" />
+						<Button Grid.Column="2" Command="{Binding CloseCommand}" CommandParameter="{Binding}" Content="X"/>
+					</Grid>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+		</TabControl>
+	</DockPanel>
+</UserControl>

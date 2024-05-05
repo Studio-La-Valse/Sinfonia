@@ -1,5 +1,5 @@
-﻿using Sinfonia.ViewModels.Application.Document.StyleTemplate;
-using Sinfonia.ViewModels.Base;
+﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.ViewModels.Application.Document.Explorer
 {

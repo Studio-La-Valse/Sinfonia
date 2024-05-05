@@ -24,7 +24,7 @@ internal class StaffGroupEditorProxy(StaffGroup staffGroup, ICommandManager comm
 
     public IEnumerable<IStaffEditor> EnumerateStaves(int numberOfStaves)
     {
-        return staffGroup.EnumerateStaves(numberOfStaves).Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
+        return staffGroup.EnumerateStaves(numberOfStaves).Select(e => e.ProxyEditor());
     }
 
     public IStaffGroupLayout ReadLayout()

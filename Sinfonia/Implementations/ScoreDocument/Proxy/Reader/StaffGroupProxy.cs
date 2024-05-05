@@ -32,11 +32,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
             {
                 yield return measure;
             }
-
-            foreach (var staff in staffGroup.EnumerateStaves())
-            {
-                yield return staff.Proxy();
-            }
         }
 
         public IEnumerable<IInstrumentMeasureReader> EnumerateMeasures()

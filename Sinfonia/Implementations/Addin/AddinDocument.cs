@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Implementations.Addin
+﻿using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.Addin
 {
     internal class AddinDocument : IDocument
     {

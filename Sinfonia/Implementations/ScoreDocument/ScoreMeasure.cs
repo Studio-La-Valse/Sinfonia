@@ -7,9 +7,9 @@ namespace Sinfonia.Implementations.ScoreDocument
     internal class ScoreMeasure : ScoreElement, IMementoElement<ScoreMeasureMemento>
     {
         private readonly ScoreDocumentCore score;
+        private readonly ScoreDocumentStyleTemplate styleTemplate;
 
         public TimeSignature TimeSignature { get; }
-        public KeySignature KeySignature { get; set; }
         public ScoreMeasureLayout Layout { get; }
 
 
@@ -17,29 +17,21 @@ namespace Sinfonia.Implementations.ScoreDocument
             score.IndexOf(this);
         public bool IsLastInScore =>
             IndexInScore == score.NumberOfMeasures - 1;
+        public ScoreDocumentCore ScoreDocumentCore => 
+            score;
 
-
-        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreMeasureStyleTemplate styleTemplate, KeySignature keySignature, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreDocumentStyleTemplate styleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
+            this.styleTemplate = styleTemplate;
 
             TimeSignature = timeSignature;
-            KeySignature = keySignature;
-
-            Layout = new ScoreMeasureLayout(styleTemplate, this);
+            Layout = new ScoreMeasureLayout(styleTemplate.ScoreMeasureStyleTemplate, this);
         }
 
 
 
-        public void EditKeySignature(KeySignature keySignature)
-        {
-            if (KeySignature.Equals(keySignature))
-            {
-                return;
-            }
 
-            KeySignature = keySignature;
-        }
         public IEnumerable<InstrumentMeasure> EnumerateMeasuresCore()
         {
             var measures = score.EnumerateScoreMeasuresCore(this);

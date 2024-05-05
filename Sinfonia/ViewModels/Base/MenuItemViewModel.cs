@@ -2,10 +2,10 @@
 {
     public class MenuItemViewModel : BaseViewModel
     {
-        public ObservableCollection<MenuItemViewModel?> MenuItems
+        public ObservableCollection<MenuItemViewModel?> Items
         {
-            get => GetValue(() => MenuItems);
-            set => SetValue(() => MenuItems, value);
+            get => GetValue(() => Items);
+            set => SetValue(() => Items, value);
         }
 
         public string Header
@@ -26,24 +26,33 @@
             set => SetValue(() => CommandParameter, value);
         }
 
+        public bool IsEnabled
+        {
+            get => GetValue(() =>  IsEnabled);
+            set => SetValue(() => IsEnabled, value);
+        }
+
         public MenuItemViewModel(string header)
         {
             Command = null;
-            MenuItems = [];
+            Items = [];
             Header = header;
+            IsEnabled = true;
         }
         public MenuItemViewModel(string header, ICommand command)
         {
             Command = command;
-            MenuItems = [];
+            Items = [];
             Header = header;
+            IsEnabled = true;
         }
         public MenuItemViewModel(string header, ICommand command, object commandParameter)
         {
             Command = command;
-            MenuItems = [];
+            Items = [];
             Header = header;
             CommandParameter = commandParameter;
+            IsEnabled = true;
         }
     }
 }

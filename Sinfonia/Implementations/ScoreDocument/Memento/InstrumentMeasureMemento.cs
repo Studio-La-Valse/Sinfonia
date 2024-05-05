@@ -8,6 +8,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Memento
         public required int MeasureIndex { get; init; }
         public required int RibbonIndex { get; init; }
         public required IEnumerable<RibbonMeasureVoiceMemento> VoiceGroups { get; init; }
-        public required InstrumentMeasureLayoutMemento Layout { get; init; }
+        public required InstrumentMeasureLayoutMemento? Layout { get; init; }
     }
 }

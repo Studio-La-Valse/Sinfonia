@@ -5,9 +5,7 @@ using Sinfonia.Implementations;
 using Sinfonia.Implementations.Addin;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
-using Sinfonia.Views;
-using StudioLaValse.Drawable.WPF.Commands;
-using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
+using Sinfonia.Windows;
 
 namespace Sinfonia.Extensions
 {

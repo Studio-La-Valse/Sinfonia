@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class InstrumentMeasure : ScoreElement, IMementoElement<InstrumentMeasureMemento>
+    internal class InstrumentMeasure : ScoreElement, IMementoElement<InstrumentMeasureMemento>, IUniqueScoreElement
     {
         private readonly Dictionary<int, MeasureBlockChain> blockChains;
         private readonly ScoreMeasure scoreMeasure;
@@ -22,8 +22,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             scoreMeasure.TimeSignature;
         public Instrument Instrument =>
             hostRibbon.Instrument;
-        public KeySignature KeySignature =>
-            scoreMeasure.KeySignature;
+        public ScoreMeasure ScoreMeasure => 
+            scoreMeasure;
 
 
         public InstrumentMeasureLayout Layout { get; }
@@ -62,7 +62,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void AddVoice(int voice)
         {
             var guid = Guid.NewGuid();
-            _ = blockChains.TryAdd(voice, new MeasureBlockChain(this, voice, keyGenerator, guid));
+            _ = blockChains.TryAdd(voice, new MeasureBlockChain(this, documentStyleTemplate, voice, keyGenerator, guid));
         }
 
 

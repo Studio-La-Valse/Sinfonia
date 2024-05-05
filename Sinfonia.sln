@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.EntityFramework", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioLaValse.ScoreDocument.Reader", "..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Reader\StudioLaValse.ScoreDocument.Reader.csproj", "{74C80B15-6367-4184-A172-5D50C7D0324A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sinfonia.Desktop", "Sinfonia.Desktop\Sinfonia.Desktop.csproj", "{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -249,6 +251,22 @@ Global
 		{74C80B15-6367-4184-A172-5D50C7D0324A}.Release|x64.Build.0 = Release|Any CPU
 		{74C80B15-6367-4184-A172-5D50C7D0324A}.Release|x86.ActiveCfg = Release|Any CPU
 		{74C80B15-6367-4184-A172-5D50C7D0324A}.Release|x86.Build.0 = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|x64.Build.0 = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Debug|x86.Build.0 = Debug|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|ARM64.Build.0 = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|x64.ActiveCfg = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|x64.Build.0 = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2BB3C077-8DF0-4097-ADCB-8B55BB60156A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,21 +20,13 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comm
 
     public TimeSignature TimeSignature => source.TimeSignature;
 
-    public KeySignature KeySignature => source.KeySignature;
+    public KeySignature KeySignature => source.Layout.KeySignature;
 
     public Guid Guid => source.Guid;
 
     public int Id => source.Id;
 
 
-
-
-    public void EditKeySignature(KeySignature keySignature)
-    {
-        var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.EditKeySignature(keySignature)).ThenInvalidate(notifyEntityChanged, this);
-        transaction.Enqueue(command);
-    }
 
     public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureEditor? next)
     {
@@ -73,7 +65,42 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comm
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<ScoreMeasureLayout, ScoreMeasureLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+        var command = new RestoreLayoutCommand<ScoreMeasureLayout, ScoreMeasureLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        transaction.Enqueue(command);
+    }
+
+    public void SetKeySignature(KeySignature keySignature)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.KeySignature = keySignature).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        transaction.Enqueue(command);
+    }
+
+    public void SetPaddingLeft(double padding)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingLeft = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        transaction.Enqueue(command);
+    }
+
+    public void SetPaddingRight(double padding)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingRight = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        transaction.Enqueue(command);
+    }
+
+    public void SetWidth(double width)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.Width = width).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        transaction.Enqueue(command);
+    }
+
+    public void SetPaddingBottom(double? padding)
+    {
+        var transaction = commandManager.ThrowIfNoTransactionOpen();
+        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingBottom = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 }

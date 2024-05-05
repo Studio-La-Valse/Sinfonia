@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a persistent, unique score element.
     /// </summary>
-    internal abstract class ScoreElement
+    internal abstract class ScoreElement : IUniqueScoreElement
     {
         /// <inheritdoc/>
         public ScoreElement(IKeyGenerator<int> keyGenerator, Guid guid)

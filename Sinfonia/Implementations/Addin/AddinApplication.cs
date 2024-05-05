@@ -15,36 +15,40 @@ namespace Sinfonia.Implementations.Addin
 
         public IDocument? ActiveDocument()
         {
-            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
-            if (viewModel == null)
+            IDocument? activeDocument = null;
+
+            if (documents.TryGetActiveDocument(out var document))
             {
-                return null;
+                activeDocument = new AddinDocument(document);
             }
-            AddinDocument addinDocument = new(viewModel);
-            return addinDocument;
+            return activeDocument;
         }
 
         public IDocument ActiveDocumentOrThrow()
         {
-            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
-            if (viewModel == null)
+            IDocument? activeDocument = null;
+
+            if (documents.TryGetActiveDocument(out var document))
+            {
+                activeDocument = new AddinDocument(document);
+            }
+            if (activeDocument == null)
             {
                 throw new Exception("No document open.");
             }
-            AddinDocument addinDocument = new(viewModel);
-            return addinDocument;
+            return activeDocument;
         }
 
         public bool TryGetActiveDocument([NotNullWhen(true)] out IDocument? activeDocument)
         {
             activeDocument = null;
-            var viewModel = documents.Documents.FirstOrDefault(d => d.IsActive);
-            if (viewModel == null)
+
+            if(documents.TryGetActiveDocument(out var document))
             {
-                return false;
+                activeDocument = new AddinDocument(document);
             }
-            activeDocument = new AddinDocument(viewModel);
-            return true;
+
+            return activeDocument is not null;
         }
     }
 }

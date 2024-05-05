@@ -1,7 +1,7 @@
-﻿using StudioLaValse.ScoreDocument.Core;
-using StudioLaValse.ScoreDocument.Primitives;
+﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using StudioLaValse.ScoreDocument.Core;
 using StudioLaValse.ScoreDocument.Layout.Templates;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using StudioLaValse.ScoreDocument.Primitives;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
@@ -65,7 +65,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             this.scoreMeasureStyleTemplate = scoreMeasureStyleTemplate;
             this.scoreMeasure = scoreMeasure;
 
-            keySignature = new ValueTemplateProperty<KeySignature>(() => scoreMeasure.KeySignature);
+            keySignature = new ValueTemplateProperty<KeySignature>(() => new KeySignature(new Step(0, 0), MajorOrMinor.Major));
             width = new ValueTemplateProperty<double>(() => scoreMeasureStyleTemplate.Width);
             paddingLeft = new ValueTemplateProperty<double>(() => scoreMeasureStyleTemplate.PaddingLeft);
             paddingRight = new ValueTemplateProperty<double>(() => scoreMeasureStyleTemplate.PaddingRight);

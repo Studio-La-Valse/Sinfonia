@@ -1,11 +1,13 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal sealed class ScoreContentTable
     {
         private readonly IList<(InstrumentRibbon instrumentRibbon, IList<InstrumentMeasure> instrumentMeasures)> instrumentRibbons;
         private readonly IList<ScoreMeasure> scoreMeasures;
         private readonly InstrumentMeasureFactory cellFactory;
-
+        private readonly ScoreDocumentStyleTemplate scoreDocumentStyleTemplate;
 
         public IEnumerable<InstrumentRibbon> RowHeaders => instrumentRibbons.Select(val => val.instrumentRibbon);
         public IEnumerable<ScoreMeasure> ColumnHeaders => scoreMeasures;
@@ -14,10 +16,10 @@
 
 
 
-        public ScoreContentTable(InstrumentMeasureFactory cellFactory)
+        public ScoreContentTable(InstrumentMeasureFactory cellFactory, ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
         {
             this.cellFactory = cellFactory;
-
+            this.scoreDocumentStyleTemplate = scoreDocumentStyleTemplate;
             instrumentRibbons = [];
             scoreMeasures = [];
         }
@@ -41,7 +43,7 @@
 
             foreach (var column in scoreMeasures)
             {
-                var cell = cellFactory.Create(column, identifier);
+                var cell = cellFactory.Create(column, identifier, scoreDocumentStyleTemplate);
                 values.Add(cell);
             }
 
@@ -58,7 +60,7 @@
 
             foreach (var column in scoreMeasures)
             {
-                var cell = cellFactory.Create(column, identifier);
+                var cell = cellFactory.Create(column, identifier, scoreDocumentStyleTemplate);
                 values.Add(cell);
             }
 
@@ -81,7 +83,7 @@
 
             foreach ((var header, var cells) in instrumentRibbons)
             {
-                var cell = cellFactory.Create(identifier, header);
+                var cell = cellFactory.Create(identifier, header, scoreDocumentStyleTemplate);
                 cells.Insert(index, cell);
             }
         }
@@ -98,7 +100,7 @@
 
             foreach ((var header, var cells) in instrumentRibbons)
             {
-                var cell = cellFactory.Create(identifier, header);
+                var cell = cellFactory.Create(identifier, header, scoreDocumentStyleTemplate);
                 cells.Add(cell);
             }
         }

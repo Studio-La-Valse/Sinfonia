@@ -1,13 +1,17 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+using StudioLaValse.ScoreDocument.Reader;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class ScoreBuilder : IScoreBuilder
     {
-        private readonly IScoreDocumentEditor scoreDocument;
+        private readonly ScoreDocumentCore scoreDocument;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
         private readonly Queue<Action<IScoreDocumentEditor>> pendingEdits = [];
 
-        public ScoreBuilder(IScoreDocumentEditor scoreDocument, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        public ScoreBuilder(ScoreDocumentCore scoreDocument, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.scoreDocument = scoreDocument;
             this.commandManager = commandManager;
@@ -40,18 +44,18 @@
         }
 
 
-        public IScoreBuilder Build()
+        public IScoreDocumentReader Build()
         {
             while (pendingEdits.Count > 0)
             {
                 var pendingAction = pendingEdits.Dequeue();
                 using var transaction = commandManager.OpenTransaction("Generic score document edit");
-                pendingAction.Invoke(scoreDocument);
+                pendingAction.Invoke(scoreDocument.ProxyEditor(commandManager, notifyEntityChanged));
             }
 
             notifyEntityChanged.RenderChanges();
 
-            return this;
+            return scoreDocument.ProxyReader();
         }
     }
 }

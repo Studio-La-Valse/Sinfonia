@@ -35,7 +35,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void AddInstrumentRibbon(Instrument instrument)
         {
-            InstrumentRibbon instrumentRibbon = new(this, instrument, keyGenerator, Guid.NewGuid());
+            InstrumentRibbon instrumentRibbon = new(this, instrument, styleTemplate, keyGenerator, Guid.NewGuid());
             contentTable.AddInstrumentRibbon(instrumentRibbon);
         }
         public void RemoveInstrumentRibbon(int indexInScore)
@@ -65,11 +65,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                     previousElement.TimeSignature :
                     new TimeSignature(4, 4);
 
-            var keySignature = previousElement is not null ?
-                    previousElement.KeySignature :
-                    new KeySignature(Step.C, MajorOrMinor.Major);
-
-            ScoreMeasure scoreMeasure = new(this, timeSignature, keySignature, keyGenerator, guid);
+            ScoreMeasure scoreMeasure = new(this, timeSignature, styleTemplate, keyGenerator, guid);
             return scoreMeasure;
         }
         public void AppendScoreMeasure(TimeSignature? timeSignature = null)

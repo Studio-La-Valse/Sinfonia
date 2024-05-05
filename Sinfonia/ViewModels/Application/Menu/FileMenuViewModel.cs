@@ -7,19 +7,19 @@ namespace Sinfonia.ViewModels.Application.Menu
         private readonly DocumentCollectionViewModel documentCollection;
         private readonly IShellMethods shellMethods;
 
-        public FileMenuViewModel(DocumentCollectionViewModel documentCollection, ImportMenuViewModel importMenuViewModel, IShellMethods shellMethods, ICommandFactory commandFactory) : base("File")
+        public FileMenuViewModel(DocumentCollectionViewModel documentCollection, ImportMenuViewModel importMenuViewModel, IShellMethods shellMethods, ICommandFactory commandFactory) : base("_File...")
         {
             this.documentCollection = documentCollection;
             this.shellMethods = shellMethods;
 
-            MenuItems.Add(importMenuViewModel);
-            MenuItems.Add(new MenuItemViewModel("Close", commandFactory.Create(CloseDocument, documentCollection.Documents.Any)));
-            MenuItems.Add(new MenuItemViewModel("Exit", commandFactory.Create(Exit)));
+            Items.Add(importMenuViewModel);
+            Items.Add(new MenuItemViewModel("Close", commandFactory.Create(CloseDocument, documentCollection.Documents.Any)));
+            Items.Add(new MenuItemViewModel("Exit", commandFactory.Create(Exit)));
         }
 
         public void CloseDocument()
         {
-            var openDocument = documentCollection.Documents.FirstOrDefault(d => d.IsActive);
+            var openDocument = documentCollection.Documents.ElementAtOrDefault(documentCollection.SelectedIndex);
             if (openDocument is null)
             {
                 return;

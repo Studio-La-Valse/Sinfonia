@@ -57,14 +57,35 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new RestoreLayoutCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
 
         public void SetDisplayName(string name)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout, l => l.DisplayName = name).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new LayoutMementoCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout, l => l.DisplayName = name).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            transaction.Enqueue(command);
+        }
+
+        public void SetAbbreviatedName(string abbreviation)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.AbbreviatedName = abbreviation).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            transaction.Enqueue(command);
+        }
+
+        public void SetNumberOfStaves(int numberOfStaves)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.NumberOfStaves = numberOfStaves).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            transaction.Enqueue(command);
+        }
+
+        public void SetCollapsed(bool isCollapsed)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.Collapsed = isCollapsed).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
     }

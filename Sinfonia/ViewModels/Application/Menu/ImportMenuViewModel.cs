@@ -1,5 +1,4 @@
-﻿using Sinfonia.Implementations;
-using Sinfonia.ViewModels.Base;
+﻿using Sinfonia.ViewModels.Base;
 using StudioLaValse.ScoreDocument.MusicXml;
 using System.IO;
 using System.Xml.Linq;
@@ -9,18 +8,20 @@ namespace Sinfonia.ViewModels.Application.Menu
     public class ImportMenuViewModel : MenuItemViewModel
     {
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
-        private readonly Interfaces.IBrowseToFile browseToFile;
+        private readonly IBrowseToFile browseToFile;
         private readonly IDocumentViewModelFactory documentViewModelFactory;
         private readonly IScoreDocumentRepository scoreDocumentRepository;
 
-        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, Interfaces.IBrowseToFile browseToFile, IDocumentViewModelFactory documentViewModelFactory, IScoreDocumentRepository scoreDocumentRepository) : base("Import")
+
+
+        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, IBrowseToFile browseToFile, IDocumentViewModelFactory documentViewModelFactory, IScoreDocumentRepository scoreDocumentRepository) : base("_Import...")
         {
             this.documentCollectionViewModel = documentCollectionViewModel;
             this.browseToFile = browseToFile;
             this.documentViewModelFactory = documentViewModelFactory;
             this.scoreDocumentRepository = scoreDocumentRepository;
-            MenuItems.Add(new MenuItemViewModel("MusicXml...", commandFactory.Create(LoadMusicXml)));
-            MenuItems.Add(new MenuItemViewModel("From Repository", commandFactory.Create(FromRepository, () => scoreDocumentRepository.AvailableScores().Any())));
+
+            Items.Add(new MenuItemViewModel("Music Xml...", commandFactory.Create(LoadMusicXml)));
         }
 
         public void LoadMusicXml()
@@ -37,10 +38,9 @@ namespace Sinfonia.ViewModels.Application.Menu
                     Layout = null
                 };
                 var documentViewModel = documentViewModelFactory.Create(memento);
-                var layout = documentViewModel.PageViewLayout;
                 _ = documentViewModel.ScoreBuilder.Edit(e =>
                 {
-                    e.BuildFromXml(layout, document);
+                    e.BuildFromXml(document);
                 }).Build();
                 documentViewModel.Explorer.Rebuild();
                 documentCollectionViewModel.Add(documentViewModel);

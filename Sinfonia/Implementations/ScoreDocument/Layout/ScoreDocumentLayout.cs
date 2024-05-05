@@ -1,5 +1,6 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
@@ -129,8 +130,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public void ApplyMemento(ScoreDocumentLayoutMemento memento)
+        public void ApplyMemento(ScoreDocumentLayoutMemento? memento)
         {
+            if (memento is null)
+            {
+                Restore();
+                return;
+            }
+
             scale.Field = memento.Scale;
             horizontalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
             verticalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;

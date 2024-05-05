@@ -1,12 +1,14 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument
+﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
     internal class InstrumentMeasureFactory(IKeyGenerator<int> keyGenerator)
     {
         private readonly IKeyGenerator<int> keyGenerator = keyGenerator;
 
-        public InstrumentMeasure Create(ScoreMeasure column, InstrumentRibbon row)
+        public InstrumentMeasure Create(ScoreMeasure column, InstrumentRibbon row, ScoreDocumentStyleTemplate styleTemplate)
         {
-            return new InstrumentMeasure(column, row, keyGenerator, Guid.NewGuid());
+            return new InstrumentMeasure(column, row, styleTemplate, keyGenerator, Guid.NewGuid());
         }
     }
 }
