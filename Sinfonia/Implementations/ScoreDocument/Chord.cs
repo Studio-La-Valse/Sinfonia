@@ -4,7 +4,7 @@ using StudioLaValse.ScoreDocument.Primitives.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordMemento>
+    public sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordMemento>
     {
         private readonly List<Note> measureElements;
         private readonly MeasureBlock hostBlock;
@@ -54,7 +54,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             measureElements = [];
 
             RythmicDuration = displayDuration;
-            Layout = new ChordLayout(documentStyleTemplate.ChordStyleTemplate);
+            Layout = new ChordLayout(Guid, documentStyleTemplate.ChordStyleTemplate);
         }
 
 
@@ -98,18 +98,20 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return new ChordMemento
             {
+                Id = Guid,
                 Notes = measureElements.Select(n => n.GetMemento()).ToList(),
                 RythmicDuration = RythmicDuration,
-                Guid = Guid
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(ChordMemento memento)
         {
             Clear();
+            Layout.ApplyMemento(memento.Layout);
             foreach (var noteMemento in memento.Notes)
             {
                 var pitch = noteMemento.Pitch;
-                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, noteMemento.Guid);
+                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, noteMemento.Id);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);
             }

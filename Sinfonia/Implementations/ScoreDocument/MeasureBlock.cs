@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlock : ScoreElement, IMementoElement<MeasureBlockMemento>, IPositionElement
+    public class MeasureBlock : ScoreElement, IMementoElement<MeasureBlockMemento>, IPositionElement
     {
         private readonly List<Chord> chords;
         private readonly MeasureBlockChain host;
@@ -62,7 +62,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             Grace = grace;
             RythmicDuration = duration;
-            Layout = new MeasureBlockLayout(documentStyleTemplate.MeasureBlockStyleTemplate);
+            Layout = new MeasureBlockLayout(Guid, documentStyleTemplate.MeasureBlockStyleTemplate);
         }
 
 
@@ -250,9 +250,9 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 Chords = chords.Select(c => c.GetMemento()).ToList(),
                 Duration = RythmicDuration,
-                Grace = Grace,
-                Guid = Guid,
-                Layout = Layout.GetMemento()
+                Id = Guid,
+                Layout = Layout.GetMemento(),
+                Voice = host.Voice
             };
         }
         public void ApplyMemento(MeasureBlockMemento memento)
@@ -261,7 +261,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             Layout.ApplyMemento(memento.Layout);
             foreach (var chordMemento in memento.Chords)
             {
-                AppendChord(chordMemento.RythmicDuration, chordMemento.Guid);
+                AppendChord(chordMemento.RythmicDuration, chordMemento.Id);
                 var chord = chords.Last();
                 chord.ApplyMemento(chordMemento);
             }

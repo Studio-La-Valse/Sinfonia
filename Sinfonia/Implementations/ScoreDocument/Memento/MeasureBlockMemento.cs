@@ -6,8 +6,8 @@ namespace Sinfonia.Implementations.ScoreDocument.Memento
     {
         public required IList<ChordMemento> Chords { get; init; }
         public required RythmicDuration Duration { get; init; }
-        public required bool Grace { get; init; }
-        public required Guid Guid { get; init; }
-        public required MeasureBlockLayoutMemento? Layout { get; init; }
+        public required Guid Id { get; init; }
+        public required MeasureBlockLayoutMemento Layout { get; init; }
+        public required int Voice { get;init; }
     }
 }

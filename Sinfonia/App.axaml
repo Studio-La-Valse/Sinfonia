@@ -5,6 +5,11 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
 	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="/Resources/VectorIcons.axaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 		<FontFamily x:Key="Bravura">avares://Sinfonia/Resources/#Bravura</FontFamily>
 	</Application.Resources>
 	

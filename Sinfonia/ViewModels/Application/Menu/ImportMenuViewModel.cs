@@ -1,4 +1,5 @@
-﻿using Sinfonia.ViewModels.Base;
+﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using Sinfonia.ViewModels.Base;
 using StudioLaValse.ScoreDocument.MusicXml;
 using System.IO;
 using System.Xml.Linq;
@@ -10,16 +11,14 @@ namespace Sinfonia.ViewModels.Application.Menu
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
         private readonly IBrowseToFile browseToFile;
         private readonly IDocumentViewModelFactory documentViewModelFactory;
-        private readonly IScoreDocumentRepository scoreDocumentRepository;
 
 
 
-        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, IBrowseToFile browseToFile, IDocumentViewModelFactory documentViewModelFactory, IScoreDocumentRepository scoreDocumentRepository) : base("_Import...")
+        public ImportMenuViewModel(ICommandFactory commandFactory, DocumentCollectionViewModel documentCollectionViewModel, IBrowseToFile browseToFile, IDocumentViewModelFactory documentViewModelFactory) : base("_Import...")
         {
             this.documentCollectionViewModel = documentCollectionViewModel;
             this.browseToFile = browseToFile;
             this.documentViewModelFactory = documentViewModelFactory;
-            this.scoreDocumentRepository = scoreDocumentRepository;
 
             Items.Add(new MenuItemViewModel("Music Xml...", commandFactory.Create(LoadMusicXml)));
         }
@@ -30,13 +29,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             {
                 using FileStream fileStream = new(filepath, FileMode.Open);
                 var document = XDocument.Load(fileStream);
-                var memento = new ScoreDocumentMemento()
-                {
-                    Guid = Guid.NewGuid(),
-                    InstrumentRibbons = [],
-                    ScoreMeasures = [],
-                    Layout = null
-                };
+                var memento = ScoreDocumentMemento.Create();
                 var documentViewModel = documentViewModelFactory.Create(memento);
                 _ = documentViewModel.ScoreBuilder.Edit(e =>
                 {
@@ -45,19 +38,6 @@ namespace Sinfonia.ViewModels.Application.Menu
                 documentViewModel.Explorer.Rebuild();
                 documentCollectionViewModel.Add(documentViewModel);
             }
-        }
-
-        public void FromRepository()
-        {
-            var guid = scoreDocumentRepository.AvailableScores().First();
-            var memento = scoreDocumentRepository
-                .Get(guid)
-                .Chain(scoreDocumentRepository.RestoreLayout);
-
-            var documentViewModel = documentViewModelFactory.Create(memento);
-            documentViewModel.Explorer.Rebuild();
-
-            documentCollectionViewModel.Add(documentViewModel);
         }
     }
 }

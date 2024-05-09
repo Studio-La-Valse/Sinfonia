@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
+    public class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
     {
         private readonly ScoreContentTable contentTable;
         private readonly PageGenerator pageGenerator;
@@ -27,7 +27,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             this.styleTemplate = styleTemplate;
             this.keyGenerator = keyGenerator;
 
-            Layout = new ScoreDocumentLayout(styleTemplate);
+            Layout = new ScoreDocumentLayout(Guid, styleTemplate);
         }
 
 
@@ -135,7 +135,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return new ScoreDocumentMemento
             {
-                Guid = Guid,
+                Id = Guid,
                 Layout = Layout.GetMemento(),
                 InstrumentRibbons = EnumerateRibbonsCore().Select(e => e.GetMemento()).ToList(),
                 ScoreMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList()
@@ -147,13 +147,13 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
-                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, keyGenerator, instrumentMemento.Guid);
+                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, keyGenerator, instrumentMemento.Id);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
             }
 
             foreach (var scoreMeasureMemento in memento.ScoreMeasures)
             {
-                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Guid, scoreMeasureMemento.TimeSignature);
+                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.TimeSignature);
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);

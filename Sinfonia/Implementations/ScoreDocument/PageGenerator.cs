@@ -4,7 +4,7 @@ using StudioLaValse.ScoreDocument.Reader.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class PageGenerator
+    public class PageGenerator
     {
         private readonly ScoreDocumentStyleTemplate styleTemplate;
 

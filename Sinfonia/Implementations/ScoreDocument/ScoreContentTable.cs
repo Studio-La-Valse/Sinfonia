@@ -2,7 +2,7 @@
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal sealed class ScoreContentTable
+    public sealed class ScoreContentTable
     {
         private readonly IList<(InstrumentRibbon instrumentRibbon, IList<InstrumentMeasure> instrumentMeasures)> instrumentRibbons;
         private readonly IList<ScoreMeasure> scoreMeasures;

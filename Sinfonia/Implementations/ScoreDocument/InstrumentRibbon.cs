@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class InstrumentRibbon : ScoreElement, IMementoElement<InstrumentRibbonMemento>
+    public class InstrumentRibbon : ScoreElement, IMementoElement<InstrumentRibbonMemento>
     {
         private readonly ScoreDocumentCore score;
 
@@ -20,7 +20,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             this.score = score;
 
             Instrument = instrument;
-            Layout = new(this);
+            Layout = new(Guid, this);
         }
 
 
@@ -42,14 +42,16 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return new InstrumentRibbonMemento
             {
+                Id = Guid,
                 Instrument = Instrument,
-                Guid = Guid,
                 IndexInScore = IndexInScore,
                 InstrumentMeasures = EnumerateMeasuresCore().Select(m => m.GetMemento()).ToArray(),
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(InstrumentRibbonMemento memento)
         {
+            Layout.ApplyMemento(memento.Layout);
             foreach (var measureMemento in memento.InstrumentMeasures)
             {
                 var measure = GetMeasureCore(measureMemento.MeasureIndex);

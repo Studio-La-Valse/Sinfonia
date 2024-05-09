@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    internal class InstrumentRibbonLayout : IInstrumentRibbonLayout, ILayout<InstrumentRibbonLayoutMemento>
+    public class InstrumentRibbonLayout : IInstrumentRibbonLayout, ILayout<InstrumentRibbonLayoutMemento>
     {
         private readonly InstrumentRibbon instrumentRibbon;
         private readonly ReferenceTemplateProperty<string> abbreviatedName;
@@ -17,12 +17,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 
 
         public bool Collapsed { get; set; }
+        public Guid Id { get; }
 
 
-        public InstrumentRibbonLayout(InstrumentRibbon instrumentRibbon)
+        public InstrumentRibbonLayout(Guid id, InstrumentRibbon instrumentRibbon)
         {
             this.instrumentRibbon = instrumentRibbon;
 
+            Id = id;
             displayName = new ReferenceTemplateProperty<string>(() => this.instrumentRibbon.Instrument.Name);
             abbreviatedName = new ReferenceTemplateProperty<string>(() => CreateDefaultNickName(displayName.Value));
             numberOfStaves = new ValueTemplateProperty<int>(() => instrumentRibbon.Instrument.NumberOfStaves);
@@ -42,6 +44,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         {
             return new InstrumentRibbonLayoutMemento()
             {
+                Id = Id,
                 AbbreviatedName = abbreviatedName.Field,
                 DisplayName = displayName.Field,
                 NumberOfStaves = numberOfStaves.Field,

@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.ViewModels.Base;
 using StudioLaValse.ScoreDocument.Reader;
@@ -17,18 +18,20 @@ namespace Sinfonia.ViewModels.Application.Document
         public IScoreBuilder ScoreBuilder { get; }
         public IScoreDocumentReader ScoreDocumentReader { get; }
         public IKeyGenerator<int> KeyGenerator { get; }
-        public CanvasViewModel CanvasViewModel { get; }
         public ISelection<IUniqueScoreElement> Selection { get; }
+        public ICommand CloseCommand { get; }
+        public CanvasViewModel CanvasViewModel { get; }
         public ExplorerViewModel Explorer { get; }
         public InspectorViewModel Inspector { get; }
         public DocumentStyleEditorViewModel DocumentStyleEditorViewModel { get; }
-        public ICommand CloseCommand { get; }
+        public ScoreDocumentCore ScoreDocumentCore { get; }
 
         public DocumentViewModel(DocumentCollectionViewModel documentCollectionViewModel,
                                  CanvasViewModel canvasViewModel,
                                  ExplorerViewModel explorerViewModel,
                                  InspectorViewModel inspectorViewModel,
                                  DocumentStyleEditorViewModel documentStyleEditorViewModel,
+                                 ScoreDocumentCore scoreDocumentCore,
                                  ISelection<IUniqueScoreElement> selection,
                                  IScoreBuilder scoreDocumentEditor,
                                  IScoreDocumentReader scoreDocumentReader,
@@ -42,9 +45,10 @@ namespace Sinfonia.ViewModels.Application.Document
             Explorer = explorerViewModel;
             Inspector = inspectorViewModel;
             DocumentStyleEditorViewModel = documentStyleEditorViewModel;
+            ScoreDocumentCore = scoreDocumentCore;
             KeyGenerator = keyGenerator;
 
-            CloseCommand = ReactiveCommand.Create<DocumentViewModel>(d => documentCollectionViewModel.Close(d));
+            CloseCommand = ReactiveCommand.Create<DocumentViewModel>(documentCollectionViewModel.Close);
         }
     }
 }

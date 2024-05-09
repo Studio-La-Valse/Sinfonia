@@ -12,16 +12,7 @@
              x:DataType="vm:MainViewModel">
 
 	<UserControl.Styles>
-		<Style Selector="Menu">
-			<Style.Setters>
-				<Setter Property="Height" Value="60"/>
-			</Style.Setters>
-		</Style>
-		<Style Selector="MenuItem">
-			<Style.Setters>
-				<Setter Property="Width" Value="120"/>
-			</Style.Setters>
-		</Style>
+
 	</UserControl.Styles>
 	
 	<UserControl.DataTemplates>
@@ -43,14 +34,17 @@
 			</Menu>
 		</Grid>
 		
-		
 		<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
 			<TabControl.ItemTemplate>
-				<DataTemplate>
-					<Grid ColumnDefinitions="100, 4, Auto">
-						<TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
+				<DataTemplate x:DataType="vmd:DocumentViewModel">
+					<Grid ColumnDefinitions="Auto, 4, 100, 4, Auto">
+						<PathIcon Grid.Column="0" Data="{StaticResource document_page_top_left_regular}" />
 						<TextBlock Grid.Column="1" />
-						<Button Grid.Column="2" Command="{Binding CloseCommand}" CommandParameter="{Binding}" Content="X"/>
+						<TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
+						<TextBlock Grid.Column="3" />
+						<Button Grid.Column="4" Background="Transparent" Command="{Binding CloseCommand}" CommandParameter="{Binding}">
+							<PathIcon Data="{StaticResource dismiss_circle_regular}" />
+						</Button>
 					</Grid>
 				</DataTemplate>
 			</TabControl.ItemTemplate>

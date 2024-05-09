@@ -10,31 +10,28 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 
         public double StemLength { get => stemLength.Value; set => stemLength.Value = value; }
         public double BeamAngle { get => beamAngle.Value; set => beamAngle.Value = value; }
+        public Guid Id { get; }
 
-
-        public MeasureBlockLayout(MeasureBlockStyleTemplate styleTemplate)
+        public MeasureBlockLayout(Guid id, MeasureBlockStyleTemplate styleTemplate)
         {
             stemLength = new ValueTemplateProperty<double>(() => styleTemplate.StemLength);
             beamAngle = new ValueTemplateProperty<double>(() => styleTemplate.BracketAngle);
+            Id = id;
         }
 
         public MeasureBlockLayoutMemento GetMemento()
         {
             return new MeasureBlockLayoutMemento()
             {
+                Id = Id,
                 StemLength = stemLength.Field,
                 BeamAngle = beamAngle.Field,
             };
         }
 
-        public void ApplyMemento(MeasureBlockLayoutMemento? memento)
+        public void ApplyMemento(MeasureBlockLayoutMemento memento)
         {
-            if(memento is null)
-            {
-                Restore();
-                return;
-            }
-
+            Restore();
             stemLength.Field = memento.StemLength;
             beamAngle.Field = memento.BeamAngle;
         }

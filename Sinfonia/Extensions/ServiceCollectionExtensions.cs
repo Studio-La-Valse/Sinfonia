@@ -18,16 +18,6 @@ namespace Sinfonia.Extensions
                 .AddTransient<IYamlConverter, YamlConverter>();
         }
 
-        public static IServiceCollection AddDbContext(this IServiceCollection services)
-        {
-            return services
-                .AddDbContext<ScoreDocumentContext>(options =>
-                {
-                    options.UseSqlite("DataSource=file::memory:?cache=shared");
-                })
-                .AddScoped<IScoreDocumentRepository, ScoreDocumentRepository>();
-        }
-
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             return services.AddSingleton<IDocumentViewModelFactory, DocumentViewModelFactory>()
@@ -38,6 +28,15 @@ namespace Sinfonia.Extensions
                 .AddSingleton<DocumentCollectionViewModel>()
                 .AddSingleton<DocumentMenuViewModel>()
                 .AddSingleton<MainViewModel>();
+        }
+
+        public static IServiceCollection AddPersistence(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<ScoreElementMementoConverter>()
+                .AddSingleton<ScoreDocumentLayoutMementoConverter>()
+                .AddSingleton<ScoreDocumentMementoConverter>()
+                .AddSingleton<IFileSaveService, FileSaveService>();
         }
 
         public static IServiceCollection AddViews(this IServiceCollection services)

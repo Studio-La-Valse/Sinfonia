@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
-using Sinfonia.EntityFramework.Attributes;
+using Sinfonia.EntityFramework.Classes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sinfonia.EntityFramework.Entities
 {
@@ -8,9 +9,11 @@ namespace Sinfonia.EntityFramework.Entities
     {
         public Guid Id { get; set; }
 
-        public ICollection<ScoreMeasureModel> ScoreMeasures { get; set; }
+        public List<ScoreMeasureModel> ScoreMeasures { get; set; }
 
-        public ICollection<InstrumentRibbonModel> InstrumentRibbons { get; set; }
+        public List<InstrumentRibbonModel> InstrumentRibbons { get; set; }
+        
+        public ScoreDocumentLayoutModel Layout { get; set; }
     }
 
     public class ScoreMeasureModel
@@ -19,12 +22,13 @@ namespace Sinfonia.EntityFramework.Entities
 
         public ScoreDocumentModel ScoreDocument { get; set; }
 
-        public ICollection<InstrumentMeasureModel> InstrumentMeasures { get; set; }
+        public List<InstrumentMeasureModel> InstrumentMeasures { get; set; }
 
-        public int TimeSignatureNumerator { get; set; }
+        public ScoreMeasureLayoutModel Layout { get; set; }
 
-        public int TimeSignatureDenominator { get; set; }
+        public TimeSignature TimeSignature { get; set; }
 
+        [Range(0, int.MaxValue)]
         public int IndexInScore { get; set; }
     }
 
@@ -34,10 +38,13 @@ namespace Sinfonia.EntityFramework.Entities
 
         public ScoreDocumentModel ScoreDocument { get; set; }
 
-        public ICollection<InstrumentMeasureModel> InstrumentMeasures { get; set; }
+        public List<InstrumentMeasureModel> InstrumentMeasures { get; set; }
 
-        public string Instrument { get; set; }
+        public InstrumentRibbonLayoutModel Layout { get; set; }
 
+        public Instrument Instrument { get; set; }
+
+        [Range(0, int.MaxValue)]
         public int IndexInScore { get; set; }
     }
 
@@ -49,10 +56,15 @@ namespace Sinfonia.EntityFramework.Entities
 
         public InstrumentRibbonModel InstrumentRibbon { get; set; }
 
-        public ICollection<MeasureBlockModel> MeasureBlocks { get; set; }
+        public List<MeasureBlockModel> MeasureBlocks { get; set; }
 
+        public InstrumentMeasureLayoutModel Layout { get; set; }
+
+
+        [Range(0, int.MaxValue)]
         public int ScoreMeasureIndex { get; set; }
 
+        [Range(0, int.MaxValue)]
         public int InstrumentRibbonIndex { get; set; }
     }
 
@@ -60,14 +72,14 @@ namespace Sinfonia.EntityFramework.Entities
     {
         public Guid Id { get; set; }
 
-        public ICollection<ChordModel> Chords { get; set; }
+        public List<ChordModel> Chords { get; set; }
 
+        public MeasureBlockLayoutModel Layout { get; set; }
+
+        [Range(0, int.MaxValue)]
         public int Voice { get; set; }
 
-        [PowerOfTwo]
-        public int Duration { get; set; }
-
-        public int Dots { get; set; }
+        public RythmicDuration Duration { get; set; }
     }
 
     public class ChordModel
@@ -76,12 +88,11 @@ namespace Sinfonia.EntityFramework.Entities
 
         public MeasureBlockModel MeasureBlock { get; set; }
 
-        public ICollection<NoteModel> Notes { get; set; }
+        public List<NoteModel> Notes { get; set; }
 
-        [PowerOfTwo]
-        public int Duration { get; set; }
+        public ChordLayoutModel Layout { get; set; }
 
-        public int Dots { get; set; }
+        public RythmicDuration RythmicDuration { get; set; }
     }
 
     public class NoteModel
@@ -90,11 +101,9 @@ namespace Sinfonia.EntityFramework.Entities
 
         public ChordModel Chord { get; set; }
 
-        public int Octave { get; set; }
+        public NoteLayoutModel Layout { get; set; }
 
-        public int Step { get; set; }
-
-        public int Shifts { get; set; }
+        public Pitch Pitch { get; set; }
     }
 }
 

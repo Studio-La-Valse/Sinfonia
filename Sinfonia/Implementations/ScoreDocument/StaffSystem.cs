@@ -4,7 +4,7 @@ using StudioLaValse.ScoreDocument.Primitives;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class StaffSystem 
+    public class StaffSystem 
     {
         private readonly ScoreDocumentCore scoreDocument;
         private readonly ScoreDocumentStyleTemplate documentStyleTemplate;

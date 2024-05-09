@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Controls;
 using Sinfonia.Windows;
+using Sinfonia.EntityFramework;
 
 namespace Sinfonia;
 
@@ -39,7 +40,7 @@ public partial class App : Application
     private static HostApplicationBuilder CreateHostBuilder()
     {
         var builder = Host.CreateApplicationBuilder(Environment.GetCommandLineArgs());
-        builder.Services.AddModels().AddDbContext().AddViewModels().AddViews();
+        builder.Services.AddModels().AddPersistence().AddViewModels().AddViews();
         return builder;
     }
 }

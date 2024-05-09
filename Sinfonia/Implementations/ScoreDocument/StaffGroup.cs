@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class StaffGroup
+    public class StaffGroup
     {
         private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IList<ScoreMeasure> scoreMeasures;

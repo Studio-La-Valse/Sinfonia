@@ -1,5 +1,6 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using System;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
@@ -12,6 +13,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         private readonly ValueTemplateProperty<AccidentalDisplay> forceAccidental;
         private readonly ValueTemplateProperty<double> scale;
 
+        public Guid Id { get; }
         public int StaffIndex { get; set; }
         public double XOffset { get; set; }
 
@@ -25,9 +27,10 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             get => scale.Value; 
             set => scale.Value = value; 
         }
+        
 
 
-        public NoteLayout(NoteStyleTemplate styleTemplate, bool grace)
+        public NoteLayout(Guid guid, NoteStyleTemplate styleTemplate, bool grace)
         {
             this.styleTemplate = styleTemplate;
 
@@ -36,13 +39,15 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 
             StaffIndex = 0;
             XOffset = 0;
+            Id = guid;
         }
 
         public NoteLayoutMemento GetMemento()
         {
             return new NoteLayoutMemento()
             {
-                AccidentalDisplay = forceAccidental.Field,
+                Id = Id,
+                ForceAccidental = forceAccidental.Field,
                 Scale = scale.Field,
                 StaffIndex = StaffIndex,
                 XOffset = XOffset
@@ -51,9 +56,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 
         public void ApplyMemento(NoteLayoutMemento memento)
         {
-            StaffIndex = memento.StaffIndex;
-            XOffset = memento.XOffset;
-            forceAccidental.Field = memento.AccidentalDisplay;
+            StaffIndex = memento.StaffIndex ?? 0;
+            XOffset = memento.XOffset ?? 0;
+            forceAccidental.Field = memento.ForceAccidental;
             scale.Field = memento.Scale;
         }
 
@@ -61,8 +66,8 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         {
             StaffIndex = 0;
             XOffset = 0;
-            forceAccidental.Field = null;
-            scale.Field = null;
+            forceAccidental.Reset();
+            scale.Reset();
         }
     }
 }

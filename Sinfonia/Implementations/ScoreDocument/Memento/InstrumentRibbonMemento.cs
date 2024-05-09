@@ -1,10 +1,13 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Memento
+﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+
+namespace Sinfonia.Implementations.ScoreDocument.Memento
 {
     public class InstrumentRibbonMemento
     {
+        public required Guid Id { get; init; }
         public required Instrument Instrument { get; init; }
-        public required Guid Guid { get; init; }
         public required IList<InstrumentMeasureMemento> InstrumentMeasures { get; init; }
         public required int IndexInScore { get; init; }
+        public required InstrumentRibbonLayoutMemento Layout { get; init; }
     }
 }

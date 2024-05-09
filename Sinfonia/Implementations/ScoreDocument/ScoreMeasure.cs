@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreMeasure : ScoreElement, IMementoElement<ScoreMeasureMemento>
+    public class ScoreMeasure : ScoreElement, IMementoElement<ScoreMeasureMemento>
     {
         private readonly ScoreDocumentCore score;
         private readonly ScoreDocumentStyleTemplate styleTemplate;
@@ -26,7 +26,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             this.styleTemplate = styleTemplate;
 
             TimeSignature = timeSignature;
-            Layout = new ScoreMeasureLayout(styleTemplate.ScoreMeasureStyleTemplate, this);
+            Layout = new ScoreMeasureLayout(Guid, styleTemplate.ScoreMeasureStyleTemplate, this);
         }
 
 
@@ -82,15 +82,17 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return new ScoreMeasureMemento
             {
-                Measures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
+                Id = Guid,
+                InstrumentMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
                 TimeSignature = TimeSignature,
-                Guid = Guid,
                 IndexInScore = IndexInScore,
+                Layout = Layout.GetMemento()
             };
         }
         public void ApplyMemento(ScoreMeasureMemento memento)
         {
-            foreach (var measureMemento in memento.Measures)
+            Layout.ApplyMemento(memento.Layout);
+            foreach (var measureMemento in memento.InstrumentMeasures)
             {
                 var measure = GetMeasureCore(measureMemento.RibbonIndex);
                 measure.ApplyMemento(measureMemento);

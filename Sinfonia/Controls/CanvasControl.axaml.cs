@@ -44,7 +44,7 @@ internal static class GeometryExtensions
 
     public static Rect ToRect(this DrawableRectangle rectangle)
     {
-        var rect = new Rect(new Point((int)rectangle.TopLeftX, (int)rectangle.TopLeftY), new Size((int)rectangle.Width, (int)rectangle.Height));
+        var rect = new Rect(new Point(rectangle.TopLeftX, rectangle.TopLeftY), new Size(rectangle.Width, rectangle.Height));
         return rect;
     }
 
@@ -91,7 +91,7 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
     /// <inheritdoc/>
     protected override void DrawElement(DrawingContext drawingContext, DrawableRectangle rectangle)
     {
-        var rect = new Rect(new Point((int)rectangle.TopLeftX, (int)rectangle.TopLeftY), new Size((int)rectangle.Width, (int)rectangle.Height));
+        var rect = rectangle.ToRect();
         drawingContext.FillRectangle(rectangle.Color.ToBrush(), rect);
 
         if (rectangle.StrokeColor != null && rectangle.StrokeWeight > 0)
@@ -133,10 +133,8 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
     {
         var strokeBrush = polyline.Color?.ToBrush() ?? new SolidColorBrush();
         var pen = new Pen(strokeBrush, polyline.StrokeWeight);
-        var geometry = new PolylineGeometry()
-        {
-            Points = polyline.Points.Select(p => p.ToPoint()).ToArray(),
-        };
+        var points = polyline.Points.Select(p => p.ToPoint()).ToArray();
+        var geometry = new PolylineGeometry(points, false);
         drawingContext.DrawGeometry(null, pen, geometry);
     }
 
@@ -146,10 +144,8 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
         var fillBrush = polygon.Fill?.ToBrush() ?? new SolidColorBrush();
         var strokeBrush = polygon.Color?.ToBrush() ?? new SolidColorBrush();
         var pen = new Pen(strokeBrush, polygon.StrokeWeight);
-        var geometry = new PolylineGeometry()
-        {
-            Points = polygon.Points.Select(p => p.ToPoint()).ToArray(),
-        };
+        var points = polygon.Points.Select(p => p.ToPoint()).ToArray();
+        var geometry = new PolylineGeometry(points, true);
         drawingContext.DrawGeometry(fillBrush, pen, geometry);
     }
 

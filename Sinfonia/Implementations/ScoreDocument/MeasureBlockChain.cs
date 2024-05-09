@@ -2,7 +2,7 @@
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlockChain : ScoreElement, IMementoElement<RibbonMeasureVoiceMemento>
+    public class MeasureBlockChain : ScoreElement, IMementoElement<RibbonMeasureVoiceMemento>
     {
         private readonly List<MeasureBlock> blocks;
         private readonly ScoreDocumentStyleTemplate scoreDocumentStyle;
@@ -150,7 +150,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             Clear();
             foreach (var block in memento.MeasureBlocks)
             {
-                Append(block.Duration, block.Grace, block.Guid);
+                Append(block.Duration, false, block.Id);
                 var newBlock = blocks.Last();
                 newBlock.ApplyMemento(block);
             }

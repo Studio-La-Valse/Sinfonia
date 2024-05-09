@@ -1,4 +1,5 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
 
@@ -6,8 +7,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
     public class ScoreDocumentLayout : IScoreDocumentLayout, ILayout<ScoreDocumentLayoutMemento>
     {
+        private readonly Guid id; 
         private readonly ScoreDocumentStyleTemplate styleTemplate;
-        private readonly Dictionary<Instrument, double> instrumentScales = [];
+        private readonly Dictionary<Guid, double> instrumentScales = [];
         private readonly ValueTemplateProperty<double> scale;
         private readonly ValueTemplateProperty<double> horizontalStaffLineThickness;
         private readonly ValueTemplateProperty<double> verticalStaffLineThickness;
@@ -94,12 +96,13 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             }
         }
 
+        public Guid Id => this.id;
 
-
-
-        public ScoreDocumentLayout(ScoreDocumentStyleTemplate styleTemplate)
+        public ScoreDocumentLayout(Guid id, ScoreDocumentStyleTemplate styleTemplate)
         {
+            this.id = id;
             this.styleTemplate = styleTemplate;
+
             scale = new ValueTemplateProperty<double>(() => styleTemplate.Scale);
             horizontalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.HorizontalStaffLineThickness);
             verticalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.VerticalStaffLineThickness);
@@ -110,18 +113,18 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public void SpecifyScale(Instrument instrument, double scale)
+        public void SpecifyScale(IInstrumentRibbon instrument, double scale)
         {
-            instrumentScales[instrument] = scale;
+            instrumentScales[instrument.Guid] = scale;
         }
-        public double GetInstrumentScale(Instrument instrument)
+        public double GetInstrumentScale(IInstrumentRibbon instrument)
         {
-            if(styleTemplate.InstrumentScales.TryGetValue(instrument, out var scale))
+            if(styleTemplate.InstrumentScales.TryGetValue(instrument.Guid, out var scale))
             {
                 return scale;
             }
 
-            if(instrumentScales.TryGetValue(instrument, out var value))
+            if(instrumentScales.TryGetValue(instrument.Guid, out var value))
             {
                 return value;
             }
@@ -130,14 +133,8 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public void ApplyMemento(ScoreDocumentLayoutMemento? memento)
+        public void ApplyMemento(ScoreDocumentLayoutMemento memento)
         {
-            if (memento is null)
-            {
-                Restore();
-                return;
-            }
-
             scale.Field = memento.Scale;
             horizontalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
             verticalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
@@ -145,11 +142,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             firstSystemIndent.Field = memento.FirstSystemIndent;
             pageColor.Field = memento.PageColor;
             foregroundColor.Field = memento.ForegroundColor;
-
-            foreach(var kv in memento.InstrumentScales)
-            {
-                instrumentScales[kv.Key] = kv.Value;
-            }
+            memento.InstrumentScales.Replace(instrumentScales);
         }
 
         public void Restore()
@@ -161,18 +154,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             firstSystemIndent.Reset();
             pageColor.Reset();
             foregroundColor.Reset();
+            instrumentScales.Clear();
         }
 
         public ScoreDocumentLayoutMemento GetMemento()
         {
-            var dict = new Dictionary<Instrument, double>();
-            foreach(var kv in instrumentScales)
-            {
-                dict[kv.Key] = kv.Value;
-            }
-
             return new ScoreDocumentLayoutMemento()
             {
+                Id = Id,
                 Scale = scale.Field,
                 HorizontalStaffLineThickness = horizontalStaffLineThickness.Field,
                 VerticalStaffLineThickness = verticalStaffLineThickness.Field,
@@ -180,8 +169,30 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
                 FirstSystemIndent = firstSystemIndent.Field,
                 PageColor = pageColor.Field,
                 ForegroundColor = foregroundColor.Field,
-                InstrumentScales = dict
+                InstrumentScales = instrumentScales.DeepCopy()
             };
+        }
+    }
+
+    public static class DictionaryExtensions
+    {
+        public static Dictionary<TKey, TValue> DeepCopy<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TKey : IEquatable<TKey> where TValue : struct
+        {
+            var dict = new Dictionary<TKey, TValue>();
+            foreach (var kv in dictionary)
+            {
+                dict[kv.Key] = kv.Value;
+            }
+            return dict;
+        }
+
+        public static void Replace<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> target) where TKey : IEquatable<TKey> where TValue : struct
+        {
+            target.Clear();
+            foreach (var kv in dictionary)
+            {
+                target[kv.Key] = kv.Value;
+            }
         }
     }
 }

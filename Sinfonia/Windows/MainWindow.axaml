@@ -11,10 +11,30 @@
         ExtendClientAreaChromeHints="PreferSystemChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
 		TransparencyLevelHint="AcrylicBlur"
+		TransparencyBackgroundFallback="Transparent"
+		Background="Transparent"
 		CanResize="True"
-        Background="Transparent"
         Title="Sinfonia">
 
-	<controls:MainControl />
+	<Window.Styles>
+		<Style Selector="ListBox">
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+		<Style Selector="Expander">
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+	</Window.Styles>
 
+	<Panel>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" x:Name="Border">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial BackgroundSource="Digger" 
+											 TintColor="{DynamicResource SystemRegionColor}" 
+											 TintOpacity="1" 
+											 MaterialOpacity="0" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		
+		<controls:MainControl />
+	</Panel>
 </Window>

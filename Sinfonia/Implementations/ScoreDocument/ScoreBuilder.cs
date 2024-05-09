@@ -4,7 +4,7 @@ using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreBuilder : IScoreBuilder
+    public class ScoreBuilder : IScoreBuilder
     {
         private readonly ScoreDocumentCore scoreDocument;
         private readonly ICommandManager commandManager;

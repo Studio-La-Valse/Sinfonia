@@ -5,6 +5,7 @@ using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
+using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Reader;
@@ -20,7 +21,12 @@ namespace Sinfonia.Implementations
         private readonly IYamlConverter yamlConverter;
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
 
-        public DocumentViewModelFactory(ICommandFactory commandFactory, IKeyGeneratorFactory<int> keyGeneratorFactory, IBrowseToFile browseToFile, ISaveFile saveFile, IYamlConverter yamlConverter, DocumentCollectionViewModel documentCollectionViewModel)
+        public DocumentViewModelFactory(ICommandFactory commandFactory,
+                                        IKeyGeneratorFactory<int> keyGeneratorFactory,
+                                        IBrowseToFile browseToFile,
+                                        ISaveFile saveFile,
+                                        IYamlConverter yamlConverter,
+                                        DocumentCollectionViewModel documentCollectionViewModel)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
@@ -48,7 +54,7 @@ namespace Sinfonia.Implementations
                     .AddViewModels();
             });
 
-            using var host = hostBuilder.Build();
+            var host = hostBuilder.Build();
 
             var documentViewModel = host.Services.GetRequiredService<DocumentViewModel>();
             return documentViewModel;
@@ -89,7 +95,7 @@ namespace Sinfonia.Implementations
                     var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
                     var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
 
-                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, keyGenerator, scoreDocumentMemento.Guid);
+                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
                     return scoreDocument;

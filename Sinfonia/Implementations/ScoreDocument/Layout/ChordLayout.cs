@@ -7,39 +7,32 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
     {
         private readonly ChordStyleTemplate styleTemplate;
 
-
+        public Guid Id { get; }
         public double XOffset { get; set; }
 
 
-        public ChordLayout(ChordStyleTemplate styleTemplate)
+        public ChordLayout(Guid id, ChordStyleTemplate styleTemplate)
         {
             this.styleTemplate = styleTemplate;
 
+            Id = id;
             XOffset = 0;
         }
 
 
 
-        public ChordLayout Copy()
-        {
-            var copy = new ChordLayout(styleTemplate)
-            {
-                XOffset = XOffset
-            };
-            return copy;
-        }
-
         public ChordLayoutMemento GetMemento()
         {
             return new ChordLayoutMemento()
             {
+                Id = Id,
                 XOffset = XOffset
             };
         }
 
         public void ApplyMemento(ChordLayoutMemento memento)
         {
-            XOffset = memento.XOffset;
+            XOffset = memento.XOffset ?? 0;
         }
 
         public void Restore()

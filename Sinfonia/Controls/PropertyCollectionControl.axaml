@@ -16,52 +16,52 @@
 	<UserControl.DataTemplates>
 		<templates:PropertyDataTemplate>
 			<DataTemplate DataType="vmb:PropertyViewModelDouble" x:Key="Double">
-				<Grid Height="25">
+				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="1" />
 						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Text="{Binding Description}" FontWeight="Bold" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
 					<GridSplitter Grid.Column="1"/>
 					<TextBox Grid.Column="2" Text="{Binding Value}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
 				</Grid>
 			</DataTemplate>
 
 			<DataTemplate DataType="vmb:PropertyViewModelInt" x:Key="Int">
-				<Grid Height="25">
+				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"  />
 						<ColumnDefinition Width="1" />
 						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Text="{Binding Description}" FontWeight="Bold" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
 					<GridSplitter Grid.Column="1"/>
 					<TextBox Grid.Column="2" Text="{Binding Value, Converter={StaticResource myIntConverter}}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
 				</Grid>
 			</DataTemplate>
 
 			<DataTemplate DataType="vmb:PropertyViewModelColor" x:Key="Color">
-				<Grid Height="25">
+				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"  />
 						<ColumnDefinition Width="1" />
 						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Text="{Binding Description}" FontWeight="Bold" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
 					<GridSplitter Grid.Column="1"/>
 					<ColorPicker Color="{Binding Value}" Grid.Column="2" HorizontalAlignment="Left"/>
 				</Grid>
 			</DataTemplate>
 
 			<DataTemplate DataType="vmb:PropertyViewModelString" x:Key="String">
-				<Grid Height="25">
+				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"  />
 						<ColumnDefinition Width="1" />
 						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Text="{Binding Description}" FontWeight="Bold" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
 					<GridSplitter Grid.Column="1"/>
 					<TextBox Grid.Column="2" Text="{Binding Value}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
 				</Grid>

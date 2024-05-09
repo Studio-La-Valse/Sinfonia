@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class Note : ScoreElement, IMementoElement<NoteMemento>
+    public class Note : ScoreElement, IMementoElement<NoteMemento>
     {
         private readonly Chord container;
 
@@ -29,7 +29,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             this.container = container;
 
             Pitch = pitch;
-            Layout = new(documentStyleTemplate.NoteStyleTemplate, Grace);
+            Layout = new(Guid, documentStyleTemplate.NoteStyleTemplate, Grace);
         }
 
 
@@ -41,7 +41,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return new NoteMemento
             {
                 Pitch = Pitch,
-                Guid = Guid,
+                Id = Guid,
                 Layout = Layout.GetMemento()
             };
         }

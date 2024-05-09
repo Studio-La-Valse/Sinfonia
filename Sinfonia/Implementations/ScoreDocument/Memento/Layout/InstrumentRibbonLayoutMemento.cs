@@ -2,6 +2,7 @@
 {
     public class InstrumentRibbonLayoutMemento
     {
+        public required Guid Id { get; init; }
         public required string? AbbreviatedName { get; init; }
         public required string? DisplayName { get; init; }
         public required int? NumberOfStaves { get; init; }

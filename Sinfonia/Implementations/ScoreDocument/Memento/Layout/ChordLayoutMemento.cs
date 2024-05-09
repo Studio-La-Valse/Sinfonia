@@ -2,6 +2,7 @@
 {
     public class ChordLayoutMemento
     {
-        public required double XOffset { get; init; }
+        public required Guid Id { get; init; }
+        public double? XOffset { get; init; }
     }
 }

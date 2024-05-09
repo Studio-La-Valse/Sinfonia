@@ -3,7 +3,7 @@ using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class Page 
+    public class Page 
     {
         private readonly ScoreDocumentCore scoreDocument;
 

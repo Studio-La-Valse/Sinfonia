@@ -7,6 +7,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
     public class ScoreMeasureLayout : IScoreMeasureLayout, ILayout<ScoreMeasureLayoutMemento>
     {
+        private readonly Guid id;
         private readonly ScoreMeasureStyleTemplate scoreMeasureStyleTemplate;
         private readonly ScoreMeasure scoreMeasure;
         private readonly ValueTemplateProperty<double> width;
@@ -60,8 +61,11 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
         public double? PaddingBottom { get; set; }
 
-        internal ScoreMeasureLayout(ScoreMeasureStyleTemplate scoreMeasureStyleTemplate, ScoreMeasure scoreMeasure)
+        public Guid Id => this.id;
+
+        internal ScoreMeasureLayout(Guid id, ScoreMeasureStyleTemplate scoreMeasureStyleTemplate, ScoreMeasure scoreMeasure)
         {
+            this.id = id;
             this.scoreMeasureStyleTemplate = scoreMeasureStyleTemplate;
             this.scoreMeasure = scoreMeasure;
 
@@ -73,16 +77,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public ScoreMeasureLayout Copy()
-        {
-            var copy = new ScoreMeasureLayout(scoreMeasureStyleTemplate, scoreMeasure);
-            copy.width.Field = width.Field;
-            copy.paddingLeft.Field = paddingLeft.Field;
-            copy.paddingRight.Field = paddingRight.Field;
-            copy.keySignature.Field = keySignature.Field;
-            copy.PaddingBottom = PaddingBottom;
-            return copy;
-        }
 
         public void Restore()
         {
@@ -97,6 +91,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         {
             return new ScoreMeasureLayoutMemento()
             {
+                Id = Id,
                 KeySignature = keySignature.Field,
                 PaddingBottom = PaddingBottom,
                 PaddingLeft = paddingLeft.Field,

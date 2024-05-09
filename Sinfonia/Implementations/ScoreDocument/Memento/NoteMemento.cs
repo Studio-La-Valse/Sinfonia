@@ -4,8 +4,8 @@ namespace Sinfonia.Implementations.ScoreDocument.Memento
 {
     public class NoteMemento
     {
+        public required Guid Id { get; init; }
         public required Pitch Pitch { get; init; }
-        public required Guid Guid { get; init; }
-        public required NoteLayoutMemento? Layout { get; init; }
+        public required NoteLayoutMemento Layout { get; init; }
     }
 }
