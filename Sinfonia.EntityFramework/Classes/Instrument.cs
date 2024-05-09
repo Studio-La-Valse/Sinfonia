@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace Sinfonia.EntityFramework.Classes
+namespace StudioLaValse.ScoreDocument.Models.Classes
 {
     public class Instrument
     {

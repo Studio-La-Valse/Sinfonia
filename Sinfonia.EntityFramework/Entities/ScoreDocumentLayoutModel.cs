@@ -1,10 +1,10 @@
 ﻿#nullable disable
 
+using StudioLaValse.ScoreDocument.Models.Classes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Sinfonia.EntityFramework.Classes;
 
-namespace Sinfonia.EntityFramework.Entities
+namespace StudioLaValse.ScoreDocument.Models.Entities
 {
     public class ScoreDocumentLayoutModel
     {
@@ -173,7 +173,7 @@ namespace Sinfonia.EntityFramework.Entities
 
 
         public ScoreDocumentLayoutModel ScoreDocumentLayout { get; set; }
-        public ChordLayoutModel ChordLayout { get; set; }   
+        public ChordLayoutModel ChordLayout { get; set; }
 
 
         public int? ForceAccidental { get; set; }

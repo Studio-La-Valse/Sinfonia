@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Sinfonia.EntityFramework;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Sinfonia.Implementations;
 using Sinfonia.Implementations.Addin;
+using Sinfonia.Implementations.ScoreDocument.Converters;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;

@@ -1,9 +1,9 @@
 ﻿#nullable disable
 
-using Sinfonia.EntityFramework.Attributes;
+using StudioLaValse.ScoreDocument.Models.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sinfonia.EntityFramework.Classes
+namespace StudioLaValse.ScoreDocument.Models.Classes
 {
     public class RythmicDuration
     {

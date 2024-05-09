@@ -1,10 +1,6 @@
 ﻿#nullable disable
 
-using Sinfonia;
-using Sinfonia.EntityFramework.Attributes;
-using Sinfonia.EntityFramework.Entities;
-
-namespace Sinfonia.EntityFramework.Classes
+namespace StudioLaValse.ScoreDocument.Models.Classes
 {
     public class KeySignature
     {

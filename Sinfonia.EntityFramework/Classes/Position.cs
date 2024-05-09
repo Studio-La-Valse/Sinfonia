@@ -1,8 +1,8 @@
 ﻿#nullable disable
 
-using Sinfonia.EntityFramework.Attributes;
+using StudioLaValse.ScoreDocument.Models.Attributes;
 
-namespace Sinfonia.EntityFramework.Classes
+namespace StudioLaValse.ScoreDocument.Models.Classes
 {
     public class Position
     {

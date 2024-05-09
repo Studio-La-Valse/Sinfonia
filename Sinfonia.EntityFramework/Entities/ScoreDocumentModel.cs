@@ -1,9 +1,9 @@
 ﻿#nullable disable
 
-using Sinfonia.EntityFramework.Classes;
+using StudioLaValse.ScoreDocument.Models.Classes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sinfonia.EntityFramework.Entities
+namespace StudioLaValse.ScoreDocument.Models.Entities
 {
     public class ScoreDocumentModel
     {
@@ -12,7 +12,7 @@ namespace Sinfonia.EntityFramework.Entities
         public List<ScoreMeasureModel> ScoreMeasures { get; set; }
 
         public List<InstrumentRibbonModel> InstrumentRibbons { get; set; }
-        
+
         public ScoreDocumentLayoutModel Layout { get; set; }
     }
 

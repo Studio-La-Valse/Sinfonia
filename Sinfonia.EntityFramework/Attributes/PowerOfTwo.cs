@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Sinfonia.EntityFramework.Attributes
+namespace StudioLaValse.ScoreDocument.Models.Attributes
 {
     public class PowerOfTwo : ValidationAttribute
     {
@@ -23,7 +23,7 @@ namespace Sinfonia.EntityFramework.Attributes
 
         private bool IsPowerOfTwo(int x)
         {
-            return x != 0 && (x & x - 1) == 0;
+            return x != 0 && (x & (x - 1)) == 0;
         }
     }
 }

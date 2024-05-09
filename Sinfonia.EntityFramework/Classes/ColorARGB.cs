@@ -1,9 +1,8 @@
 ﻿#nullable disable
 
-using Sinfonia;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sinfonia.EntityFramework.Classes
+namespace StudioLaValse.ScoreDocument.Models.Classes
 {
     public class ColorARGB
     {

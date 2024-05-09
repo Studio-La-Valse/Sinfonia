@@ -1,8 +1,6 @@
 ﻿#nullable disable
 
-using Sinfonia;
-
-namespace Sinfonia.EntityFramework
+namespace StudioLaValse.ScoreDocument.Models
 {
     internal static class Constants
     {

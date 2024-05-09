@@ -1,10 +1,9 @@
 ﻿#nullable disable
 
-using Sinfonia.EntityFramework;
-using Sinfonia.EntityFramework.Classes;
+using StudioLaValse.ScoreDocument.Models.Classes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sinfonia.EntityFramework.Entities;
+namespace StudioLaValse.ScoreDocument.Models.Entities;
 
 public class ScoreDocumentStyleTemplateModel
 {
@@ -45,7 +44,7 @@ public class ScoreDocumentStyleTemplateModel
     public double StemLineThickness { get; set; }
 
     [Range(0, double.MaxValue)]
-    public double FirstSystemIndent { get; set; } 
+    public double FirstSystemIndent { get; set; }
 
     public ColorARGB PageColor { get; set; }
 
@@ -90,7 +89,7 @@ public class MeasureBlockStyleTemplateModel
     public ScoreDocumentStyleTemplateModel ScoreDocumentStyleTemplate { get; set; }
 
 
-    public double StemLength { get; set; } 
+    public double StemLength { get; set; }
     public double BracketAngle { get; set; }
 }
 
@@ -101,7 +100,7 @@ public class NoteStyleTemplateModel
 
     [Range(Constants.GenerallyNotZero, double.MaxValue)]
     public double Scale { get; set; }
-    public int AccidentalDisplay { get; set; } 
+    public int AccidentalDisplay { get; set; }
 }
 
 public class ChordStyleTemplateModel
@@ -160,7 +159,7 @@ public class PageStyleTemplateModel
     public double MarginLeft { get; set; }
 
     [Range(0, double.MaxValue)]
-    public double MarginBottom { get; set; } 
+    public double MarginBottom { get; set; }
 }
 
 #nullable enable

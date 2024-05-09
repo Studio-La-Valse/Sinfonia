@@ -1,13 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sinfonia.ViewModels.Application;
-using Sinfonia.Controls;
 using Sinfonia.Windows;
-using Sinfonia.EntityFramework;
+using System.Diagnostics;
 
 namespace Sinfonia;
 
@@ -25,14 +23,12 @@ public partial class App : Application
         var mainViewModel = host.Services.GetRequiredService<MainViewModel>();
         mainWindow.DataContext = mainViewModel;
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = mainWindow;
+            throw new UnreachableException();
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = mainWindow;
-        }
+
+        desktop.MainWindow = mainWindow;
 
         base.OnFrameworkInitializationCompleted();
     }

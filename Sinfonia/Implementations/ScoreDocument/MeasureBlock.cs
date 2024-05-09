@@ -109,18 +109,21 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public void Clear()
+        public void Clear(bool rebeam=true)
         {
             chords.Clear();
         }
-        public void AppendChord(RythmicDuration rythmicDuration)
+        public void AppendChord(RythmicDuration rythmicDuration, bool rebeam=true)
         {
             var guid = Guid.NewGuid();
             var layoutGuid = Guid.NewGuid();
             var chordLayout = new ChordLayout(layoutGuid);
             var chord = new Chord(this, rythmicDuration, documentStyleTemplate, chordLayout, keyGenerator, guid);
             chords.Add(chord);
-            Rebeam();
+            if (rebeam)
+            {
+                Rebeam();
+            }
         }
         public void Splice(int index)
         {
@@ -136,8 +139,9 @@ namespace Sinfonia.Implementations.ScoreDocument
             Clear();
             foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
-                AppendChord(rythmicDuration);
+                AppendChord(rythmicDuration, rebeam: false);
             }
+            Rebeam();
         }
         public void DivideEqual(int number)
         {
@@ -146,8 +150,9 @@ namespace Sinfonia.Implementations.ScoreDocument
             Clear();
             foreach (var rythmicDuration in stepsAsRythmicDurations)
             {
-                AppendChord(rythmicDuration);
+                AppendChord(rythmicDuration, rebeam: false);
             }
+            Rebeam();
         }
 
 
