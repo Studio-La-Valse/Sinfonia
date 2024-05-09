@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sinfonia.Implementations.ScoreDocument;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
 using Sinfonia.ViewModels.Application;
@@ -95,7 +96,9 @@ namespace Sinfonia.Implementations
                     var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
                     var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
 
-                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, keyGenerator, scoreDocumentMemento.Id);
+                    var layoutMemento = scoreDocumentMemento.Layout;
+                    var layout = new ScoreDocumentLayout(layoutMemento.Id, styleTemplate);
+                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, layout, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
                     return scoreDocument;

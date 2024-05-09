@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -8,7 +9,8 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public InstrumentMeasure Create(ScoreMeasure column, InstrumentRibbon row, ScoreDocumentStyleTemplate styleTemplate)
         {
-            return new InstrumentMeasure(column, row, styleTemplate, keyGenerator, Guid.NewGuid());
+            var layout = new InstrumentMeasureLayout(Guid.NewGuid(), row.Instrument, column);
+            return new InstrumentMeasure(column, row, styleTemplate, layout, keyGenerator, Guid.NewGuid());
         }
     }
 }

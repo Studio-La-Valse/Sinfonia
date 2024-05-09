@@ -20,14 +20,14 @@ namespace Sinfonia.Implementations.ScoreDocument
         public ScoreDocumentLayout Layout { get; }
 
 
-        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, ScoreDocumentStyleTemplate styleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, ScoreDocumentStyleTemplate styleTemplate, ScoreDocumentLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.contentTable = contentTable;
             this.pageGenerator = pageGenerator;
             this.styleTemplate = styleTemplate;
             this.keyGenerator = keyGenerator;
 
-            Layout = new ScoreDocumentLayout(Guid, styleTemplate);
+            Layout = layout;
         }
 
 
@@ -35,7 +35,8 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void AddInstrumentRibbon(Instrument instrument)
         {
-            InstrumentRibbon instrumentRibbon = new(this, instrument, styleTemplate, keyGenerator, Guid.NewGuid());
+            var layout = new InstrumentRibbonLayout(Guid.NewGuid(), instrument);
+            InstrumentRibbon instrumentRibbon = new(this, instrument, styleTemplate, layout, keyGenerator, Guid.NewGuid());
             contentTable.AddInstrumentRibbon(instrumentRibbon);
         }
         public void RemoveInstrumentRibbon(int indexInScore)
@@ -53,7 +54,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public ScoreMeasure CreateScoreMeasureCore(Guid guid, TimeSignature? timeSignature = null)
+        public ScoreMeasure CreateScoreMeasureCore(Guid guid, Guid layoutGuid, TimeSignature? timeSignature = null)
         {
             if (!contentTable.RowHeaders.Any())
             {
@@ -65,17 +66,18 @@ namespace Sinfonia.Implementations.ScoreDocument
                     previousElement.TimeSignature :
                     new TimeSignature(4, 4);
 
-            ScoreMeasure scoreMeasure = new(this, timeSignature, styleTemplate, keyGenerator, guid);
+            var layout = new ScoreMeasureLayout(layoutGuid, styleTemplate.ScoreMeasureStyleTemplate);
+            ScoreMeasure scoreMeasure = new(this, timeSignature, styleTemplate, layout, keyGenerator, guid);
             return scoreMeasure;
         }
         public void AppendScoreMeasure(TimeSignature? timeSignature = null)
         {
-            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), Guid.NewGuid(), timeSignature);
             contentTable.AddScoreMeasure(scoreMeasure);
         }
         public void InsertScoreMeasure(int index, TimeSignature? timeSignature = null)
         {
-            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), timeSignature);
+            var scoreMeasure = CreateScoreMeasureCore(Guid.NewGuid(), Guid.NewGuid(), timeSignature);
             contentTable.InsertScoreMeasure(scoreMeasure, index);
         }
         public void RemoveScoreMeasure(int indexInScore)
@@ -145,21 +147,22 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             Clear();
 
+            Layout.ApplyMemento(memento.Layout);
+
             foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
-                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, keyGenerator, instrumentMemento.Id);
+                var layout = new InstrumentRibbonLayout(instrumentMemento.Layout.Id, instrumentMemento.Instrument);
+                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, layout, keyGenerator, instrumentMemento.Id);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
             }
 
             foreach (var scoreMeasureMemento in memento.ScoreMeasures)
             {
-                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.TimeSignature);
+                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.Layout.Id, scoreMeasureMemento.TimeSignature);
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);
             }
-
-            Layout.ApplyMemento(memento.Layout);
         }
 
         public IEnumerable<Page> GeneratePages()

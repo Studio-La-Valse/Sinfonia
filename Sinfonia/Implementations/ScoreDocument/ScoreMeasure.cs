@@ -20,13 +20,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public ScoreDocumentCore ScoreDocumentCore => 
             score;
 
-        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreDocumentStyleTemplate styleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreDocumentStyleTemplate styleTemplate, ScoreMeasureLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
             this.styleTemplate = styleTemplate;
 
             TimeSignature = timeSignature;
-            Layout = new ScoreMeasureLayout(Guid, styleTemplate.ScoreMeasureStyleTemplate, this);
+            Layout = layout;
         }
 
 

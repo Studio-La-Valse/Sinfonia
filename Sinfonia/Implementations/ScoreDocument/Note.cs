@@ -24,12 +24,16 @@ namespace Sinfonia.Implementations.ScoreDocument
             container.Tuplet;
 
 
-        internal Note(Pitch pitch, Chord container, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal Note(Pitch pitch,
+                      Chord container,
+                      NoteLayout layout,
+                      IKeyGenerator<int> keyGenerator,
+                      Guid guid) : base(keyGenerator, guid)
         {
             this.container = container;
 
             Pitch = pitch;
-            Layout = new(Guid, documentStyleTemplate.NoteStyleTemplate, Grace);
+            Layout = layout;
         }
 
 
@@ -48,11 +52,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(NoteMemento memento)
         {
             Pitch = memento.Pitch;
-
-            if(memento.Layout is not null)
-            {
-                Layout.ApplyMemento(memento.Layout);
-            }
+            Layout.ApplyMemento(memento.Layout);
         }
     }
 }

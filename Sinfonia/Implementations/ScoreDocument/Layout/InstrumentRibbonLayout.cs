@@ -1,11 +1,9 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
     public class InstrumentRibbonLayout : IInstrumentRibbonLayout, ILayout<InstrumentRibbonLayoutMemento>
     {
-        private readonly InstrumentRibbon instrumentRibbon;
         private readonly ReferenceTemplateProperty<string> abbreviatedName;
         private readonly ReferenceTemplateProperty<string> displayName;
         private readonly ValueTemplateProperty<int> numberOfStaves;
@@ -20,14 +18,12 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         public Guid Id { get; }
 
 
-        public InstrumentRibbonLayout(Guid id, InstrumentRibbon instrumentRibbon)
+        public InstrumentRibbonLayout(Guid id, Instrument instrument)
         {
-            this.instrumentRibbon = instrumentRibbon;
-
             Id = id;
-            displayName = new ReferenceTemplateProperty<string>(() => this.instrumentRibbon.Instrument.Name);
+            displayName = new ReferenceTemplateProperty<string>(() => instrument.Name);
             abbreviatedName = new ReferenceTemplateProperty<string>(() => CreateDefaultNickName(displayName.Value));
-            numberOfStaves = new ValueTemplateProperty<int>(() => instrumentRibbon.Instrument.NumberOfStaves);
+            numberOfStaves = new ValueTemplateProperty<int>(() => instrument.NumberOfStaves);
             Collapsed = false;
         }
 

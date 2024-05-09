@@ -8,25 +8,26 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         private readonly Dictionary<int, double> paddingBottomForStaves = [];
         private readonly ValueTemplateProperty<int> numberOfStaves;
         private readonly Guid id;
-        private readonly InstrumentMeasure instrumentMeasure;
+        private readonly ScoreMeasure scoreMeasure;
 
         public int? NumberOfStaves { get; set; }
         public double? PaddingBottom { get; set; }
         public bool Collapsed { get; set; }
 
 
-        public KeySignature KeySignature => 
-            instrumentMeasure.ScoreMeasure.Layout.KeySignature;
+        public KeySignature KeySignature =>
+            scoreMeasure.Layout.KeySignature;
         public IEnumerable<ClefChange> ClefChanges => 
             changeList;
         public Guid Id =>
             id;
 
-        public InstrumentMeasureLayout(Guid id, InstrumentMeasure instrumentMeasure)
+        public InstrumentMeasureLayout(Guid id, Instrument instrument, ScoreMeasure scoreMeasure)
         {
-            this.numberOfStaves = new ValueTemplateProperty<int>(() => instrumentMeasure.Instrument.NumberOfStaves);
             this.id = id;
-            this.instrumentMeasure = instrumentMeasure;
+            this.scoreMeasure = scoreMeasure;
+
+            this.numberOfStaves = new ValueTemplateProperty<int>(() => instrument.NumberOfStaves);
         }
 
         public void AddClefChange(ClefChange clefChange)

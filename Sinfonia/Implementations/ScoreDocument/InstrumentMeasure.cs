@@ -29,7 +29,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public InstrumentMeasureLayout Layout { get; }
 
 
-        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, ScoreDocumentStyleTemplate documentStyleTemplate, InstrumentMeasureLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.scoreMeasure = scoreMeasure;
             this.hostRibbon = hostRibbon;
@@ -38,7 +38,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             blockChains = [];
 
-            Layout = new InstrumentMeasureLayout(guid, this);
+            Layout = layout;
         }
 
 

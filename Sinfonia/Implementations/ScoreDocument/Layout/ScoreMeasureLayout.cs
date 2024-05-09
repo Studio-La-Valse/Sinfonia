@@ -8,8 +8,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
     public class ScoreMeasureLayout : IScoreMeasureLayout, ILayout<ScoreMeasureLayoutMemento>
     {
         private readonly Guid id;
-        private readonly ScoreMeasureStyleTemplate scoreMeasureStyleTemplate;
-        private readonly ScoreMeasure scoreMeasure;
         private readonly ValueTemplateProperty<double> width;
         private readonly ValueTemplateProperty<KeySignature> keySignature;
         private readonly ValueTemplateProperty<double> paddingLeft;
@@ -63,11 +61,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
 
         public Guid Id => this.id;
 
-        internal ScoreMeasureLayout(Guid id, ScoreMeasureStyleTemplate scoreMeasureStyleTemplate, ScoreMeasure scoreMeasure)
+        internal ScoreMeasureLayout(Guid id, ScoreMeasureStyleTemplate scoreMeasureStyleTemplate)
         {
             this.id = id;
-            this.scoreMeasureStyleTemplate = scoreMeasureStyleTemplate;
-            this.scoreMeasure = scoreMeasure;
 
             keySignature = new ValueTemplateProperty<KeySignature>(() => new KeySignature(new Step(0, 0), MajorOrMinor.Major));
             width = new ValueTemplateProperty<double>(() => scoreMeasureStyleTemplate.Width);

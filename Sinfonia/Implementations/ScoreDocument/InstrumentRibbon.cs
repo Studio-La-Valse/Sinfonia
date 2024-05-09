@@ -15,12 +15,12 @@ namespace Sinfonia.Implementations.ScoreDocument
         public ScoreDocumentCore HostScoreDocument => score;
 
 
-        public InstrumentRibbon(ScoreDocumentCore score, Instrument instrument, ScoreDocumentStyleTemplate styleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public InstrumentRibbon(ScoreDocumentCore score, Instrument instrument, ScoreDocumentStyleTemplate styleTemplate, InstrumentRibbonLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
 
             Instrument = instrument;
-            Layout = new(Guid, this);
+            Layout = layout;
         }
 
 

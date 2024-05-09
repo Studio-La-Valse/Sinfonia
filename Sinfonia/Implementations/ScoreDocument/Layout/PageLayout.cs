@@ -32,17 +32,5 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             marginRight = new ValueTemplateProperty<double>(() => this.pageStyleTemplate.MarginRight);
             marginBottom = new ValueTemplateProperty<double>(() => this.pageStyleTemplate.MarginBottom);
         }
-
-        public PageLayout Copy()
-        {
-            var copy = new PageLayout(pageStyleTemplate);
-            copy.pageWidth.Field = pageWidth.Field;
-            copy.pageHeight.Field = pageHeight.Field;
-            copy.marginTop.Field = marginTop.Field;
-            copy.marginRight.Field = marginRight.Field;
-            copy.marginBottom.Field = marginBottom.Field;
-            copy.marginLeft.Field = marginLeft.Field;
-            return copy;
-        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Core;
+using StudioLaValse.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -53,7 +55,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         public InstrumentMeasure InstrumentMeasure =>
             host.RibbonMeasure;
 
-        public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, ScoreDocumentStyleTemplate documentStyleTemplate, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, ScoreDocumentStyleTemplate documentStyleTemplate, MeasureBlockLayout layout, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
         {
             this.host = host;
             this.documentStyleTemplate = documentStyleTemplate;
@@ -62,7 +64,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             Grace = grace;
             RythmicDuration = duration;
-            Layout = new MeasureBlockLayout(Guid, documentStyleTemplate.MeasureBlockStyleTemplate);
+            Layout = layout;
         }
 
 
@@ -114,11 +116,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void AppendChord(RythmicDuration rythmicDuration)
         {
             var guid = Guid.NewGuid();
-            AppendChord(rythmicDuration, guid);
-        }
-        public void AppendChord(RythmicDuration rythmicDuration, Guid guid)
-        {
-            Chord chord = new(this, rythmicDuration, documentStyleTemplate, keyGenerator, guid);
+            var layoutGuid = Guid.NewGuid();
+            var chordLayout = new ChordLayout(layoutGuid);
+            var chord = new Chord(this, rythmicDuration, documentStyleTemplate, chordLayout, keyGenerator, guid);
             chords.Add(chord);
             Rebeam();
         }
@@ -261,10 +261,12 @@ namespace Sinfonia.Implementations.ScoreDocument
             Layout.ApplyMemento(memento.Layout);
             foreach (var chordMemento in memento.Chords)
             {
-                AppendChord(chordMemento.RythmicDuration, chordMemento.Id);
-                var chord = chords.Last();
+                var chordLayout = new ChordLayout(chordMemento.Layout.Id);
+                var chord = new Chord(this, chordMemento.RythmicDuration, documentStyleTemplate, chordLayout, keyGenerator, chordMemento.Id);
+                chords.Add(chord);
                 chord.ApplyMemento(chordMemento);
             }
+            Rebeam();
         }
     }
 }

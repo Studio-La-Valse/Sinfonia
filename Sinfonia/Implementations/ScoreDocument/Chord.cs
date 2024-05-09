@@ -45,7 +45,12 @@ namespace Sinfonia.Implementations.ScoreDocument
             hostBlock.RibbonMeasure;
 
 
-        public Chord(MeasureBlock hostBlock, RythmicDuration displayDuration, ScoreDocumentStyleTemplate documentStyleTemplate, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public Chord(MeasureBlock hostBlock,
+                     RythmicDuration displayDuration,
+                     ScoreDocumentStyleTemplate documentStyleTemplate,
+                     ChordLayout chordLayout,
+                     IKeyGenerator<int> keyGenerator,
+                     Guid guid) : base(keyGenerator, guid)
         {
             this.hostBlock = hostBlock;
             this.keyGenerator = keyGenerator;
@@ -54,7 +59,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             measureElements = [];
 
             RythmicDuration = displayDuration;
-            Layout = new ChordLayout(Guid, documentStyleTemplate.ChordStyleTemplate);
+            Layout = chordLayout;
         }
 
 
@@ -74,7 +79,8 @@ namespace Sinfonia.Implementations.ScoreDocument
                     continue;
                 }
 
-                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, Guid.NewGuid());
+                var noteLayout = new NoteLayout(Guid.NewGuid(), documentStyleTemplate.NoteStyleTemplate, Grace);
+                Note noteInMeasure = new(pitch, this, noteLayout, keyGenerator, Guid.NewGuid());
                 measureElements.Add(noteInMeasure);
             }
         }
@@ -111,7 +117,8 @@ namespace Sinfonia.Implementations.ScoreDocument
             foreach (var noteMemento in memento.Notes)
             {
                 var pitch = noteMemento.Pitch;
-                Note noteInMeasure = new(pitch, this, documentStyleTemplate, keyGenerator, noteMemento.Id);
+                var noteLayout = new NoteLayout(noteMemento.Layout.Id, documentStyleTemplate.NoteStyleTemplate, Grace);
+                var noteInMeasure = new Note(pitch, this, noteLayout, keyGenerator, noteMemento.Id);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);
             }
