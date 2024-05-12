@@ -33,7 +33,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static HostApplicationBuilder CreateHostBuilder()
+    public static HostApplicationBuilder CreateHostBuilder()
     {
         var builder = Host.CreateApplicationBuilder(Environment.GetCommandLineArgs());
         builder.Services.AddModels().AddPersistence().AddViewModels().AddViews();

@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
     <ProjectReference Include="..\Sinfonia.EntityFramework\StudioLaValse.ScoreDocument.Models.csproj" />

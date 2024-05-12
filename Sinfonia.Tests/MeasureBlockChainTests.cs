@@ -19,14 +19,8 @@ namespace Sinfonia.Tests
         private readonly IScoreBuilder builder;
         public MeasureBlockChainTests()
         {
-            var serviceProvider = App.CreateHostBuilder([]).Build().Services;
-            var memento = new ScoreDocumentMemento()
-            {
-                Guid = Guid.NewGuid(),
-                InstrumentRibbons = [],
-                ScoreMeasures = [],
-                Layout = null!
-            };
+            var serviceProvider = App.CreateHostBuilder().Build().Services;
+            var memento = ScoreDocumentMemento.Create();
             builder = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento).ScoreBuilder;
         }
 
