@@ -72,9 +72,7 @@
 
 			<GridSplitter Grid.Row="1"/>
 
-			<GridSplitter Grid.Row="2"/>
-
-			<ScrollViewer Grid.Row="3" DataContext="{Binding Inspector}" x:DataType="vmi:InspectorViewModel">
+			<ScrollViewer Grid.Row="2" DataContext="{Binding Inspector}" x:DataType="vmi:InspectorViewModel">
 				<ItemsControl ItemsSource="{Binding PropertiesViewModel}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>

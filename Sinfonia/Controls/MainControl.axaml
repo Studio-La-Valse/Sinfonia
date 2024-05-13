@@ -7,14 +7,11 @@
 			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
 			 xmlns:views="using:Sinfonia.Controls"
 			 xmlns:templates="using:Sinfonia.DataTemplates"
+			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sinfonia.Controls.MainControl"
              x:DataType="vm:MainViewModel">
 
-	<UserControl.Styles>
-
-	</UserControl.Styles>
-	
 	<UserControl.DataTemplates>
 		<templates:DocumentDataTemplate/>
 	</UserControl.DataTemplates>
@@ -33,21 +30,25 @@
 				</Menu.Styles>
 			</Menu>
 		</Grid>
-		
-		<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
-			<TabControl.ItemTemplate>
-				<DataTemplate x:DataType="vmd:DocumentViewModel">
-					<Grid ColumnDefinitions="Auto, 4, 100, 4, Auto">
-						<PathIcon Grid.Column="0" Data="{StaticResource document_page_top_left_regular}" />
-						<TextBlock Grid.Column="1" />
-						<TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
-						<TextBlock Grid.Column="3" />
-						<Button Grid.Column="4" Background="Transparent" Command="{Binding CloseCommand}" CommandParameter="{Binding}">
-							<PathIcon Data="{StaticResource dismiss_circle_regular}" />
-						</Button>
-					</Grid>
-				</DataTemplate>
-			</TabControl.ItemTemplate>
-		</TabControl>
+
+		<Grid RowDefinitions="* 25">
+			<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
+				<TabControl.ItemTemplate>
+					<DataTemplate x:DataType="vmd:DocumentViewModel">
+						<Grid ColumnDefinitions="Auto, 4, 100, 4, Auto">
+							<i:MaterialIcon Kind="DocumentSign" Grid.Column="0"/>
+							<TextBlock Grid.Column="1" />
+							<TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
+							<TextBlock Grid.Column="3" />
+							<Button Grid.Column="4" Background="Transparent" Command="{Binding CloseCommand}" CommandParameter="{Binding}">
+								<i:MaterialIcon Kind="Close"/>
+							</Button>
+						</Grid>
+					</DataTemplate>
+				</TabControl.ItemTemplate>
+			</TabControl>
+
+			<Border Background="{DynamicResource SystemAccentColor}" Grid.Row="1"/>
+		</Grid>
 	</DockPanel>
 </UserControl>

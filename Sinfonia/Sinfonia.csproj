@@ -25,12 +25,13 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
     <PackageReference Include="StudioLaValse.Drawable.Avalonia" Version="2.1.1" />
-    <PackageReference Include="YamlDotNet" Version="15.1.2" />
+    <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +39,6 @@
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
-    <ProjectReference Include="..\Sinfonia.EntityFramework\StudioLaValse.ScoreDocument.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
