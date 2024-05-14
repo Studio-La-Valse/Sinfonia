@@ -8,6 +8,7 @@
 			 xmlns:vme="using:Sinfonia.ViewModels.Application.Document.Explorer"
 			 xmlns:vms="using:Sinfonia.ViewModels.Application.Document.StyleTemplate"
 			 xmlns:vmi="using:Sinfonia.ViewModels.Application.Document.Inspector"
+			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:controls="using:Sinfonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sinfonia.Controls.DocumentControl"
@@ -19,14 +20,31 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Grid ColumnDefinitions="400 5 * 5 400">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="400" MinWidth="120"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="400" MinWidth="120"/>
+		</Grid.ColumnDefinitions>
+		
+		<DockPanel DataContext="{Binding DocumentStyleEditorViewModel}">
+			<DockPanel DockPanel.Dock="Top">
+				<DockPanel.Resources>
+					<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
+						<MenuItem Command="{Binding LoadYaml}" Header="Load Yaml"/>
+						<MenuItem Command="{Binding SaveYaml}" Header="Save Yaml"/>
+					</MenuFlyout>
+				</DockPanel.Resources>
+				
+				<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+				<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+				<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+				<TextBlock Text="Style Template" VerticalAlignment="Center"/>
+			</DockPanel>
 
-		<ScrollViewer Grid.Column="0" DataContext="{Binding DocumentStyleEditorViewModel}" x:DataType="vms:DocumentStyleEditorViewModel">
-			<StackPanel>
-				<Grid ColumnDefinitions="* *">
-					<Button Command="{Binding LoadYamlCommand}" Content="Load Yaml" Grid.Column="0"/>
-					<Button Command="{Binding SaveYamlCommand}" Content="Save Yaml" Grid.Column="1"/>
-				</Grid>
+			<ScrollViewer>
 				<ItemsControl ItemsSource="{Binding Templates}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -41,8 +59,8 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
-			</StackPanel>
-		</ScrollViewer>
+			</ScrollViewer>
+		</DockPanel>		
 
 		<GridSplitter Grid.Column="1"/>
 
@@ -58,9 +76,22 @@
 		<GridSplitter Grid.Column="3"/>
 
 		<Grid Grid.Column="4" RowDefinitions="* 5 *">
-			
+
 			<DockPanel Grid.Row="0" DataContext="{Binding Explorer}" x:DataType="vme:ExplorerViewModel">
-				<Button Command="{Binding RebuildCommand}" Content="Rebuild" DockPanel.Dock="Top"/>
+
+				<DockPanel DockPanel.Dock="Top">
+					<DockPanel.Resources>
+						<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
+							<MenuItem Command="{Binding RebuildCommand}" Header="Rebuild"/>
+						</MenuFlyout>
+					</DockPanel.Resources>
+
+					<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+					<TextBlock Text="Explorer" VerticalAlignment="Center"/>
+				</DockPanel>
+				
 				<TreeView Grid.Row="0" DataContext="{Binding ScoreDocument}" x:DataType="vme:ScoreElementViewModel" ItemsSource="{Binding ScoreElements}">
 					<TreeView.ItemTemplate>
 						<TreeDataTemplate ItemsSource="{Binding ScoreElements}">
@@ -72,24 +103,35 @@
 
 			<GridSplitter Grid.Row="1"/>
 
-			<ScrollViewer Grid.Row="2" DataContext="{Binding Inspector}" x:DataType="vmi:InspectorViewModel">
-				<ItemsControl ItemsSource="{Binding PropertiesViewModel}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<StackPanel/>
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-					<ItemsControl.ItemTemplate>
-						<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
-							<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-								<controls:PropertyCollectionControl/>
-							</Expander>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-
+			<DockPanel Grid.Row="2" DataContext="{Binding Inspector}">
+				<DockPanel DockPanel.Dock="Top" x:DataType="vmi:InspectorViewModel">
+					<DockPanel.Resources>
+						<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
+							
+						</MenuFlyout>
+					</DockPanel.Resources>
+					<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+					<TextBlock Text="Explorer" VerticalAlignment="Center"/>
+				</DockPanel>
+				<ScrollViewer  x:DataType="vmi:InspectorViewModel">
+					<ItemsControl ItemsSource="{Binding PropertiesViewModel}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel/>
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+								<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+									<controls:PropertyCollectionControl/>
+								</Expander>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</DockPanel>
 		</Grid>
-
 	</Grid>
 </UserControl>

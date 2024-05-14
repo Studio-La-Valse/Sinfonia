@@ -9,9 +9,14 @@ namespace Sinfonia.ViewModels.Application
 
         public MenuViewModel(FileMenuViewModel fileMenuViewModel, DocumentMenuViewModel documentMenuViewModel)
         {
-            Items = new ObservableCollection<MenuItemViewModel>();
-            Items.Add(fileMenuViewModel);
-            Items.Add(documentMenuViewModel);
+            fileMenuViewModel.Icon = new() { Kind = Material.Icons.MaterialIconKind.Menu, Width = 40};
+            documentMenuViewModel.Icon = new() { Kind = Material.Icons.MaterialIconKind.Cog, Width = 40 };
+
+            Items = new ObservableCollection<MenuItemViewModel>()
+            {
+                fileMenuViewModel, documentMenuViewModel
+            };
+            
         }
     }
 }

@@ -16,19 +16,41 @@
 		<templates:DocumentDataTemplate/>
 	</UserControl.DataTemplates>
 
+	<UserControl.Styles>
+		<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
+			<Setter Property="Header" Value="{Binding Header}"/>
+			<Setter Property="ItemsSource" Value="{Binding Items}"/>
+			<Setter Property="Command" Value="{Binding Command}"/>
+			<Setter Property="CommandParameter" Value="{Binding CommandParameter}" />
+			<Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+		</Style>
+	</UserControl.Styles>
+
 	<DockPanel>
 		<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" >
-			<Menu x:DataType="vm:MenuViewModel" DataContext="{Binding MenuViewModel}" ItemsSource="{Binding Items}" Grid.Column="1">
-				<Menu.Styles>
-					<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
-						<Setter Property="Header" Value="{Binding Header}"/>
-						<Setter Property="ItemsSource" Value="{Binding Items}"/>
-						<Setter Property="Command" Value="{Binding Command}"/>
-						<Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
-						<Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
-					</Style>
-				</Menu.Styles>
-			</Menu>
+
+			<ItemsControl Grid.Column="1" DataContext="{Binding MenuViewModel.Items}" ItemsSource="{Binding}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vmb:MenuItemViewModel">
+						<Button Content="{Binding Icon}" DataContext="{Binding}">
+							<Button.Flyout>
+								<MenuFlyout ItemsSource="{Binding Items}" Placement="BottomEdgeAlignedLeft">
+									<MenuFlyout.ItemTemplate>
+										<DataTemplate x:DataType="vmb:MenuItemViewModel">
+											<MenuItem DataContext="{Binding}"/>
+										</DataTemplate >
+									</MenuFlyout.ItemTemplate >
+								</MenuFlyout>
+							</Button.Flyout>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
 		</Grid>
 
 		<Grid RowDefinitions="* 25">

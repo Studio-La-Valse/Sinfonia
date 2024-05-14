@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.ViewModels.Base
+﻿using YamlDotNet.Core.Tokens;
+
+namespace Sinfonia.ViewModels.Base
 {
     public class MenuItemViewModel : BaseViewModel
     {
@@ -6,6 +8,12 @@
         {
             get => GetValue(() => Items);
             set => SetValue(() => Items, value);
+        }
+
+        public Material.Icons.Avalonia.MaterialIcon Icon 
+        {
+            get => GetValue(() => Icon);
+            set => SetValue(() => Icon, value);
         }
 
         public string Header
