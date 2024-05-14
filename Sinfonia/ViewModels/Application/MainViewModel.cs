@@ -1,4 +1,5 @@
-﻿using Sinfonia.ViewModels.Base;
+﻿using Sinfonia.ViewModels.Application.Menu;
+using Sinfonia.ViewModels.Base;
 
 namespace Sinfonia.ViewModels.Application
 {

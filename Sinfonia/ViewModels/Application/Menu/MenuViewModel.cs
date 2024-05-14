@@ -1,7 +1,7 @@
 ﻿using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.ViewModels.Base;
 
-namespace Sinfonia.ViewModels.Application
+namespace Sinfonia.ViewModels.Application.Menu
 {
     public class MenuViewModel : BaseViewModel
     {
@@ -16,7 +16,6 @@ namespace Sinfonia.ViewModels.Application
             {
                 fileMenuViewModel, documentMenuViewModel
             };
-            
         }
     }
 }
