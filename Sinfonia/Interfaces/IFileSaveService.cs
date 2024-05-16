@@ -11,8 +11,7 @@ namespace Sinfonia.Interfaces
 {
     public interface IFileSaveService
     {
-        void SaveDocument(DocumentViewModel documentReader);
-
-        (ScoreDocumentMemento, ScoreDocumentStyleTemplate) Get();
+        void SaveDocument();
+        void Open();
     }
 }

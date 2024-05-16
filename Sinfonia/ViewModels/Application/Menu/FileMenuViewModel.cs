@@ -6,9 +6,7 @@ namespace Sinfonia.ViewModels.Application.Menu
     public class FileMenuViewModel : MenuItemViewModel
     {
         private readonly DocumentCollectionViewModel documentCollection;
-        private readonly ImportMenuViewModel importMenuViewModel;
         private readonly IShellMethods shellMethods;
-        private readonly ICommandFactory commandFactory;
         private readonly IFileSaveService fileService;
         private readonly IDocumentViewModelFactory documentViewModelFactory;
 
@@ -20,46 +18,43 @@ namespace Sinfonia.ViewModels.Application.Menu
                                  IDocumentViewModelFactory documentViewModelFactory) : base("_File...")
         {
             this.documentCollection = documentCollection;
-            this.importMenuViewModel = importMenuViewModel;
             this.shellMethods = shellMethods;
-            this.commandFactory = commandFactory;
             this.fileService = fileService;
             this.documentViewModelFactory = documentViewModelFactory;
 
-            Items.Add(new MenuItemViewModel("Open", commandFactory.Create(OpenFile)));
+            var openItem = new MenuItemViewModel()
+            {
+                Header = "Open",
+                Command = commandFactory.Create(fileService.Open)
+            };
+
+            var saveItem = new MenuItemViewModel()
+            {
+                Header = "Save as...",
+                Command = commandFactory.Create(fileService.SaveDocument),
+                Icon = new() { Kind = Material.Icons.MaterialIconKind.Floppy }
+            };
+
+            var closeItem = new MenuItemViewModel()
+            {
+                Header = "Close",
+                Command = commandFactory.Create(CloseDocument)
+            };
+
+            var exitItem = new MenuItemViewModel()
+            {
+                Header = "Exit",
+                Command = commandFactory.Create(Exit),
+                Icon = new() { Kind = Material.Icons.MaterialIconKind.ExitToApp }
+            };
+            
+            Items.Add(openItem);
             Items.Add(importMenuViewModel);
-            Items.Add(new MenuItemViewModel("Save as...", commandFactory.Create(SaveAs)));
-            Items.Add(new MenuItemViewModel("Close", commandFactory.Create(CloseDocument, documentCollection.Documents.Any)));
-            Items.Add(new MenuItemViewModel("Exit", commandFactory.Create(Exit)));
+            Items.Add(saveItem);
+            Items.Add(closeItem);
+            Items.Add(exitItem);
         }
 
-
-        public void OpenFile()
-        {
-            try
-            {
-                var (memento, style) = fileService.Get();
-                var documentViewModel = documentViewModelFactory.Create(memento);
-                documentViewModel.Explorer.Rebuild();
-                documentViewModel.CanvasViewModel.ScoreDocumentStyle.Apply(style);
-                documentCollection.Add(documentViewModel);
-            }
-            catch
-            {
-
-            }
-        }
-
-        public void SaveAs()
-        {
-            var active = documentCollection.TryGetActiveDocument(out var activeDocument);
-            if (!active)
-            {
-                return;
-            }
-
-            fileService.SaveDocument(activeDocument!);
-        }
 
         public void CloseDocument()
         {

@@ -14,12 +14,6 @@
              x:Class="Sinfonia.Controls.DocumentControl"
 			 x:DataType="vm:DocumentViewModel">
 
-	<UserControl.Styles>
-		<Style Selector="Expander">
-			<Setter Property="IsExpanded" Value="True"/>
-		</Style>
-	</UserControl.Styles>
-
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="400" MinWidth="120"/>
@@ -31,16 +25,16 @@
 		
 		<DockPanel DataContext="{Binding DocumentStyleEditorViewModel}">
 			<DockPanel DockPanel.Dock="Top">
-				<DockPanel.Resources>
-					<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
-						<MenuItem Command="{Binding LoadYaml}" Header="Load Yaml"/>
-						<MenuItem Command="{Binding SaveYaml}" Header="Save Yaml"/>
-					</MenuFlyout>
-				</DockPanel.Resources>
-				
-				<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+				<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Width="40">
+					<Button.Flyout>
+						<MenuFlyout Placement="BottomEdgeAlignedLeft">
+							<MenuItem Command="{Binding LoadYaml}" Header="Load Yaml"/>
+							<MenuItem Command="{Binding SaveYaml}" Header="Save Yaml"/>
+						</MenuFlyout>
+					</Button.Flyout>
+				</Button>
 				<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
-				<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+				<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40" Command="{Binding ToggleExpandAllCommand}"/>
 				<TextBlock Text="Style Template" VerticalAlignment="Center"/>
 			</DockPanel>
 
@@ -53,7 +47,7 @@
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
-							<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+							<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
 								<controls:PropertyCollectionControl/>
 							</Expander>
 						</DataTemplate>
@@ -112,7 +106,7 @@
 					</DockPanel.Resources>
 					<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
 					<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
-					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40" Command="{Binding ToggleExpandAllCommand}"/>
 					<TextBlock Text="Explorer" VerticalAlignment="Center"/>
 				</DockPanel>
 				<ScrollViewer  x:DataType="vmi:InspectorViewModel">
@@ -124,7 +118,7 @@
 						</ItemsControl.ItemsPanel>
 						<ItemsControl.ItemTemplate>
 							<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
-								<Expander Header="{Binding Header}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+								<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
 									<controls:PropertyCollectionControl/>
 								</Expander>
 							</DataTemplate>

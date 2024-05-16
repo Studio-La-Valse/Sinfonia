@@ -1,4 +1,5 @@
-﻿using YamlDotNet.Core.Tokens;
+﻿using Avalonia.Media;
+using YamlDotNet.Core.Tokens;
 
 namespace Sinfonia.ViewModels.Base
 {
@@ -38,6 +39,14 @@ namespace Sinfonia.ViewModels.Base
         {
             get => GetValue(() =>  IsEnabled);
             set => SetValue(() => IsEnabled, value);
+        }
+
+        public MenuItemViewModel()
+        {
+            Command = null;
+            Items = [];
+            Header = "";
+            IsEnabled = true;
         }
 
         public MenuItemViewModel(string header)

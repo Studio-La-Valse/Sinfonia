@@ -17,22 +17,16 @@ namespace Sinfonia.Implementations
     {
         private readonly ICommandFactory commandFactory;
         private readonly IKeyGeneratorFactory<int> keyGeneratorFactory;
-        private readonly IBrowseToFile browseToFile;
-        private readonly ISaveFile saveFile;
-        private readonly IYamlConverter yamlConverter;
+        private readonly IScoreStyleTemplateSaveService yamlConverter;
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
 
         public DocumentViewModelFactory(ICommandFactory commandFactory,
                                         IKeyGeneratorFactory<int> keyGeneratorFactory,
-                                        IBrowseToFile browseToFile,
-                                        ISaveFile saveFile,
-                                        IYamlConverter yamlConverter,
+                                        IScoreStyleTemplateSaveService yamlConverter,
                                         DocumentCollectionViewModel documentCollectionViewModel)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
-            this.browseToFile = browseToFile;
-            this.saveFile = saveFile;
             this.yamlConverter = yamlConverter;
             this.documentCollectionViewModel = documentCollectionViewModel;
         }
@@ -44,8 +38,6 @@ namespace Sinfonia.Implementations
                 services
                     .AddSingleton(documentCollectionViewModel)
                     .AddSingleton(commandFactory)
-                    .AddSingleton(browseToFile)
-                    .AddSingleton(saveFile)
                     .AddSingleton(yamlConverter)
                     .AddSingleton(keyGeneratorFactory.CreateKeyGenerator())
                     .AddSingleton(CommandManager.CreateGreedy())

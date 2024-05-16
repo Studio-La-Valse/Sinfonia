@@ -4,6 +4,12 @@
     {
         public abstract string Header { get; }
 
+        public bool IsExpanded
+        {
+            get => GetValue(() => IsExpanded);
+            set => SetValue(() => IsExpanded, value);
+        }
+
         public ObservableCollection<PropertyViewModel> Properties
         {
             get => GetValue(() => Properties);
@@ -13,6 +19,7 @@
         public PropertyCollectionViewModel()
         {
             Properties = [];
+            IsExpanded = true;
         }
     }
 }

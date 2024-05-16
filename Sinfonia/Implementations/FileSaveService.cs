@@ -1,5 +1,8 @@
 ﻿using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Interfaces;
+using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Models.Entities;
@@ -21,16 +24,20 @@ namespace Sinfonia.Implementations
     {
         private readonly ScoreDocumentMementoConverter documentMementoConverter;
         private readonly MainWindow mainWindow;
+        private readonly IDocumentViewModelFactory documentViewModelFactory;
+        private readonly DocumentCollectionViewModel documentCollection;
 
-        public FileSaveService(ScoreDocumentMementoConverter documentMementoConverter, MainWindow mainWindow)
+        public FileSaveService(ScoreDocumentMementoConverter documentMementoConverter, MainWindow mainWindow, IDocumentViewModelFactory documentViewModelFactory, DocumentCollectionViewModel documentCollection)
         {
             this.documentMementoConverter = documentMementoConverter;
             this.mainWindow = mainWindow;
+            this.documentViewModelFactory = documentViewModelFactory;
+            this.documentCollection = documentCollection;
         }
 
 
 
-        public (ScoreDocumentMemento, ScoreDocumentStyleTemplate) Get()
+        public void Open()
         {
             var task = mainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
@@ -49,34 +56,40 @@ namespace Sinfonia.Implementations
             var documentModel = JsonSerializer.Deserialize<DocumentModel>(stream) ?? throw new Exception();
             var scoreDocument = documentMementoConverter.Convert(documentModel.ScoreDocument);
             var template = documentModel.StyleTemplate;
-            return (scoreDocument, template);   
+            var documentViewModel = documentViewModelFactory.Create(scoreDocument);
+            documentViewModel.Explorer.Rebuild();
+            documentViewModel.CanvasViewModel.ScoreDocumentStyle.Apply(documentModel.StyleTemplate);
+            documentCollection.Add(documentViewModel);
         }
 
 
-        public void SaveDocument(DocumentViewModel documentReader)
+        public void SaveDocument()
         {
-            var task = mainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+            if(documentCollection.TryGetActiveDocument(out var documentReader))
             {
-                Title = "Save as...",
-                DefaultExtension = ".sin",
-                SuggestedFileName = documentReader.Header,
-                ShowOverwritePrompt = true,
-                FileTypeChoices = [new FilePickerFileType("Sinfonia files") { Patterns = ["*.sin"] }]
-            });
-            var result = AsyncHelper.RunSync(() => task);
-            if (result is null)
-            {
-                throw new Exception();
-            }
+                var task = mainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+                {
+                    Title = "Save as...",
+                    DefaultExtension = ".sin",
+                    SuggestedFileName = documentReader.Header,
+                    ShowOverwritePrompt = true,
+                    FileTypeChoices = [new FilePickerFileType("Sinfonia files") { Patterns = ["*.sin"] }]
+                });
+                var result = AsyncHelper.RunSync(() => task);
+                if (result is null)
+                {
+                    throw new Exception();
+                }
 
-            using var stream = AsyncHelper.RunSync(result.OpenWriteAsync);
-            var _document = documentMementoConverter.ConvertBack(documentReader.ScoreDocumentCore.GetMemento());
-            var documentModel = new DocumentModel()
-            {
-                ScoreDocument = _document,
-                StyleTemplate = documentReader.CanvasViewModel.ScoreDocumentStyle
-            };
-            JsonSerializer.Serialize(stream, documentModel);
+                using var stream = AsyncHelper.RunSync(result.OpenWriteAsync);
+                var _document = documentMementoConverter.ConvertBack(documentReader.ScoreDocumentCore.GetMemento());
+                var documentModel = new DocumentModel()
+                {
+                    ScoreDocument = _document,
+                    StyleTemplate = documentReader.CanvasViewModel.ScoreDocumentStyle
+                };
+                JsonSerializer.Serialize(stream, documentModel);
+            }
         }
     }
 }

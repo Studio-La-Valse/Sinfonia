@@ -8,9 +8,22 @@
              x:Class="Sinfonia.Controls.MenuControl"
 			 x:DataType="vm:MenuViewModel">
 	
-	<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" >
+	<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="50">
 
-		<ItemsControl Grid.Column="1" ItemsSource="{Binding Items}">
+		<Menu Grid.Column="1" ItemsSource="{Binding Items}">
+			<Menu.Styles>
+				<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
+					<Setter Property="Header" Value="{Binding Header}"/>
+					<Setter Property="ItemsSource" Value="{Binding Items}"/>
+					<Setter Property="Command" Value="{Binding Command}"/>
+					<Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+					<Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+					<Setter Property="Icon" Value="{Binding Icon}"/>
+				</Style>
+			</Menu.Styles>
+		</Menu>
+		
+		<!--<ItemsControl Grid.Column="1" ItemsSource="{Binding Items}">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -18,7 +31,7 @@
 			</ItemsControl.ItemsPanel>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate x:DataType="vmb:MenuItemViewModel">
-					<Button Content="{Binding Icon}" DataContext="{Binding}">
+					<Button Content="{Binding Icon}" DataContext="{Binding}" Command="{Binding Command}" IsEnabled="{Binding IsEnabled}">
 						<Button.Flyout>
 							<MenuFlyout ItemsSource="{Binding Items}" Placement="BottomEdgeAlignedLeft">
 								<MenuFlyout.ItemTemplate>
@@ -31,6 +44,6 @@
 					</Button>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+		</ItemsControl>-->
 	</Grid>
 </UserControl>

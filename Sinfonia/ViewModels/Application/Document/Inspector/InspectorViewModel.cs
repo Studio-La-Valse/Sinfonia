@@ -14,11 +14,29 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
             set => SetValue(() => PropertiesViewModel, value);
         }
 
-        public InspectorViewModel(IScoreBuilder scoreBuilder)
+        public ICommand ToggleExpandAllCommand
+        {
+            get => GetValue(() => ToggleExpandAllCommand);
+            set => SetValue(() => ToggleExpandAllCommand, value);
+        }
+
+        public InspectorViewModel(IScoreBuilder scoreBuilder, ICommandFactory commandFactory)
         {
             this.scoreBuilder = scoreBuilder;
 
             PropertiesViewModel = [];
+            ToggleExpandAllCommand = commandFactory.Create(ToggleExpandAll);
+        }
+
+        public void ToggleExpandAll()
+        {
+            if(PropertiesViewModel.All(p => p.IsExpanded))
+            {
+                PropertiesViewModel.ForEach(p => p.IsExpanded = false);
+                return;
+            }
+
+            PropertiesViewModel.ForEach(p => p.IsExpanded= true);
         }
 
         public void Update(IEnumerable<IUniqueScoreElement> selected, IEnumerable<IUniqueScoreElement> unselected)

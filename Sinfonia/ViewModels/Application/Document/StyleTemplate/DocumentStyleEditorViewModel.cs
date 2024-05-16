@@ -3,7 +3,6 @@ using Avalonia.Media;
 using Sinfonia.ViewModels.Base;
 using System.IO;
 using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
-using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
 
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
@@ -42,9 +41,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         private readonly MeasureBlockViewModel measureBlockViewModel;
         private readonly ChordViewModel chordViewModel;
         private readonly NoteViewModel noteViewModel;
-        private readonly IYamlConverter yamlConverter;
-        private readonly IBrowseToFile browseToFile;
-        private readonly ISaveFile saveFile;
+        private readonly IScoreStyleTemplateSaveService scoreStyleTemplateSaveService;
 
         public ObservableCollection<PropertyCollectionViewModel> Templates
         {
@@ -64,6 +61,12 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             set => SetValue(() => SaveYamlCommand, value);
         }
 
+        public ICommand ToggleExpandAllCommand
+        {
+            get => GetValue(() => ToggleExpandAllCommand);
+            set => SetValue(() => ToggleExpandAllCommand, value);
+        }
+
         public DocumentStyleEditorViewModel(CanvasViewModel canvasViewModel,
                                             ScoreDocumentViewModel scoreDocumentViewModel,
                                             PageViewModel pageViewModel,
@@ -77,9 +80,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
                                             ChordViewModel chordViewModel,
                                             NoteViewModel noteViewModel,
                                             ICommandFactory commandFactory,
-                                            IYamlConverter yamlConverter,
-                                            IBrowseToFile browseToFile,
-                                            ISaveFile saveFile)
+                                            IScoreStyleTemplateSaveService scoreStyleTemplateSaveService)
         {
 
             this.canvasViewModel = canvasViewModel;
@@ -94,15 +95,24 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             this.measureBlockViewModel = measureBlockViewModel;
             this.chordViewModel = chordViewModel;
             this.noteViewModel = noteViewModel;
-            this.yamlConverter = yamlConverter;
-            this.browseToFile = browseToFile;
-            this.saveFile = saveFile;
-
+            this.scoreStyleTemplateSaveService = scoreStyleTemplateSaveService;
             Templates = [];
             SaveYamlCommand = commandFactory.Create(SaveYaml);
             LoadYamlCommand = commandFactory.Create(LoadYaml);
+            ToggleExpandAllCommand = commandFactory.Create(ToggleExpandAll);
 
             Rebuild();
+        }
+
+        public void ToggleExpandAll()
+        {
+            if(Templates.All(t => t.IsExpanded))
+            {
+                Templates.ForEach(t => t.IsExpanded = false);
+                return;
+            }
+
+            Templates.ForEach(t => t.IsExpanded = true);
         }
 
         public void Rebuild()
@@ -122,24 +132,15 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         }
         public void LoadYaml()
         {
-            if (browseToFile.BrowseToFile(".yaml", "Yaml Files(*.yaml)|*.yaml|Yaml Files(*.yml)|*.yml", out var filePath))
-            {
-                using var reader = File.OpenText(filePath);
-                var yaml = yamlConverter.FromYaml(reader);
-                canvasViewModel.ScoreDocumentStyle.Apply(yaml);
-                canvasViewModel.Rerender();
-                Rebuild();
-            }
+            var yaml = scoreStyleTemplateSaveService.Open();
+            canvasViewModel.ScoreDocumentStyle.Apply(yaml);
+            canvasViewModel.Rerender();
+            Rebuild();
         }
 
         public void SaveYaml()
         {
-            if (saveFile.SaveToFile("my_style", ".yaml", "Yaml Files(*.yaml)|*.yaml|Yaml Files(*.yml)|*.yml", out var filePath))
-            {
-                var yaml = yamlConverter.ToYaml(canvasViewModel.ScoreDocumentStyle);
-                using var writer = File.CreateText(filePath);
-                writer.Write(yaml);
-            }
+            scoreStyleTemplateSaveService.Save(canvasViewModel.ScoreDocumentStyle);
         }
     }
 

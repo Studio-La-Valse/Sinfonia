@@ -14,7 +14,8 @@ namespace Sinfonia.Extensions
         {
             return services.AddSingleton<IShellMethods, ShellMethods>()
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
-                .AddTransient<IYamlConverter, YamlConverter>();
+                .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
+                .AddTransient<IMusicXmlImportService, MusicXmlImportService>();
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
@@ -25,7 +26,6 @@ namespace Sinfonia.Extensions
                 .AddSingleton<FileMenuViewModel>()
                 .AddSingleton<MenuViewModel>()
                 .AddSingleton<DocumentCollectionViewModel>()
-                .AddSingleton<DocumentMenuViewModel>()
                 .AddSingleton<MainViewModel>();
         }
 
@@ -41,8 +41,7 @@ namespace Sinfonia.Extensions
         public static IServiceCollection AddViews(this IServiceCollection services)
         {
             return services.AddSingleton<MainWindow>()
-                .AddScoped<IBrowseToFile, FileBrowser>()
-                .AddScoped<ISaveFile, SaveFile>();
+                .AddSingleton<IOptionsWindowService, OptionsWindowService>();
         }
 
         public static IServiceCollection RegisterExternalAddins(this IServiceCollection services)
