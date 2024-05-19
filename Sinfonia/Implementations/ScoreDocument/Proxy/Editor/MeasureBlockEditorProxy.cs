@@ -1,8 +1,5 @@
-﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
@@ -32,42 +29,42 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void AppendChord(RythmicDuration rythmicDuration)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.AppendChord(rythmicDuration)).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<MeasureBlock, MeasureBlockModel>(source, (s) => s.AppendChord(rythmicDuration)).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void Splice(int index)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.Splice(index)).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<MeasureBlock, MeasureBlockModel>(source, (s) => s.Splice(index)).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, (s) => s.Clear()).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<MeasureBlock, MeasureBlockModel>(source, (s) => s.Clear()).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<MeasureBlockLayout, MeasureBlockLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new RestoreLayoutCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void SetStemLength(double stemLength)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, s => s.Layout.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout, s => s.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void SetBeamAngle(double angle)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockMemento>(source, s => s.Layout.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout, s => s.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -103,7 +100,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IMeasureBlockLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

@@ -10,7 +10,7 @@
 	</Application.Resources>
 	
     <Application.Styles>
-        <FluentTheme >
+        <FluentTheme DensityStyle="Compact">
 			<FluentTheme.Palettes>
 				 <!--Palette for Light theme variant--> 
 				<ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
@@ -18,7 +18,7 @@
 				<ColorPaletteResources x:Key="Dark" Accent="DarkGreen" RegionColor="Black" ErrorText="Yellow" />
 			</FluentTheme.Palettes>
 		</FluentTheme>
-		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
 		<materialIcons:MaterialIconStyles />
 	</Application.Styles>
 </Application>

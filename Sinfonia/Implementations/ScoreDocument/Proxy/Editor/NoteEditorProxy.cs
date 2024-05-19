@@ -1,8 +1,5 @@
-﻿using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Core;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
 
@@ -37,41 +34,41 @@ internal class NoteEditorProxy(Note source, ICommandManager commandManager, INot
 
     public INoteLayout ReadLayout()
     {
-        return source.Layout;
+        return source.SecondaryLayout;
     }
 
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<NoteLayout, NoteLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new RestoreLayoutCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetForceAccidental(AccidentalDisplay display)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.ForceAccidental = display).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.ForceAccidental = display).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetScale(double scale)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.Scale = scale).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.Scale = scale).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetStaffIndex(int staffIndex)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetXOffset(double offset)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<Note, NoteMemento>(source, s => s.Layout.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 }

@@ -1,9 +1,5 @@
-﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Core;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
@@ -59,48 +55,48 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comm
 
     public IScoreMeasureLayout ReadLayout()
     {
-        return source.Layout;
+        return source.SecondaryLayout;
     }
 
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<ScoreMeasureLayout, ScoreMeasureLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new RestoreLayoutCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 
     public void SetKeySignature(KeySignature keySignature)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.KeySignature = keySignature).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.KeySignature = keySignature).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingLeft(double padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingLeft = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingLeft = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingRight(double padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingRight = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingRight = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 
     public void SetWidth(double width)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.Width = width).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.Width = width).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingBottom(double? padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<ScoreMeasure, ScoreMeasureMemento>(source, s => s.Layout.PaddingBottom = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingBottom = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
         transaction.Enqueue(command);
     }
 }

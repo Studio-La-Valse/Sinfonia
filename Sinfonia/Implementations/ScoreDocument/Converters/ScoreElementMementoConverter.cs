@@ -1,33 +1,30 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Converters
+﻿using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
+
+namespace Sinfonia.Implementations.ScoreDocument.Converters
 {
-    public class ScoreElementMementoConverter
+    public static class ScoreElementMementoConverter
     {
-        public ScoreElementMementoConverter()
-        {
-
-        }
-
-        public Instrument Convert(StudioLaValse.ScoreDocument.Models.Classes.Instrument instrument)
+        public static Instrument Convert(this StudioLaValse.ScoreDocument.Models.Classes.Instrument instrument)
         {
             var _instrument = Instrument.CreateCustom(instrument.Name, instrument.Clefs.Select(Convert).ToArray());
             return _instrument;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.Instrument ConvertBack(Instrument instrument)
+        public static StudioLaValse.ScoreDocument.Models.Classes.Instrument Convert(this Instrument instrument)
         {
             var _instrument = new StudioLaValse.ScoreDocument.Models.Classes.Instrument()
             {
-                Clefs = instrument.DefaultClefs.Select(ConvertBack).ToList(),
+                Clefs = instrument.DefaultClefs.Select(Convert).ToList(),
                 Name = instrument.Name,
             };
             return _instrument;
         }
 
-        public RythmicDuration Convert(StudioLaValse.ScoreDocument.Models.Classes.RythmicDuration rythmicDuration)
+        public static RythmicDuration Convert(this StudioLaValse.ScoreDocument.Models.Classes.RythmicDuration rythmicDuration)
         {
             var _rythmicDuration = new RythmicDuration(rythmicDuration.PowerOfTwo, rythmicDuration.Dots);
             return _rythmicDuration;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.RythmicDuration ConvertBack(RythmicDuration rythmicDuration)
+        public static StudioLaValse.ScoreDocument.Models.Classes.RythmicDuration Convert(this RythmicDuration rythmicDuration)
         {
             var _rythmicDuration = new StudioLaValse.ScoreDocument.Models.Classes.RythmicDuration()
             {
@@ -37,12 +34,12 @@
             return _rythmicDuration;
         }
 
-        public TimeSignature Convert(StudioLaValse.ScoreDocument.Models.Classes.TimeSignature timeSignature)
+        public static TimeSignature Convert(this StudioLaValse.ScoreDocument.Models.Classes.TimeSignature timeSignature)
         {
             var _timeSignature = new TimeSignature(timeSignature.Numerator, timeSignature.Denominator);
             return _timeSignature;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.TimeSignature ConvertBack(TimeSignature timeSignature)
+        public static StudioLaValse.ScoreDocument.Models.Classes.TimeSignature Convert(this TimeSignature timeSignature)
         {
             var _timeSignature = new StudioLaValse.ScoreDocument.Models.Classes.TimeSignature()
             {
@@ -52,15 +49,15 @@
             return _timeSignature;
         }
 
-        public KeySignature Convert(StudioLaValse.ScoreDocument.Models.Classes.KeySignature keySignature)
+        public static KeySignature Convert(this StudioLaValse.ScoreDocument.Models.Classes.KeySignature keySignature)
         {
             var step = Convert(keySignature.Step);
             var _keySignature = new KeySignature(step, keySignature.Major ? MajorOrMinor.Major : MajorOrMinor.Minor);
             return _keySignature;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.KeySignature ConvertBack(KeySignature keySignature)
+        public static StudioLaValse.ScoreDocument.Models.Classes.KeySignature Convert(this KeySignature keySignature)
         {
-            var step = ConvertBack(keySignature.Origin);
+            var step = Convert(keySignature.Origin);
             var major = keySignature.MajorOrMinor == MajorOrMinor.Major ? true : false;
             var _keySignature = new StudioLaValse.ScoreDocument.Models.Classes.KeySignature()
             {
@@ -70,7 +67,7 @@
             return _keySignature;
         }
 
-        public Clef Convert(string clef)
+        public static Clef Convert(this string clef)
         {
             var _clef = clef.ToLower() switch
             {
@@ -85,17 +82,35 @@
             };
             return _clef;
         }
-        public string ConvertBack(Clef clef)
+        public static string Convert(this Clef clef)
         {
             return clef.Name.ToString();
         }
 
-        public Step Convert(StudioLaValse.ScoreDocument.Models.Classes.Step step)
+
+        public static ClefChange Convert(this StudioLaValse.ScoreDocument.Models.Classes.ClefChange clefChange)
+        {
+            var _clefChange = new ClefChange(clefChange.Clef.Convert(), clefChange.StaffIndex, clefChange.Position.Convert());
+            return _clefChange;
+        }
+        public static StudioLaValse.ScoreDocument.Models.Classes.ClefChange Convert(this ClefChange clefChange)
+        {
+            var _clefChange = new StudioLaValse.ScoreDocument.Models.Classes.ClefChange()
+            {
+                Clef = clefChange.Clef.Convert(),
+                Position = clefChange.Position.Convert(),
+                StaffIndex = clefChange.StaffIndex
+            };
+            return _clefChange;
+        }
+
+
+        public static Step Convert(this StudioLaValse.ScoreDocument.Models.Classes.Step step)
         {
             var _step = new Step(step.StepsFromC, step.Shifts);
             return _step;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.Step ConvertBack(Step step)
+        public static StudioLaValse.ScoreDocument.Models.Classes.Step Convert(this Step step)
         {
             var _step = new StudioLaValse.ScoreDocument.Models.Classes.Step()
             {
@@ -105,28 +120,28 @@
             return _step;
         }
 
-        public Pitch Convert(StudioLaValse.ScoreDocument.Models.Classes.Pitch pitch)
+        public static Pitch Convert(this StudioLaValse.ScoreDocument.Models.Classes.Pitch pitch)
         {
             var step = Convert(pitch.Step);
             var _pitch = new Pitch(step, pitch.Octave);
             return _pitch;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.Pitch ConvertBack(Pitch pitch)
+        public static StudioLaValse.ScoreDocument.Models.Classes.Pitch Convert(this Pitch pitch)
         {
             var _pitch = new StudioLaValse.ScoreDocument.Models.Classes.Pitch()
             {
                 Octave = pitch.Octave,
-                Step = ConvertBack(pitch.Step)
+                Step = Convert(pitch.Step)
             };
             return _pitch;
         }
 
-        public Position Convert(StudioLaValse.ScoreDocument.Models.Classes.Position position)
+        public static Position Convert(this StudioLaValse.ScoreDocument.Models.Classes.Position position)
         {
             var _position = new Position(position.Numerator, position.Denominator);
             return _position;
         }
-        public StudioLaValse.ScoreDocument.Models.Classes.Position ConvertBack(Position position)
+        public static StudioLaValse.ScoreDocument.Models.Classes.Position Convert(this Position position)
         {
             var _position = new StudioLaValse.ScoreDocument.Models.Classes.Position()
             {
@@ -134,6 +149,29 @@
                 Numerator = position.Numerator,
             };
             return _position;
+        }
+
+        public static ColorARGB Convert(this StudioLaValse.ScoreDocument.Models.Classes.ColorARGB Color)
+        {
+            var _color = new ColorARGB()
+            {
+                A = Color.A,
+                B = Color.B,
+                G = Color.G,
+                R = Color.R,
+            };
+            return _color;
+        }
+        public static StudioLaValse.ScoreDocument.Models.Classes.ColorARGB Convert(this ColorARGB Color)
+        {
+            var _color = new StudioLaValse.ScoreDocument.Models.Classes.ColorARGB()
+            {
+                A = Color.A,
+                B = Color.B,
+                G = Color.G,
+                R = Color.R,
+            };
+            return _color;
         }
     }
 }

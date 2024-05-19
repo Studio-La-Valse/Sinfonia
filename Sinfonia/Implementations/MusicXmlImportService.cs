@@ -1,6 +1,7 @@
 ﻿using Avalonia.Platform.Storage;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.MusicXml;
 using System.Xml.Linq;
 
@@ -36,7 +37,7 @@ namespace Sinfonia.Implementations
             var file = result[0];
             using var fileStream = AsyncHelper.RunSync(file.OpenReadAsync);
             var document = XDocument.Load(fileStream);
-            var memento = ScoreDocumentMemento.Create();
+            var memento = ScoreDocumentModel.Create();
             var documentViewModel = documentViewModelFactory.Create(memento);
             _ = documentViewModel.ScoreBuilder.Edit(e =>
             {

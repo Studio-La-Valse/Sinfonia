@@ -1,4 +1,7 @@
 ﻿using Sinfonia.Implementations.Commands;
+using StudioLaValse.ScoreDocument.Core;
+using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
@@ -30,21 +33,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void Append(RythmicDuration duration, bool grace)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Append(duration, grace));
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Append(duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Clear());
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 
         public void Divide(params int[] steps)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Divide(steps));
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Divide(steps)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
 
         }
@@ -52,21 +55,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void DivideEqual(int number)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.DivideEqual(number));
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.DivideEqual(number)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 
         public void Insert(Position position, RythmicDuration duration, bool grace)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Insert(position, duration, grace));
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Insert(position, duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 
         public void Prepend(RythmicDuration duration, bool grace)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            MementoCommand<MeasureBlockChain, RibbonMeasureVoiceMemento> command = new(source, s => s.Prepend(duration, grace));
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Prepend(duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 

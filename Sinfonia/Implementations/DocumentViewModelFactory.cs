@@ -9,6 +9,7 @@ using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations
@@ -31,7 +32,7 @@ namespace Sinfonia.Implementations
             this.documentCollectionViewModel = documentCollectionViewModel;
         }
 
-        public DocumentViewModel Create(ScoreDocumentMemento scoreDocument)
+        public DocumentViewModel Create(ScoreDocumentModel scoreDocument)
         {
             var hostBuilder = Host.CreateDefaultBuilder().ConfigureServices(services =>
             {
@@ -74,7 +75,7 @@ namespace Sinfonia.Implementations
             
         }
 
-        public static IServiceCollection AddScoreDocument(this IServiceCollection services, ScoreDocumentMemento scoreDocumentMemento)
+        public static IServiceCollection AddScoreDocument(this IServiceCollection services, ScoreDocumentModel scoreDocumentMemento)
         {
             return services
                 .AddSingleton<ScoreDocumentStyleTemplate>()
@@ -89,13 +90,14 @@ namespace Sinfonia.Implementations
                     var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
 
                     var layoutMemento = scoreDocumentMemento.Layout;
-                    var layout = new ScoreDocumentLayout(layoutMemento.Id, styleTemplate);
-                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, layout, keyGenerator, scoreDocumentMemento.Id);
+                    var primaryLayout = new PrimaryScoreDocumentLayout(styleTemplate);
+                    var secondaryLayout = new SecondaryScoreDocumentLayout(primaryLayout, layoutMemento.Id);
+                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
                     return scoreDocument;
                 })
-                .AddSingleton<IScoreDocumentLayout>(services => services.GetRequiredService<ScoreDocumentCore>().Layout)
+                .AddSingleton<IScoreDocumentLayout>(services => services.GetRequiredService<ScoreDocumentCore>().SecondaryLayout)
                 .AddSingleton<IScoreBuilder, ScoreBuilder>()
                 .AddSingleton<IScoreDocumentReader, ScoreDocumentReaderProxy>()
                 .AddTransient<IScoreDocumentEditor, ScoreDocumentEditorProxy>();

@@ -9,8 +9,9 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public InstrumentMeasure Create(ScoreMeasure column, InstrumentRibbon row, ScoreDocumentStyleTemplate styleTemplate)
         {
-            var layout = new InstrumentMeasureLayout(Guid.NewGuid(), row.Instrument, column);
-            return new InstrumentMeasure(column, row, styleTemplate, layout, keyGenerator, Guid.NewGuid());
+            var layout = new InstrumentMeasureLayout(row.Instrument, column);
+            var secondaryLayout = new SecondaryInstrumentMeasureLayout(layout, Guid.NewGuid());
+            return new InstrumentMeasure(column, row, styleTemplate, layout, secondaryLayout, keyGenerator, Guid.NewGuid());
         }
     }
 }

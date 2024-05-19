@@ -1,16 +1,19 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class ScoreMeasure : ScoreElement, IMementoElement<ScoreMeasureMemento>
+    public class ScoreMeasure : ScoreElement, IMementoElement<ScoreMeasureModel>
     {
         private readonly ScoreDocumentCore score;
-        private readonly ScoreDocumentStyleTemplate styleTemplate;
+
 
         public TimeSignature TimeSignature { get; }
-        public ScoreMeasureLayout Layout { get; }
+        public PrimaryScoreMeasureLayout Layout { get; }
+        public SecondaryScoreMeasureLayout SecondaryLayout { get; }
 
 
         public int IndexInScore =>
@@ -20,13 +23,21 @@ namespace Sinfonia.Implementations.ScoreDocument
         public ScoreDocumentCore ScoreDocumentCore => 
             score;
 
-        internal ScoreMeasure(ScoreDocumentCore score, TimeSignature timeSignature, ScoreDocumentStyleTemplate styleTemplate, ScoreMeasureLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+
+
+        internal ScoreMeasure(ScoreDocumentCore score,
+                              TimeSignature timeSignature,
+                              ScoreDocumentStyleTemplate styleTemplate,
+                              PrimaryScoreMeasureLayout layout,
+                              SecondaryScoreMeasureLayout secondaryLayout,
+                              IKeyGenerator<int> keyGenerator,
+                              Guid guid) : base(keyGenerator, guid)
         {
             this.score = score;
-            this.styleTemplate = styleTemplate;
 
             TimeSignature = timeSignature;
             Layout = layout;
+            SecondaryLayout = secondaryLayout;
         }
 
 
@@ -78,23 +89,30 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public ScoreMeasureMemento GetMemento()
+        public ScoreMeasureModel GetMemento()
         {
-            return new ScoreMeasureMemento
+            return new ScoreMeasureModel
             {
                 Id = Guid,
+                Layout = SecondaryLayout.GetMemento(),
                 InstrumentMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
-                TimeSignature = TimeSignature,
+                TimeSignature = TimeSignature.Convert(),
                 IndexInScore = IndexInScore,
-                Layout = Layout.GetMemento()
+                KeySignature = Layout._KeySignature.Field?.Convert(),
+                PaddingBottom = Layout._PaddingBottom.Field,
+                PaddingLeft = Layout._PaddingLeft.Field,
+                PaddingRight = Layout._PaddingRight.Field,
+                Width = Layout._Width.Field
             };
         }
-        public void ApplyMemento(ScoreMeasureMemento memento)
+        public void ApplyMemento(ScoreMeasureModel memento)
         {
-            Layout.ApplyMemento(memento.Layout);
+            Layout.ApplyMemento(memento);
+            SecondaryLayout.ApplyMemento(memento.Layout);
+
             foreach (var measureMemento in memento.InstrumentMeasures)
             {
-                var measure = GetMeasureCore(measureMemento.RibbonIndex);
+                var measure = GetMeasureCore(measureMemento.InstrumentRibbonIndex);
                 measure.ApplyMemento(measureMemento);
             }
         }

@@ -1,13 +1,15 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Core;
 using StudioLaValse.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class MeasureBlock : ScoreElement, IMementoElement<MeasureBlockMemento>, IPositionElement
+    public class MeasureBlock : ScoreElement, IPositionElement, IMementoElement<MeasureBlockModel>
     {
         private readonly List<Chord> chords;
         private readonly MeasureBlockChain host;
@@ -52,19 +54,29 @@ namespace Sinfonia.Implementations.ScoreDocument
         public bool Grace { get; }
         public RythmicDuration RythmicDuration { get; }
         public MeasureBlockLayout Layout { get; }
+        public SecondaryMeasureBlockLayout SecondaryLayout { get; }
         public InstrumentMeasure InstrumentMeasure =>
             host.RibbonMeasure;
 
-        public MeasureBlock(RythmicDuration duration, MeasureBlockChain host, ScoreDocumentStyleTemplate documentStyleTemplate, MeasureBlockLayout layout, bool grace, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        public MeasureBlock(RythmicDuration duration,
+                            MeasureBlockChain host,
+                            ScoreDocumentStyleTemplate documentStyleTemplate,
+                            MeasureBlockLayout layout,
+                            SecondaryMeasureBlockLayout secondaryLayout,
+                            bool grace,
+                            IKeyGenerator<int> keyGenerator,
+                            Guid guid) : base(keyGenerator, guid)
         {
             this.host = host;
             this.documentStyleTemplate = documentStyleTemplate;
             this.keyGenerator = keyGenerator;
+
             chords = [];
 
             Grace = grace;
             RythmicDuration = duration;
             Layout = layout;
+            SecondaryLayout = secondaryLayout;
         }
 
 
@@ -109,7 +121,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public void Clear(bool rebeam=true)
+        public void Clear()
         {
             chords.Clear();
         }
@@ -117,8 +129,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             var guid = Guid.NewGuid();
             var layoutGuid = Guid.NewGuid();
-            var chordLayout = new ChordLayout(layoutGuid);
-            var chord = new Chord(this, rythmicDuration, documentStyleTemplate, chordLayout, keyGenerator, guid);
+            var chordLayout = new ChordLayout();
+            var secondaryChordLayout = new SecondaryChordLayout(chordLayout, layoutGuid);
+            var chord = new Chord(this, rythmicDuration, documentStyleTemplate, chordLayout, secondaryChordLayout, keyGenerator, guid);
             chords.Add(chord);
             if (rebeam)
             {
@@ -249,28 +262,36 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public MeasureBlockMemento GetMemento()
+        public MeasureBlockModel GetMemento()
         {
-            return new MeasureBlockMemento()
+            return new MeasureBlockModel()
             {
-                Chords = chords.Select(c => c.GetMemento()).ToList(),
-                Duration = RythmicDuration,
                 Id = Guid,
-                Layout = Layout.GetMemento(),
-                Voice = host.Voice
+                Chords = chords.Select(c => c.GetMemento()).ToList(),
+                Duration = RythmicDuration.Convert(),
+                Layout = SecondaryLayout.GetMemento(),
+                Voice = host.Voice,
+                BeamAngle = Layout._BeamAngle.Field,
+                StemLength = Layout._StemLength.Field,
             };
         }
-        public void ApplyMemento(MeasureBlockMemento memento)
+
+        public void ApplyMemento(MeasureBlockModel memento)
         {
             Clear();
-            Layout.ApplyMemento(memento.Layout);
+
+            Layout.ApplyMemento(memento);
+            SecondaryLayout.ApplyMemento(memento.Layout);
+
             foreach (var chordMemento in memento.Chords)
             {
-                var chordLayout = new ChordLayout(chordMemento.Layout.Id);
-                var chord = new Chord(this, chordMemento.RythmicDuration, documentStyleTemplate, chordLayout, keyGenerator, chordMemento.Id);
+                var chordLayout = new ChordLayout();
+                var secondaryChordLayout = new SecondaryChordLayout(chordLayout, chordMemento.Layout.Id);
+                var chord = new Chord(this, chordMemento.RythmicDuration.Convert(), documentStyleTemplate, chordLayout, secondaryChordLayout, keyGenerator, chordMemento.Id);
                 chords.Add(chord);
                 chord.ApplyMemento(chordMemento);
             }
+
             Rebeam();
         }
     }

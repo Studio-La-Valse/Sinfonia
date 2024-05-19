@@ -1,8 +1,4 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.ViewModels.Base;
-using StudioLaValse.ScoreDocument.MusicXml;
-using System.IO;
-using System.Xml.Linq;
+﻿using Sinfonia.ViewModels.Base;
 
 namespace Sinfonia.ViewModels.Application.Menu
 {

@@ -65,7 +65,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IScoreMeasureLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

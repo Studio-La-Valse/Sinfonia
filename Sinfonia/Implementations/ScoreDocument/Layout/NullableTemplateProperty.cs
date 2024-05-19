@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Sinfonia.Implementations.ScoreDocument.Layout
+﻿namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
     /// <summary> 
     /// Defines a template property that has a field and a value. When the value is assigned a value, this value will instead be assigned to the backing field. If the field has a value assigned, this value will be used. If not, the value will be retrieved by the provided value getter.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ReferenceTemplateProperty<T> where T : class
+    public class NullableTemplateProperty<T> where T : struct
     {
-        private readonly Func<T> getDefaultValue;
+        private readonly Func<T?> getDefaultValue;
 
         /// <summary>
         /// The backing field for this property. If it is not set, the template value will be used.
@@ -18,13 +16,13 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         /// <summary>
         /// The value of the property.
         /// </summary>
-        public T Value
+        public T? Value
         {
             get
             {
-                if (Field is not null)
+                if (Field.HasValue)
                 {
-                    return Field;
+                    return Field.Value;
                 }
 
                 return getDefaultValue();
@@ -39,7 +37,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         /// The default constructor.
         /// </summary>
         /// <param name="getDefaultValue"></param>
-        public ReferenceTemplateProperty(Func<T> getDefaultValue)
+        public NullableTemplateProperty(Func<T?> getDefaultValue)
         {
             this.getDefaultValue = getDefaultValue;
         }

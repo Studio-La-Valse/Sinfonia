@@ -1,45 +1,74 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    public class MeasureBlockLayout : IMeasureBlockLayout, ILayout<MeasureBlockLayoutMemento>
+    public abstract class BaseMeasureBlockLayout
     {
-        private readonly ValueTemplateProperty<double> stemLength;
-        private readonly ValueTemplateProperty<double> beamAngle;
+        public abstract ValueTemplateProperty<double> _StemLength { get; }
+        public abstract ValueTemplateProperty<double> _BeamAngle { get; }
 
-        public double StemLength { get => stemLength.Value; set => stemLength.Value = value; }
-        public double BeamAngle { get => beamAngle.Value; set => beamAngle.Value = value; }
-        public Guid Id { get; }
+        public double StemLength { get => _StemLength.Value; set => _StemLength.Value = value; }
+        public double BeamAngle { get => _BeamAngle.Value; set => _BeamAngle.Value = value; }
 
-        public MeasureBlockLayout(Guid id, MeasureBlockStyleTemplate styleTemplate)
-        {
-            stemLength = new ValueTemplateProperty<double>(() => styleTemplate.StemLength);
-            beamAngle = new ValueTemplateProperty<double>(() => styleTemplate.BracketAngle);
-            Id = id;
-        }
-
-        public MeasureBlockLayoutMemento GetMemento()
-        {
-            return new MeasureBlockLayoutMemento()
-            {
-                Id = Id,
-                StemLength = stemLength.Field,
-                BeamAngle = beamAngle.Field,
-            };
-        }
-
-        public void ApplyMemento(MeasureBlockLayoutMemento memento)
-        {
-            Restore();
-            stemLength.Field = memento.StemLength;
-            beamAngle.Field = memento.BeamAngle;
-        }
 
         public void Restore()
         {
-            stemLength.Reset();
-            beamAngle.Reset();
+            _StemLength.Reset();
+            _BeamAngle.Reset();
+        }
+
+        public void ApplyMemento(MeasureBlockLayoutMembers memento)
+        {
+            Restore();
+
+            _StemLength.Field = memento.StemLength;
+            _BeamAngle.Field = memento.BeamAngle;
+        }
+        public void ApplyMemento(MeasureBlockLayoutModel memento)
+        {
+            ApplyMemento((MeasureBlockLayoutMembers)memento);
+        }
+    }
+
+    public class MeasureBlockLayout : BaseMeasureBlockLayout
+    {
+        public override ValueTemplateProperty<double> _StemLength { get; }
+        public override ValueTemplateProperty<double> _BeamAngle { get; }
+
+
+        public MeasureBlockLayout(MeasureBlockStyleTemplate styleTemplate)
+        {
+            _StemLength = new ValueTemplateProperty<double>(() => styleTemplate.StemLength);
+            _BeamAngle = new ValueTemplateProperty<double>(() => styleTemplate.BeamAngle);
+        }
+    }
+
+    public class SecondaryMeasureBlockLayout : BaseMeasureBlockLayout, IMeasureBlockLayout, ILayout<MeasureBlockLayoutModel>
+    {
+        public Guid Id { get; }
+
+        public override ValueTemplateProperty<double> _StemLength { get; }
+        public override ValueTemplateProperty<double> _BeamAngle { get; }
+
+
+        public SecondaryMeasureBlockLayout(Guid id, MeasureBlockLayout blockLayout)
+        {
+            Id = id;
+
+            _StemLength = new ValueTemplateProperty<double>(() => blockLayout.StemLength);
+            _BeamAngle = new ValueTemplateProperty<double>(() => blockLayout.BeamAngle);
+        }
+
+        public MeasureBlockLayoutModel GetMemento()
+        {
+            return new MeasureBlockLayoutModel()
+            {
+                Id = Id,
+                StemLength = _StemLength.Field,
+                BeamAngle = _BeamAngle.Field,
+            };
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         private readonly ValueTemplateProperty<double> marginRight;
         private readonly ValueTemplateProperty<double> marginBottom;
 
+
         public int PageWidth { get => pageWidth.Value; }
         public int PageHeight { get => pageHeight.Value; }
         public double MarginLeft { get => marginLeft.Value; }

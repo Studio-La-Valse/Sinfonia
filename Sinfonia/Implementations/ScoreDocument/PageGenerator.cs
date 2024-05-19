@@ -16,7 +16,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public IEnumerable<Page> Generate(ScoreDocumentCore scoreDocument)
         {
-            var scoreDocumentLayout = scoreDocument.Layout;
+            var scoreDocumentLayout = scoreDocument.SecondaryLayout;
 
             var currentpage = new Page(0, scoreDocument, styleTemplate);
             currentpage.StaffSystems.Clear();

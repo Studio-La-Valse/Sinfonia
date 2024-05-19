@@ -60,7 +60,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IChordLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

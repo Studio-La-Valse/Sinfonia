@@ -1,10 +1,7 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    internal interface ILayout<TMemento>
+    internal interface ILayout<TMemento> : IMementoElement<TMemento>
     {
-        Guid Id { get; }
-        TMemento GetMemento();
-        void ApplyMemento(TMemento memento);
         void Restore();
     }
 }

@@ -1,6 +1,5 @@
 ﻿global using Sinfonia.API;
 global using Sinfonia.Extensions;
-global using Sinfonia.Implementations.ScoreDocument.Memento;
 global using Sinfonia.Interfaces;
 global using Sinfonia.ViewModels.Application.Document;
 global using Sinfonia.ViewModels.Application.Document.Explorer;

@@ -66,7 +66,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IInstrumentMeasureLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
 
         public override string ToString()

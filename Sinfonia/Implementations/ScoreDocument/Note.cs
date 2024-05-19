@@ -1,16 +1,18 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class Note : ScoreElement, IMementoElement<NoteMemento>
+    public class Note : ScoreElement, IMementoElement<NoteModel>
     {
         private readonly Chord container;
 
 
         public Pitch Pitch { get; set; }
         public NoteLayout Layout { get; }
-
+        public SecondaryNoteLayout SecondaryLayout { get; }
 
         public InstrumentMeasure HostMeasure => 
             container.HostMeasure;
@@ -27,6 +29,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         internal Note(Pitch pitch,
                       Chord container,
                       NoteLayout layout,
+                      SecondaryNoteLayout secondaryLayout,
                       IKeyGenerator<int> keyGenerator,
                       Guid guid) : base(keyGenerator, guid)
         {
@@ -34,25 +37,33 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             Pitch = pitch;
             Layout = layout;
+            SecondaryLayout = secondaryLayout;
         }
 
 
 
-
-
-        public NoteMemento GetMemento()
+        public NoteModel GetMemento()
         {
-            return new NoteMemento
+            return new NoteModel
             {
-                Pitch = Pitch,
+                Pitch = Pitch.Convert(),
                 Id = Guid,
-                Layout = Layout.GetMemento()
+                Layout = SecondaryLayout.GetMemento(),
+                ForceAccidental = Layout._ForceAccidental.Field.HasValue ? (int)Layout._ForceAccidental.Field : null,
+                Scale = Layout._Scale.Field,
+                StaffIndex = Layout._StaffIndex.Field,
+                XOffset = Layout._XOffset.Field,
             };
         }
-        public void ApplyMemento(NoteMemento memento)
+        public void ApplyMemento(NoteModel memento)
         {
-            Pitch = memento.Pitch;
-            Layout.ApplyMemento(memento.Layout);
+            Layout.Restore();
+            Layout.ApplyMemento(memento);
+
+            SecondaryLayout.Restore();
+            SecondaryLayout.ApplyMemento(memento.Layout);
+
+            Pitch = memento.Pitch.Convert();
         }
     }
 }

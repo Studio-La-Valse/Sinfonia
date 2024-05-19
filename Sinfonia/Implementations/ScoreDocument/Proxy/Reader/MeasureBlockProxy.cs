@@ -67,7 +67,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IMeasureBlockLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

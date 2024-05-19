@@ -1,39 +1,66 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    public class ChordLayout : IChordLayout, ILayout<ChordLayoutMemento>
+    public abstract class BaseChordLayout
     {
-        public Guid Id { get; }
-        public double XOffset { get; set; }
+        public abstract ValueTemplateProperty<double> _XOffset { get; }
 
 
-        public ChordLayout(Guid id)
+        public double XOffset
         {
-            Id = id;
-            XOffset = 0;
-        }
-
-
-
-        public ChordLayoutMemento GetMemento()
-        {
-            return new ChordLayoutMemento()
-            {
-                Id = Id,
-                XOffset = XOffset
-            };
-        }
-
-        public void ApplyMemento(ChordLayoutMemento memento)
-        {
-            XOffset = memento.XOffset ?? 0;
+            get => _XOffset.Value;
+            set => _XOffset.Value = value;
         }
 
         public void Restore()
         {
-            XOffset = 0;
+            _XOffset.Reset();
+        }
+
+        public void ApplyMemento(ChordLayoutMembers memento)
+        {
+            Restore();
+            _XOffset.Field = memento.XOffset;
+        }
+        public void ApplyMemento(ChordLayoutModel memento)
+        {
+            ApplyMemento((ChordLayoutMembers)memento);
+        }
+    }
+
+    public class ChordLayout : BaseChordLayout
+    {
+        public override ValueTemplateProperty<double> _XOffset { get; }
+
+
+        public ChordLayout()
+        {
+            _XOffset = new ValueTemplateProperty<double>(() => 0);
+        }
+    }
+
+    public class SecondaryChordLayout : BaseChordLayout, IChordLayout, ILayout<ChordLayoutModel>
+    {
+        public Guid Id { get; }
+        public override ValueTemplateProperty<double> _XOffset { get; }
+
+
+        public SecondaryChordLayout(ChordLayout source, Guid id)
+        {
+            Id = id;
+
+            _XOffset = new ValueTemplateProperty<double>(() => source.XOffset);
+        }
+
+        public ChordLayoutModel GetMemento()
+        {
+            return new ChordLayoutModel()
+            {
+                Id = Id,
+                XOffset = _XOffset.Field
+            };
         }
     }
 }

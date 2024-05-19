@@ -25,9 +25,4 @@ internal static class EnumerableExtensions
             }
         }
     }
-
-    public static T Chain<T>(this T value, Func<T, T> func)
-    {
-        return func(value);
-    }
 }

@@ -1,8 +1,6 @@
-﻿using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
 using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
@@ -40,21 +38,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void AddVoice(int voice)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.AddVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.AddVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 
         public void RemoveVoice(int voice)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.RemoveVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.RemoveVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureMemento>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 
@@ -90,20 +88,20 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void AddClefChange(ClefChange clefChange)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<InstrumentMeasureLayout, InstrumentMeasureLayoutMemento>(source.Layout, l => l.AddClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.AddClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<InstrumentMeasureLayout, InstrumentMeasureLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new RestoreLayoutCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 
         public IInstrumentMeasureLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

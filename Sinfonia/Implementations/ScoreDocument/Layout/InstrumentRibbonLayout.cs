@@ -1,59 +1,26 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+﻿using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    public class InstrumentRibbonLayout : IInstrumentRibbonLayout, ILayout<InstrumentRibbonLayoutMemento>
+    public abstract class BaseInstrumentRibbonLayout
     {
-        private readonly ReferenceTemplateProperty<string> abbreviatedName;
-        private readonly ReferenceTemplateProperty<string> displayName;
-        private readonly ValueTemplateProperty<int> numberOfStaves;
+        public abstract ReferenceTemplateProperty<string> abbreviatedName { get; }
+        public abstract ReferenceTemplateProperty<string> displayName { get; }
+        public abstract ValueTemplateProperty<int> numberOfStaves { get; }
+        public abstract ValueTemplateProperty<bool> collapsed { get; }
 
 
         public string AbbreviatedName { get => abbreviatedName.Value; set => abbreviatedName.Value = value; }
         public string DisplayName { get => displayName.Value; set => displayName.Value = value; }
         public int NumberOfStaves { get => numberOfStaves.Value; set => numberOfStaves.Value = value; }
+        public bool Collapsed { get => collapsed.Value; set => collapsed.Value = value; }
+        public string Name { get => displayName.Value; set => displayName.Value = value; }
 
 
-        public bool Collapsed { get; set; }
-        public Guid Id { get; }
-
-
-        public InstrumentRibbonLayout(Guid id, Instrument instrument)
+        public BaseInstrumentRibbonLayout()
         {
-            Id = id;
-            displayName = new ReferenceTemplateProperty<string>(() => instrument.Name);
-            abbreviatedName = new ReferenceTemplateProperty<string>(() => CreateDefaultNickName(displayName.Value));
-            numberOfStaves = new ValueTemplateProperty<int>(() => instrument.NumberOfStaves);
-            Collapsed = false;
-        }
-
-
-        public static string CreateDefaultNickName(string name)
-        {
-            return string.IsNullOrWhiteSpace(name)
-                ? ""
-                : name.Length == 1 ? string.Concat(name.AsSpan(0, 1), ".") : string.Concat(name.AsSpan(0, 2), ".");
-        }
-
-
-        public InstrumentRibbonLayoutMemento GetMemento()
-        {
-            return new InstrumentRibbonLayoutMemento()
-            {
-                Id = Id,
-                AbbreviatedName = abbreviatedName.Field,
-                DisplayName = displayName.Field,
-                NumberOfStaves = numberOfStaves.Field,
-                Collapsed = Collapsed,
-            };
-        }
-
-        public void ApplyMemento(InstrumentRibbonLayoutMemento memento)
-        {
-            abbreviatedName.Field = memento.AbbreviatedName;
-            displayName.Field = memento.DisplayName;
-            numberOfStaves.Field = memento.NumberOfStaves;
-            Collapsed = memento.Collapsed ?? false;
+            
         }
 
         public void Restore()
@@ -61,7 +28,74 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             abbreviatedName.Reset();
             displayName.Reset();
             numberOfStaves.Reset();
-            Collapsed = false;
+            collapsed.Reset();
+        }
+
+        public void ApplyMemento(InstrumentRibbonLayoutMembers memento)
+        {
+            abbreviatedName.Field = memento.AbbreviatedName;
+            displayName.Field = memento.DisplayName;
+            numberOfStaves.Field = memento.NumberOfStaves;
+            Collapsed = memento.Collapsed ?? false;
+        }
+        public void ApplyMemento(InstrumentRibbonLayoutModel memento)
+        {
+            ApplyMemento((InstrumentRibbonLayoutMembers)memento);
+        }
+    }
+
+    public class InstrumentRibbonLayout : BaseInstrumentRibbonLayout 
+    {
+        public override ReferenceTemplateProperty<string> abbreviatedName { get; }
+        public override ReferenceTemplateProperty<string> displayName { get; }
+        public override ValueTemplateProperty<int> numberOfStaves { get; }
+        public override ValueTemplateProperty<bool> collapsed { get; }
+
+        public InstrumentRibbonLayout(Instrument instrument)
+        {
+            displayName = new ReferenceTemplateProperty<string>(() => instrument.Name);
+            numberOfStaves = new ValueTemplateProperty<int>(() => instrument.NumberOfStaves);
+            collapsed = new ValueTemplateProperty<bool>(() => false);
+            abbreviatedName = new ReferenceTemplateProperty<string>(() => CreateDefaultNickName(displayName.Value));
+        }
+
+        public static string CreateDefaultNickName(string name)
+        {
+            return string.IsNullOrWhiteSpace(name)
+                ? ""
+                : name.Length == 1 ? string.Concat(name.AsSpan(0, 1), ".") : string.Concat(name.AsSpan(0, 2), ".");
+        }
+    }
+
+    public class SecondaryInstrumentRibbonLayout : BaseInstrumentRibbonLayout, IInstrumentRibbonLayout, ILayout<InstrumentRibbonLayoutModel>
+    {
+        public Guid Id { get; }
+        public override ReferenceTemplateProperty<string> abbreviatedName { get; }
+        public override ReferenceTemplateProperty<string> displayName { get; }
+        public override ValueTemplateProperty<int> numberOfStaves { get; }
+        public override ValueTemplateProperty<bool> collapsed { get; }
+
+        public SecondaryInstrumentRibbonLayout(InstrumentRibbonLayout layout, Guid id)
+        {
+            Id = id;
+            displayName = new ReferenceTemplateProperty<string>(() => layout.Name);
+            numberOfStaves = new ValueTemplateProperty<int>(() => layout.NumberOfStaves);
+            collapsed = new ValueTemplateProperty<bool>(() => layout.Collapsed);
+            abbreviatedName = new ReferenceTemplateProperty<string>(() => layout.AbbreviatedName);
+        }
+
+
+
+        public InstrumentRibbonLayoutModel GetMemento()
+        {
+            return new InstrumentRibbonLayoutModel()
+            {
+                Id = Id,
+                AbbreviatedName = abbreviatedName.Field,
+                DisplayName = displayName.Field,
+                NumberOfStaves = numberOfStaves.Field,
+                Collapsed = Collapsed,
+            };
         }
     }
 }

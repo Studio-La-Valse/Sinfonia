@@ -14,11 +14,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             get
             {
-                var numberOfStaves = EnumerateMeasures().Max(m => m.Layout.NumberOfStaves);
-                var distanceToNext = EnumerateMeasures().Max(m => m.Layout.PaddingBottom);
+                var numberOfStaves = EnumerateMeasures().Max(m => m.Layout.NumberOfStaves) ?? 
+                    Instrument.NumberOfStaves;
+                var distanceToNext = EnumerateMeasures().Max(m => m.Layout.PaddingBottom) ?? 
+                    documentStyleTemplate.StaffGroupStyleTemplate.DistanceToNext;
                 var collapsed = EnumerateMeasures().Any(m => m.Layout.Collapsed);
 
-                var layout = new StaffGroupLayout(documentStyleTemplate.StaffGroupStyleTemplate, Instrument, numberOfStaves, distanceToNext, collapsed);
+                var layout = new StaffGroupLayout(numberOfStaves, distanceToNext, collapsed);
                 return layout;
             }
         }

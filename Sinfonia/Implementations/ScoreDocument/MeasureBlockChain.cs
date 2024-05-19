@@ -5,7 +5,7 @@ using System;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class MeasureBlockChain : ScoreElement, IMementoElement<RibbonMeasureVoiceMemento>
+    public class MeasureBlockChain : ScoreElement
     {
         private readonly List<MeasureBlock> blocks;
         private readonly ScoreDocumentStyleTemplate scoreDocumentStyle;
@@ -81,34 +81,35 @@ namespace Sinfonia.Implementations.ScoreDocument
                 }
             }
 
-            var layout = new MeasureBlockLayout(Guid.NewGuid(), scoreDocumentStyle.MeasureBlockStyleTemplate);
-            var newBlock = new MeasureBlock(duration, this, scoreDocumentStyle, layout, grace, keyGenerator, Guid.NewGuid());
+            var layout = new MeasureBlockLayout(scoreDocumentStyle.MeasureBlockStyleTemplate);
+            var secondaryLayout = new SecondaryMeasureBlockLayout(Guid.NewGuid(), layout);
+            var newBlock = new MeasureBlock(duration, this, scoreDocumentStyle, layout, secondaryLayout, grace, keyGenerator, Guid.NewGuid());
             blocks.Insert(0, newBlock);
         }
         public void Append(RythmicDuration duration, bool grace)
         {
+            var blockId = Guid.NewGuid();   
+            var layoutId = Guid.NewGuid();
+            AppendCore(duration, grace, blockId, layoutId);
+        }
+        public MeasureBlock AppendCore(RythmicDuration rythmicDuration, bool grace, Guid blockGuid, Guid secondaryLayoutGuid)
+        {
             if (!grace)
             {
-                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
-                if (newLength > RibbonMeasure.TimeSignature)
-                {
-                    throw new Exception("New measure block cannot fit in this measure.");
-                }
+                ThrowIfWillCauseOverflow(rythmicDuration);
             }
 
-            var layout = new MeasureBlockLayout(Guid.NewGuid(), scoreDocumentStyle.MeasureBlockStyleTemplate);
-            var newBlock = new MeasureBlock(duration, this, scoreDocumentStyle, layout, grace, keyGenerator, Guid.NewGuid());
+            var layout = new MeasureBlockLayout(scoreDocumentStyle.MeasureBlockStyleTemplate);
+            var secondaryLayout = new SecondaryMeasureBlockLayout(secondaryLayoutGuid, layout);
+            var newBlock = new MeasureBlock(rythmicDuration, this, scoreDocumentStyle, layout, secondaryLayout, grace, keyGenerator, blockGuid);
             blocks.Add(newBlock);
+            return newBlock;
         }
         public void Insert(Position position, RythmicDuration duration, bool grace)
         {
             if (!grace)
             {
-                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + duration;
-                if (newLength > RibbonMeasure.TimeSignature)
-                {
-                    throw new Exception("New measure block cannot fit in this measure.");
-                }
+                ThrowIfWillCauseOverflow(duration);
             }
 
             for (var i = 0; i < blocks.Count; i++)
@@ -116,14 +117,23 @@ namespace Sinfonia.Implementations.ScoreDocument
                 var block = blocks[i];
                 if (block.Position == position)
                 {
-                    var layout = new MeasureBlockLayout(Guid.NewGuid(), scoreDocumentStyle.MeasureBlockStyleTemplate);
-                    var newBlock = new MeasureBlock(duration, this, scoreDocumentStyle, layout, grace, keyGenerator, Guid.NewGuid());
+                    var layout = new MeasureBlockLayout(scoreDocumentStyle.MeasureBlockStyleTemplate);
+                    var secondaryBlockLayout = new SecondaryMeasureBlockLayout(Guid.NewGuid(), layout);
+                    var newBlock = new MeasureBlock(duration, this, scoreDocumentStyle, layout, secondaryBlockLayout, grace, keyGenerator, Guid.NewGuid());
                     blocks.Insert(i, newBlock);
                     return;
                 }
             }
 
             throw new Exception($"No existing block found that starts at position {position}");
+        }
+        public void ThrowIfWillCauseOverflow(RythmicDuration rythmicDuration)
+        {
+            var newLength = blocks.Select(e => e.RythmicDuration).Sum() + rythmicDuration;
+            if (newLength > RibbonMeasure.TimeSignature)
+            {
+                throw new Exception("New measure block cannot fit in this measure.");
+            }
         }
         public void Clear()
         {
@@ -134,35 +144,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public IEnumerable<MeasureBlock> GetBlocksCore()
         {
             return blocks;
-        }
-
-
-
-
-        public RibbonMeasureVoiceMemento GetMemento()
-        {
-            return new RibbonMeasureVoiceMemento
-            {
-                Voice = Voice,
-                MeasureBlocks = blocks.Select(b => b.GetMemento()).ToList()
-            };
-        }
-        public void ApplyMemento(RibbonMeasureVoiceMemento memento)
-        {
-            Clear();
-            foreach (var block in memento.MeasureBlocks)
-            {
-                var newLength = blocks.Select(e => e.RythmicDuration).Sum() + block.Duration;
-                if (newLength > RibbonMeasure.TimeSignature)
-                {
-                    throw new Exception("New measure block cannot fit in this measure.");
-                }
-
-                var layout = new MeasureBlockLayout(block.Layout.Id, scoreDocumentStyle.MeasureBlockStyleTemplate);
-                var newBlock = new MeasureBlock(block.Duration, this, scoreDocumentStyle, layout, false, keyGenerator, block.Id);
-                blocks.Add(newBlock);
-                newBlock.ApplyMemento(block);
-            }
         }
     }
 }

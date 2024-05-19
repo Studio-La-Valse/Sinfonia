@@ -49,7 +49,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IInstrumentRibbonLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Primitives.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordMemento>
+    public sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordModel>
     {
         private readonly List<Note> measureElements;
         private readonly MeasureBlock hostBlock;
@@ -15,7 +17,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public RythmicDuration RythmicDuration { get; }
         public ChordLayout Layout { get; }
-
+        public SecondaryChordLayout SecondaryLayout { get; }
 
         public Tuplet Tuplet =>
             hostBlock.Tuplet;
@@ -45,10 +47,12 @@ namespace Sinfonia.Implementations.ScoreDocument
             hostBlock.RibbonMeasure;
 
 
+
         public Chord(MeasureBlock hostBlock,
                      RythmicDuration displayDuration,
                      ScoreDocumentStyleTemplate documentStyleTemplate,
                      ChordLayout chordLayout,
+                     SecondaryChordLayout secondaryChordLayout,
                      IKeyGenerator<int> keyGenerator,
                      Guid guid) : base(keyGenerator, guid)
         {
@@ -60,6 +64,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             RythmicDuration = displayDuration;
             Layout = chordLayout;
+            SecondaryLayout = secondaryChordLayout;
         }
 
 
@@ -69,6 +74,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Clear()
         {
             measureElements.Clear();
+            Layout.Restore();
+            SecondaryLayout.Restore();
         }
         public void Add(params Pitch[] pitches)
         {
@@ -79,8 +86,9 @@ namespace Sinfonia.Implementations.ScoreDocument
                     continue;
                 }
 
-                var noteLayout = new NoteLayout(Guid.NewGuid(), documentStyleTemplate.NoteStyleTemplate, Grace);
-                Note noteInMeasure = new(pitch, this, noteLayout, keyGenerator, Guid.NewGuid());
+                var noteLayout = new NoteLayout(documentStyleTemplate.NoteStyleTemplate, Grace);
+                var secondaryNoteLayout = new SecondaryNoteLayout(Guid.NewGuid(), noteLayout);
+                Note noteInMeasure = new(pitch, this, noteLayout, secondaryNoteLayout, keyGenerator, Guid.NewGuid());
                 measureElements.Add(noteInMeasure);
             }
         }
@@ -100,25 +108,30 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public ChordMemento GetMemento()
+        public ChordModel GetMemento()
         {
-            return new ChordMemento
+            return new ChordModel
             {
                 Id = Guid,
                 Notes = measureElements.Select(n => n.GetMemento()).ToList(),
-                RythmicDuration = RythmicDuration,
-                Layout = Layout.GetMemento()
+                RythmicDuration = RythmicDuration.Convert(),
+                Layout = SecondaryLayout.GetMemento(),
+                XOffset = Layout._XOffset.Field
             };
         }
-        public void ApplyMemento(ChordMemento memento)
+        public void ApplyMemento(ChordModel memento)
         {
             Clear();
-            Layout.ApplyMemento(memento.Layout);
+            
+            Layout.ApplyMemento(memento);
+            SecondaryLayout.ApplyMemento(memento.Layout);
+
             foreach (var noteMemento in memento.Notes)
             {
-                var pitch = noteMemento.Pitch;
-                var noteLayout = new NoteLayout(noteMemento.Layout.Id, documentStyleTemplate.NoteStyleTemplate, Grace);
-                var noteInMeasure = new Note(pitch, this, noteLayout, keyGenerator, noteMemento.Id);
+                var pitch = noteMemento.Pitch.Convert();
+                var noteLayout = new NoteLayout(documentStyleTemplate.NoteStyleTemplate, Grace);
+                var secondaryLayout = new SecondaryNoteLayout(noteMemento.Layout.Id, noteLayout);
+                var noteInMeasure = new Note(pitch, this, noteLayout, secondaryLayout, keyGenerator, noteMemento.Id);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);
             }

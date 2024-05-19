@@ -47,7 +47,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public INoteLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
     }
 }

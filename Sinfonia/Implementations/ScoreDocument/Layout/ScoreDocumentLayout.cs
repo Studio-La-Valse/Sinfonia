@@ -1,130 +1,114 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
+using Sinfonia.Implementations.ScoreDocument.Converters;
+using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    public class ScoreDocumentLayout : IScoreDocumentLayout, ILayout<ScoreDocumentLayoutMemento>
+    public abstract class BaseScoreDocumentLayout
     {
-        private readonly Guid id; 
-        private readonly ScoreDocumentStyleTemplate styleTemplate;
-        private readonly Dictionary<Guid, double> instrumentScales = [];
-        private readonly ValueTemplateProperty<double> scale;
-        private readonly ValueTemplateProperty<double> horizontalStaffLineThickness;
-        private readonly ValueTemplateProperty<double> verticalStaffLineThickness;
-        private readonly ValueTemplateProperty<double> stemLineThickness;
-        private readonly ValueTemplateProperty<double> firstSystemIndent;
-        private readonly ReferenceTemplateProperty<ColorARGB> pageColor;
-        private readonly ReferenceTemplateProperty<ColorARGB> foregroundColor;
+        public abstract ValueTemplateProperty<double> _Scale { get; }
+        public abstract ValueTemplateProperty<double> _HorizontalStaffLineThickness { get; }
+        public abstract ValueTemplateProperty<double> _VerticalStaffLineThickness { get; }
+        public abstract ValueTemplateProperty<double> _StemLineThickness { get; }
+        public abstract ValueTemplateProperty<double> _FirstSystemIndent { get; }
+        public abstract ValueTemplateProperty<ColorARGB> _PageColor { get; }
+        public abstract ValueTemplateProperty<ColorARGB> _ForegroundColor { get; }
+        public Dictionary<Guid, double> _InstrumentScales { get; } = [];
+        public abstract Dictionary<Guid, double> _InstrumentScalesSource { get; }
 
         public double Scale
         {
             get
             {
-                return scale.Value;
+                return _Scale.Value;
             }
             set
             {
-                scale.Value = value;
+                _Scale.Value = value;
             }
         }
         public double HorizontalStaffLineThickness
         {
             get
             {
-                return horizontalStaffLineThickness.Value;
+                return _HorizontalStaffLineThickness.Value;
             }
             set
             {
-                horizontalStaffLineThickness.Value = value;
+                _HorizontalStaffLineThickness.Value = value;
             }
         }
         public double VerticalStaffLineThickness
         {
             get
             {
-                return verticalStaffLineThickness.Value;
+                return _VerticalStaffLineThickness.Value;
             }
             set
             {
-                verticalStaffLineThickness.Value = value;
+                _VerticalStaffLineThickness.Value = value;
             }
         }
         public double StemLineThickness
         {
             get
             {
-                return stemLineThickness.Value;
+                return _StemLineThickness.Value;
             }
             set
             {
-                stemLineThickness.Value = value;
+                _StemLineThickness.Value = value;
             }
         }
         public double FirstSystemIndent
         {
             get
             {
-                return firstSystemIndent.Value;
+                return _FirstSystemIndent.Value;
             }
             set
             {
-                firstSystemIndent.Value = value;
+                _FirstSystemIndent.Value = value;
             }
         }
         public ColorARGB PageColor
         {
             get
             {
-                return pageColor.Value;
+                return _PageColor.Value;
             }
             set
             {
-                pageColor.Value = value;
+                _PageColor.Value = value;
             }
         }
         public ColorARGB ForegroundColor
         {
             get
             {
-                return foregroundColor.Value;
+                return _ForegroundColor.Value;
             }
             set
             {
-                foregroundColor.Value = value;
+                _ForegroundColor.Value = value;
             }
-        }
-
-        public Guid Id => this.id;
-
-        public ScoreDocumentLayout(Guid id, ScoreDocumentStyleTemplate styleTemplate)
-        {
-            this.id = id;
-            this.styleTemplate = styleTemplate;
-
-            scale = new ValueTemplateProperty<double>(() => styleTemplate.Scale);
-            horizontalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.HorizontalStaffLineThickness);
-            verticalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.VerticalStaffLineThickness);
-            stemLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.StemLineThickness);
-            firstSystemIndent = new ValueTemplateProperty<double>(() => styleTemplate.FirstSystemIndent);
-            pageColor = new ReferenceTemplateProperty<ColorARGB>(() => styleTemplate.PageColor);
-            foregroundColor = new ReferenceTemplateProperty<ColorARGB>(() => styleTemplate.ForegroundColor);
         }
 
 
         public void SpecifyScale(IInstrumentRibbon instrument, double scale)
         {
-            instrumentScales[instrument.Guid] = scale;
+            _InstrumentScales[instrument.Guid] = scale;
         }
         public double GetInstrumentScale(IInstrumentRibbon instrument)
         {
-            if(styleTemplate.InstrumentScales.TryGetValue(instrument.Guid, out var scale))
+            if (_InstrumentScalesSource.TryGetValue(instrument.Guid, out var scale))
             {
                 return scale;
             }
 
-            if(instrumentScales.TryGetValue(instrument.Guid, out var value))
+            if (_InstrumentScales.TryGetValue(instrument.Guid, out var value))
             {
                 return value;
             }
@@ -133,66 +117,101 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public void ApplyMemento(ScoreDocumentLayoutMemento memento)
-        {
-            scale.Field = memento.Scale;
-            horizontalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
-            verticalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
-            stemLineThickness.Field = memento.StemLineThickness;
-            firstSystemIndent.Field = memento.FirstSystemIndent;
-            pageColor.Field = memento.PageColor;
-            foregroundColor.Field = memento.ForegroundColor;
-            memento.InstrumentScales.Replace(instrumentScales);
-        }
-
         public void Restore()
         {
-            scale.Reset();
-            horizontalStaffLineThickness.Reset();
-            verticalStaffLineThickness.Reset();
-            stemLineThickness.Reset();
-            firstSystemIndent.Reset();
-            pageColor.Reset();
-            foregroundColor.Reset();
-            instrumentScales.Clear();
+            _Scale.Reset();
+            _HorizontalStaffLineThickness.Reset();
+            _VerticalStaffLineThickness.Reset();
+            _StemLineThickness.Reset();
+            _FirstSystemIndent.Reset();
+            _PageColor.Reset();
+            _ForegroundColor.Reset();
+            _InstrumentScales.Clear();
         }
-
-        public ScoreDocumentLayoutMemento GetMemento()
+        public void ApplyMemento(ScoreDocumentLayoutMembers memento)
         {
-            return new ScoreDocumentLayoutMemento()
-            {
-                Id = Id,
-                Scale = scale.Field,
-                HorizontalStaffLineThickness = horizontalStaffLineThickness.Field,
-                VerticalStaffLineThickness = verticalStaffLineThickness.Field,
-                StemLineThickness = stemLineThickness.Field,
-                FirstSystemIndent = firstSystemIndent.Field,
-                PageColor = pageColor.Field,
-                ForegroundColor = foregroundColor.Field,
-                InstrumentScales = instrumentScales.DeepCopy()
-            };
+            _Scale.Field = memento.Scale;
+            _HorizontalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
+            _VerticalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
+            _StemLineThickness.Field = memento.StemLineThickness;
+            _FirstSystemIndent.Field = memento.FirstSystemIndent;
+            _PageColor.Field = memento.PageColor.Convert();
+            _ForegroundColor.Field = memento.ForegroundColor.Convert();
+            memento.InstrumentScales.Replace(_InstrumentScales);
+        }
+        public void ApplyMemento(ScoreDocumentLayoutModel memento)
+        {
+            ApplyMemento((ScoreDocumentLayoutMembers)memento);
         }
     }
 
-    public static class DictionaryExtensions
+    public class PrimaryScoreDocumentLayout : BaseScoreDocumentLayout
     {
-        public static Dictionary<TKey, TValue> DeepCopy<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TKey : IEquatable<TKey> where TValue : struct
+        public override ValueTemplateProperty<double> _Scale { get; }
+        public override ValueTemplateProperty<double> _HorizontalStaffLineThickness { get; }
+        public override ValueTemplateProperty<double> _VerticalStaffLineThickness { get; }
+        public override ValueTemplateProperty<double> _StemLineThickness { get; }
+        public override ValueTemplateProperty<double> _FirstSystemIndent { get; }
+        public override ValueTemplateProperty<ColorARGB> _PageColor { get; }
+        public override ValueTemplateProperty<ColorARGB> _ForegroundColor { get; }
+        public override Dictionary<Guid, double> _InstrumentScalesSource { get; }
+
+        public PrimaryScoreDocumentLayout(ScoreDocumentStyleTemplate styleTemplate)
         {
-            var dict = new Dictionary<TKey, TValue>();
-            foreach (var kv in dictionary)
-            {
-                dict[kv.Key] = kv.Value;
-            }
-            return dict;
+            _Scale = new ValueTemplateProperty<double>(() => styleTemplate.Scale);
+            _HorizontalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.HorizontalStaffLineThickness);
+            _VerticalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.VerticalStaffLineThickness);
+            _StemLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.StemLineThickness);
+            _FirstSystemIndent = new ValueTemplateProperty<double>(() => styleTemplate.FirstSystemIndent);
+            _ForegroundColor = new ValueTemplateProperty<ColorARGB>(() => styleTemplate.ForegroundColor);
+            _PageColor = new ValueTemplateProperty<ColorARGB>(() => styleTemplate.PageColor);
+            _InstrumentScalesSource = styleTemplate.InstrumentScales;
+        }
+    }
+
+    public class SecondaryScoreDocumentLayout : BaseScoreDocumentLayout, IScoreDocumentLayout, ILayout<ScoreDocumentLayoutModel> 
+    {
+        public override ValueTemplateProperty<double> _Scale { get; }
+        public override ValueTemplateProperty<double> _HorizontalStaffLineThickness { get; }
+        public override ValueTemplateProperty<double> _VerticalStaffLineThickness { get; }
+        public override ValueTemplateProperty<double> _StemLineThickness { get; }
+        public override ValueTemplateProperty<double> _FirstSystemIndent { get; }
+        public override ValueTemplateProperty<ColorARGB> _PageColor { get; }
+        public override ValueTemplateProperty<ColorARGB> _ForegroundColor { get; }
+        public override Dictionary<Guid, double> _InstrumentScalesSource { get; }
+        public Guid Id { get; }
+
+
+        public SecondaryScoreDocumentLayout(PrimaryScoreDocumentLayout styleTemplate, Guid id)
+        {
+            _Scale = new ValueTemplateProperty<double>(() => styleTemplate.Scale);
+            _HorizontalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.HorizontalStaffLineThickness);
+            _VerticalStaffLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.VerticalStaffLineThickness);
+            _StemLineThickness = new ValueTemplateProperty<double>(() => styleTemplate.StemLineThickness);
+            _FirstSystemIndent = new ValueTemplateProperty<double>(() => styleTemplate.FirstSystemIndent);
+            _ForegroundColor = new ValueTemplateProperty<ColorARGB>(() => styleTemplate.ForegroundColor);
+            _PageColor = new ValueTemplateProperty<ColorARGB>(() => styleTemplate.PageColor);
+            _InstrumentScalesSource = styleTemplate._InstrumentScalesSource;
+
+            Id = id;
         }
 
-        public static void Replace<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> target) where TKey : IEquatable<TKey> where TValue : struct
+
+
+        public ScoreDocumentLayoutModel GetMemento()
         {
-            target.Clear();
-            foreach (var kv in dictionary)
+            return new ScoreDocumentLayoutModel()
             {
-                target[kv.Key] = kv.Value;
-            }
+                Id = Id,
+                Scale = _Scale.Field,
+                HorizontalStaffLineThickness = _HorizontalStaffLineThickness.Field,
+                VerticalStaffLineThickness = _VerticalStaffLineThickness.Field,
+                StemLineThickness = _StemLineThickness.Field,
+                FirstSystemIndent = _FirstSystemIndent.Field,
+                PageColor = _PageColor.Field?.Convert(),
+                ForegroundColor = _ForegroundColor.Field?.Convert(),
+                InstrumentScales = _InstrumentScalesSource.DeepCopy()
+            };
         }
     }
 }

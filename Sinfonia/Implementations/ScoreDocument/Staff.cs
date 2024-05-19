@@ -13,22 +13,9 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             get
             {
-                double? paddingBottom = null;
-                foreach (var padding in measures.Select(m => m.Layout.GetPaddingBottom(IndexInStaffGroup)))
-                {
-                    if (padding.HasValue)
-                    {
-                        if (paddingBottom.HasValue)
-                        {
-                            paddingBottom = Math.Max(padding.Value, paddingBottom.Value);
-                        }
-                        else
-                        {
-                            paddingBottom = padding.Value;
-                        }
-                    }
-                }
-                var layout = new StaffLayout(staffStyleTemplate, paddingBottom);
+                var paddingBottom = measures.Max(m => m.Layout.GetPaddingBottom(IndexInStaffGroup));
+                paddingBottom ??= staffStyleTemplate.DistanceToNext;
+                var layout = new StaffLayout(paddingBottom.Value);
                 return layout;
             }
         }

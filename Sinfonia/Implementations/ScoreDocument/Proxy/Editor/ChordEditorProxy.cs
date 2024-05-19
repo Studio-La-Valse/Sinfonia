@@ -1,9 +1,5 @@
-﻿
-using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Core;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
@@ -39,21 +35,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void Add(params Pitch[] pitches)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Add(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<Chord, ChordModel>(source, s => s.Add(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void Set(params Pitch[] pitches)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Set(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<Chord, ChordModel>(source, s => s.Set(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<Chord, ChordModel>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -69,13 +65,13 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IChordLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
 
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<ChordLayout, ChordLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new RestoreLayoutCommand<SecondaryChordLayout, ChordLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -83,7 +79,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void SetXOffset(double offset)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordMemento>(source, s => s.Layout.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<SecondaryChordLayout, ChordLayoutModel>(source.SecondaryLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
     }

@@ -1,26 +1,20 @@
 ﻿namespace Sinfonia.Implementations.ScoreDocument
 {
-    /// <summary>
-    /// Represents a persistent, unique score element.
-    /// </summary>
     public abstract class ScoreElement : IUniqueScoreElement
     {
-        /// <inheritdoc/>
+        public int Id { get; }
+        public Guid Guid { get; }
+
+
         public ScoreElement(IKeyGenerator<int> keyGenerator, Guid guid)
         {
             Id = keyGenerator.Generate();
             Guid = guid;
         }
-        /// <inheritdoc/>
         public ScoreElement(int id, Guid guid)
         {
             Id = id;
             Guid = guid;
         }
-        /// <inheritdoc/>
-        public int Id { get; }
-
-        /// <inheritdoc/>
-        public Guid Guid { get; }
     }
 }

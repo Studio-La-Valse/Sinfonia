@@ -1,10 +1,12 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class InstrumentMeasure : ScoreElement, IMementoElement<InstrumentMeasureMemento>, IUniqueScoreElement
+    public class InstrumentMeasure : ScoreElement, IUniqueScoreElement, IMementoElement<InstrumentMeasureModel>
     {
         private readonly Dictionary<int, MeasureBlockChain> blockChains;
         private readonly ScoreMeasure scoreMeasure;
@@ -27,9 +29,16 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         public InstrumentMeasureLayout Layout { get; }
+        public SecondaryInstrumentMeasureLayout SecondaryLayout { get; }
 
-
-        internal InstrumentMeasure(ScoreMeasure scoreMeasure, InstrumentRibbon hostRibbon, ScoreDocumentStyleTemplate documentStyleTemplate, InstrumentMeasureLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+        internal InstrumentMeasure(
+            ScoreMeasure scoreMeasure, 
+            InstrumentRibbon hostRibbon, 
+            ScoreDocumentStyleTemplate documentStyleTemplate, 
+            InstrumentMeasureLayout layout, 
+            SecondaryInstrumentMeasureLayout secondaryLayout,
+            IKeyGenerator<int> keyGenerator, 
+            Guid guid) : base(keyGenerator, guid)
         {
             this.scoreMeasure = scoreMeasure;
             this.hostRibbon = hostRibbon;
@@ -39,6 +48,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             blockChains = [];
 
             Layout = layout;
+            SecondaryLayout = secondaryLayout;
         }
 
 
@@ -54,6 +64,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void Clear()
         {
             blockChains.Clear();
+            Layout.Restore();
+            SecondaryLayout.Restore();
         }
         public void RemoveVoice(int voice)
         {
@@ -103,25 +115,38 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public InstrumentMeasureMemento GetMemento()
+        public InstrumentMeasureModel GetMemento()
         {
-            return new InstrumentMeasureMemento
+            return new InstrumentMeasureModel
             {
-                Id = Guid.NewGuid(),
-                MeasureIndex = MeasureIndex,
-                RibbonIndex = RibbonIndex,
-                VoiceGroups = blockChains.Values.Select(v => v.GetMemento()).ToList(),
-                Layout = Layout.GetMemento()
+                Id = Guid,
+                ScoreMeasureIndex = MeasureIndex,
+                InstrumentRibbonIndex = RibbonIndex,
+                MeasureBlocks = blockChains.Values.SelectMany(v => v.GetBlocksCore()).Select(b => b.GetMemento()).ToList(),
+                Layout = SecondaryLayout.GetMemento(),
+                ClefChanges = Layout._ClefChanges.Select(e => e.Convert()).ToList(),
+                Collapsed = Layout._Collapsed.Field,
+                IgnoredClefChanges = Layout._IgnoredClefChanges.Select(e => e.Convert()).ToList(),
+                NumberOfStaves = Layout._NumberOfStaves.Field,
+                PaddingBottom = Layout._PaddingBottom.Field,
+                StaffPaddingBottom = Layout._PaddingBottomForStaves.DeepCopy()
             };
         }
-        public void ApplyMemento(InstrumentMeasureMemento memento)
+        public void ApplyMemento(InstrumentMeasureModel memento)
         {
             Clear();
-            foreach (var voiceGroup in memento.VoiceGroups)
+            foreach (var voiceGroup in memento.MeasureBlocks.GroupBy(e => e.Voice))
             {
-                AddVoice(voiceGroup.Voice);
-                var blockChain = GetBlockChainOrThrowCore(voiceGroup.Voice);
-                blockChain.ApplyMemento(voiceGroup);
+                var voice = voiceGroup.Key;
+                AddVoice(voice);
+                var blockChain = GetBlockChainOrThrowCore(voice);
+
+                blockChain.Clear();
+                foreach (var block in voiceGroup)
+                {
+                    var newBlock = blockChain.AppendCore(block.Duration.Convert(), false, block.Id, block.Layout.Id);
+                    newBlock.ApplyMemento(block);
+                }
             }
             Layout.ApplyMemento(memento.Layout);
         }

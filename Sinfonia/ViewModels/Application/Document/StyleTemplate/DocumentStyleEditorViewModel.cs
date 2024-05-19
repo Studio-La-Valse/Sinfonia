@@ -263,7 +263,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             var template = canvasViewModel.ScoreDocumentStyle.MeasureBlockStyleTemplate;
 
             Properties.Add(new PropertyViewModel<double>(() => template.StemLength, v => { template.StemLength = v; canvasViewModel.Rerender(); }, "Stem Length"));
-            Properties.Add(new PropertyViewModel<double>(() => template.BracketAngle, v => { template.BracketAngle = v; canvasViewModel.Rerender(); }, "Bracket Angle"));
+            Properties.Add(new PropertyViewModel<double>(() => template.BeamAngle, v => { template.BeamAngle = v; canvasViewModel.Rerender(); }, "Bracket Angle"));
         }
     }
 

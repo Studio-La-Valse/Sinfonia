@@ -7,20 +7,17 @@ namespace Sinfonia.ViewModels.Application.Menu
     {
         private readonly DocumentCollectionViewModel documentCollection;
         private readonly IShellMethods shellMethods;
-        private readonly IFileSaveService fileService;
-        private readonly IDocumentViewModelFactory documentViewModelFactory;
 
         public FileMenuViewModel(DocumentCollectionViewModel documentCollection,
                                  ImportMenuViewModel importMenuViewModel,
                                  IShellMethods shellMethods,
                                  ICommandFactory commandFactory,
                                  IFileSaveService fileService,
+                                 IFileSyncService fileSyncService,
                                  IDocumentViewModelFactory documentViewModelFactory) : base("_File...")
         {
             this.documentCollection = documentCollection;
             this.shellMethods = shellMethods;
-            this.fileService = fileService;
-            this.documentViewModelFactory = documentViewModelFactory;
 
             var openItem = new MenuItemViewModel()
             {
@@ -33,6 +30,13 @@ namespace Sinfonia.ViewModels.Application.Menu
                 Header = "Save as...",
                 Command = commandFactory.Create(fileService.SaveDocument),
                 Icon = new() { Kind = Material.Icons.MaterialIconKind.Floppy }
+            };
+
+            var syncItem = new MenuItemViewModel()
+            {
+                Header = "Sync",
+                Command = commandFactory.Create(fileSyncService.UploadPrivate),
+                Icon = new() { Kind = Material.Icons.MaterialIconKind.World }
             };
 
             var closeItem = new MenuItemViewModel()
@@ -51,6 +55,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             Items.Add(openItem);
             Items.Add(importMenuViewModel);
             Items.Add(saveItem);
+            Items.Add(syncItem);
             Items.Add(closeItem);
             Items.Add(exitItem);
         }

@@ -1,9 +1,13 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Converters;
+using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Primitives;
+using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentMemento>
+    public class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentModel>
     {
         private readonly ScoreContentTable contentTable;
         private readonly PageGenerator pageGenerator;
@@ -17,17 +21,27 @@ namespace Sinfonia.Implementations.ScoreDocument
             contentTable.Height;
 
 
-        public ScoreDocumentLayout Layout { get; }
+
+        public PrimaryScoreDocumentLayout PrimaryLayout { get; }
+        public SecondaryScoreDocumentLayout SecondaryLayout { get; }
 
 
-        internal ScoreDocumentCore(ScoreContentTable contentTable, PageGenerator pageGenerator, ScoreDocumentStyleTemplate styleTemplate, ScoreDocumentLayout layout, IKeyGenerator<int> keyGenerator, Guid guid) : base(keyGenerator, guid)
+
+        internal ScoreDocumentCore(ScoreContentTable contentTable,
+                                   PageGenerator pageGenerator,
+                                   ScoreDocumentStyleTemplate styleTemplate,
+                                   PrimaryScoreDocumentLayout primaryLayout,
+                                   SecondaryScoreDocumentLayout secondaryLayout,
+                                   IKeyGenerator<int> keyGenerator,
+                                   Guid guid) : base(keyGenerator, guid)
         {
             this.contentTable = contentTable;
             this.pageGenerator = pageGenerator;
             this.styleTemplate = styleTemplate;
             this.keyGenerator = keyGenerator;
 
-            Layout = layout;
+            PrimaryLayout = primaryLayout;
+            SecondaryLayout = secondaryLayout;
         }
 
 
@@ -35,10 +49,19 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void AddInstrumentRibbon(Instrument instrument)
         {
-            var layout = new InstrumentRibbonLayout(Guid.NewGuid(), instrument);
-            InstrumentRibbon instrumentRibbon = new(this, instrument, styleTemplate, layout, keyGenerator, Guid.NewGuid());
+            var layoutId = Guid.NewGuid();
+            var ribbonId = Guid.NewGuid();
+            var instrumentRibbon = CreateInstrumentRibbonCore(instrument, ribbonId, layoutId);
             contentTable.AddInstrumentRibbon(instrumentRibbon);
         }
+        public InstrumentRibbon CreateInstrumentRibbonCore(Instrument instrument, Guid ribbonId, Guid layoutId)
+        {
+            var primaryLayout = new InstrumentRibbonLayout(instrument);
+            var secondaryLayout = new SecondaryInstrumentRibbonLayout(primaryLayout, layoutId);
+            var instrumentRibbon = new InstrumentRibbon(this, instrument, primaryLayout, secondaryLayout, keyGenerator, ribbonId);
+            return instrumentRibbon;
+        }
+
         public void RemoveInstrumentRibbon(int indexInScore)
         {
             contentTable.RemoveInstrumentRibbon(indexInScore);
@@ -66,8 +89,9 @@ namespace Sinfonia.Implementations.ScoreDocument
                     previousElement.TimeSignature :
                     new TimeSignature(4, 4);
 
-            var layout = new ScoreMeasureLayout(layoutGuid, styleTemplate.ScoreMeasureStyleTemplate);
-            ScoreMeasure scoreMeasure = new(this, timeSignature, styleTemplate, layout, keyGenerator, guid);
+            var layout = new PrimaryScoreMeasureLayout(styleTemplate.ScoreMeasureStyleTemplate);
+            var secondaryLayout = new SecondaryScoreMeasureLayout(layoutGuid, layout);
+            ScoreMeasure scoreMeasure = new(this, timeSignature, styleTemplate, layout, secondaryLayout, keyGenerator, guid);
             return scoreMeasure;
         }
         public void AppendScoreMeasure(TimeSignature? timeSignature = null)
@@ -133,32 +157,44 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public ScoreDocumentMemento GetMemento()
+        public ScoreDocumentModel GetMemento()
         {
-            return new ScoreDocumentMemento
+            return new ScoreDocumentModel
             {
                 Id = Guid,
-                Layout = Layout.GetMemento(),
+                Layout = SecondaryLayout.GetMemento(),
                 InstrumentRibbons = EnumerateRibbonsCore().Select(e => e.GetMemento()).ToList(),
-                ScoreMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList()
+                ScoreMeasures = EnumerateMeasuresCore().Select(e => e.GetMemento()).ToList(),
+                FirstSystemIndent = PrimaryLayout._FirstSystemIndent.Field,
+                ForegroundColor = PrimaryLayout._ForegroundColor.Field?.Convert(),
+                PageColor = PrimaryLayout._PageColor.Field?.Convert(),
+                HorizontalStaffLineThickness = PrimaryLayout._HorizontalStaffLineThickness.Field,
+                InstrumentScales = PrimaryLayout._InstrumentScalesSource.DeepCopy(),
+                Scale = PrimaryLayout._Scale.Field,
+                StemLineThickness = PrimaryLayout._StemLineThickness.Field,
+                VerticalStaffLineThickness = PrimaryLayout._VerticalStaffLineThickness.Field,
             };
         }
-        public void ApplyMemento(ScoreDocumentMemento memento)
+        public void ApplyMemento(ScoreDocumentModel memento)
         {
             Clear();
 
-            Layout.ApplyMemento(memento.Layout);
+            PrimaryLayout.Restore();
+            PrimaryLayout.ApplyMemento(memento);
+            SecondaryLayout.Restore();
+            SecondaryLayout.ApplyMemento(memento.Layout);
 
             foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
-                var layout = new InstrumentRibbonLayout(instrumentMemento.Layout.Id, instrumentMemento.Instrument);
-                var instrumentRibbon = new InstrumentRibbon(this, instrumentMemento.Instrument, styleTemplate, layout, keyGenerator, instrumentMemento.Id);
+                var instrumentRibbon = CreateInstrumentRibbonCore(instrumentMemento.Instrument.Convert(), instrumentMemento.Id, instrumentMemento.Layout.Id);
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
+
+                instrumentRibbon.ApplyMemento(instrumentMemento);
             }
 
             foreach (var scoreMeasureMemento in memento.ScoreMeasures)
             {
-                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.Layout.Id, scoreMeasureMemento.TimeSignature);
+                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.Layout.Id, scoreMeasureMemento.TimeSignature.Convert());
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);

@@ -1,9 +1,5 @@
-﻿using Sinfonia.Extensions;
-using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 {
@@ -51,41 +47,41 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IInstrumentRibbonLayout ReadLayout()
         {
-            return source.Layout;
+            return source.SecondaryLayout;
         }
 
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            var command = new RestoreLayoutCommand<SecondaryInstrumentRibbonLayout, InstrumentRibbonLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
 
         public void SetDisplayName(string name)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<InstrumentRibbonLayout, InstrumentRibbonLayoutMemento>(source.Layout, l => l.DisplayName = name).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            var command = new LayoutMementoCommand<SecondaryInstrumentRibbonLayout, InstrumentRibbonLayoutModel>(source.SecondaryLayout, l => l.DisplayName = name).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
 
         public void SetAbbreviatedName(string abbreviation)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.AbbreviatedName = abbreviation).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonModel>(source, s => s.Layout.AbbreviatedName = abbreviation).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
 
         public void SetNumberOfStaves(int numberOfStaves)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.NumberOfStaves = numberOfStaves).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonModel>(source, s => s.Layout.NumberOfStaves = numberOfStaves).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
 
         public void SetCollapsed(bool isCollapsed)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonMemento>(source, s => s.Layout.Collapsed = isCollapsed).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
+            var command = new MementoCommand<InstrumentRibbon, InstrumentRibbonModel>(source, s => s.Layout.Collapsed = isCollapsed).ThenInvalidate(notifyEntityChanged, source.HostScoreDocument);
             transaction.Enqueue(command);
         }
     }

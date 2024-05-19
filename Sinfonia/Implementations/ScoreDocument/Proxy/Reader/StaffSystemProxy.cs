@@ -1,5 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
-using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 {

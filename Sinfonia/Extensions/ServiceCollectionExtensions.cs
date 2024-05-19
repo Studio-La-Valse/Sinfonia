@@ -32,10 +32,8 @@ namespace Sinfonia.Extensions
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             return services
-                .AddSingleton<ScoreElementMementoConverter>()
-                .AddSingleton<ScoreDocumentLayoutMementoConverter>()
-                .AddSingleton<ScoreDocumentMementoConverter>()
-                .AddSingleton<IFileSaveService, FileSaveService>();
+                .AddSingleton<IFileSaveService, FileSaveService>()
+                .AddSingleton<IFileSyncService, FileSyncSerivce>();
         }
 
         public static IServiceCollection AddViews(this IServiceCollection services)
