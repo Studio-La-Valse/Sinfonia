@@ -79,16 +79,18 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _PaddingBottom.Reset();
         }
 
-        public void ApplyMemento(ScoreMeasureLayoutModel memento)
+        public void ApplyMemento(ScoreMeasureLayoutModel? memento)
         {
-            _KeySignature.Field = memento.KeySignature?.Convert();
-            _PaddingBottom.Field = memento.PaddingBottom;
-            _PaddingLeft.Field = memento.PaddingLeft;
-            _PaddingRight.Field = memento.PaddingRight;
-            _Width.Field = memento.Width;
+            ApplyMemento(memento as ScoreMeasureLayoutMembers);
         }
-        public void ApplyMemento(ScoreMeasureModel memento)
+        public void ApplyMemento(ScoreMeasureLayoutMembers? memento)
         {
+            Restore();
+            if(memento is null)
+            {
+                return;
+            }
+
             _KeySignature.Field = memento.KeySignature?.Convert();
             _PaddingBottom.Field = memento.PaddingBottom;
             _PaddingLeft.Field = memento.PaddingLeft;

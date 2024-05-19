@@ -19,16 +19,20 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _BeamAngle.Reset();
         }
 
-        public void ApplyMemento(MeasureBlockLayoutMembers memento)
+        public void ApplyMemento(MeasureBlockLayoutMembers? memento)
         {
             Restore();
+            if(memento is null)
+            {
+                return;
+            }
 
             _StemLength.Field = memento.StemLength;
             _BeamAngle.Field = memento.BeamAngle;
         }
-        public void ApplyMemento(MeasureBlockLayoutModel memento)
+        public void ApplyMemento(MeasureBlockLayoutModel? memento)
         {
-            ApplyMemento((MeasureBlockLayoutMembers)memento);
+            ApplyMemento(memento as MeasureBlockLayoutMembers);
         }
     }
 

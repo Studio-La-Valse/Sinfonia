@@ -19,14 +19,19 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _XOffset.Reset();
         }
 
-        public void ApplyMemento(ChordLayoutMembers memento)
+        public void ApplyMemento(ChordLayoutMembers? memento)
         {
             Restore();
+            if(memento is null)
+            {
+                return;
+            }
+
             _XOffset.Field = memento.XOffset;
         }
-        public void ApplyMemento(ChordLayoutModel memento)
+        public void ApplyMemento(ChordLayoutModel? memento)
         {
-            ApplyMemento((ChordLayoutMembers)memento);
+            ApplyMemento(memento as ChordLayoutMembers);
         }
     }
 

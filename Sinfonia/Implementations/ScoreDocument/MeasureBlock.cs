@@ -286,7 +286,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             foreach (var chordMemento in memento.Chords)
             {
                 var chordLayout = new ChordLayout();
-                var secondaryChordLayout = new SecondaryChordLayout(chordLayout, chordMemento.Layout.Id);
+                var secondaryChordLayout = new SecondaryChordLayout(chordLayout, chordMemento.Layout?.Id ?? Guid.NewGuid());
                 var chord = new Chord(this, chordMemento.RythmicDuration.Convert(), documentStyleTemplate, chordLayout, secondaryChordLayout, keyGenerator, chordMemento.Id);
                 chords.Add(chord);
                 chord.ApplyMemento(chordMemento);

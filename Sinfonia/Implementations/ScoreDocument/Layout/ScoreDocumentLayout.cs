@@ -128,20 +128,26 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _ForegroundColor.Reset();
             _InstrumentScales.Clear();
         }
-        public void ApplyMemento(ScoreDocumentLayoutMembers memento)
+        public void ApplyMemento(ScoreDocumentLayoutMembers? memento)
         {
+            Restore();
+            if(memento is null)
+            {
+                return;
+            }
+
             _Scale.Field = memento.Scale;
             _HorizontalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
             _VerticalStaffLineThickness.Field = memento.HorizontalStaffLineThickness;
             _StemLineThickness.Field = memento.StemLineThickness;
             _FirstSystemIndent.Field = memento.FirstSystemIndent;
-            _PageColor.Field = memento.PageColor.Convert();
-            _ForegroundColor.Field = memento.ForegroundColor.Convert();
-            memento.InstrumentScales.Replace(_InstrumentScales);
+            _PageColor.Field = memento.PageColor?.Convert();
+            _ForegroundColor.Field = memento.ForegroundColor?.Convert();
+            memento.InstrumentScales?.Replace(_InstrumentScales);
         }
-        public void ApplyMemento(ScoreDocumentLayoutModel memento)
+        public void ApplyMemento(ScoreDocumentLayoutModel? memento)
         {
-            ApplyMemento((ScoreDocumentLayoutMembers)memento);
+            ApplyMemento(memento as ScoreDocumentLayoutMembers);
         }
     }
 

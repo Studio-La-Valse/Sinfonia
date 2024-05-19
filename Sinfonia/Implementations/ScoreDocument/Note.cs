@@ -57,10 +57,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public void ApplyMemento(NoteModel memento)
         {
-            Layout.Restore();
             Layout.ApplyMemento(memento);
-
-            SecondaryLayout.Restore();
             SecondaryLayout.ApplyMemento(memento.Layout);
 
             Pitch = memento.Pitch.Convert();

@@ -40,22 +40,25 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _Collapsed.Reset();
         }
 
-        public void ApplyMemento(InstrumentMeasureLayoutMembers memento)
+        public void ApplyMemento(InstrumentMeasureLayoutMembers? memento)
         {
             Restore();
+            if(memento is null)
+            {
+                return;
+            }
 
-
-            foreach (var clefChange in memento.ClefChanges)
+            foreach (var clefChange in memento.ClefChanges ?? [])
             {
                 _ClefChanges.Add(clefChange.Convert());
             }
 
-            foreach (var clefChange in memento.IgnoredClefChanges)
+            foreach (var clefChange in memento.IgnoredClefChanges ?? [])
             {
                 _IgnoredClefChanges.Add(clefChange.Convert());
             }
 
-            foreach (var kv in memento.StaffPaddingBottom)
+            foreach (var kv in memento.StaffPaddingBottom ?? [])
             {
                 _PaddingBottomForStaves.Add(kv.Key, kv.Value);
             }
@@ -64,9 +67,9 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             _PaddingBottom.Field = memento.PaddingBottom;
             _Collapsed.Field = memento.Collapsed;
         }
-        public void ApplyMemento(InstrumentMeasureLayoutModel memento)
+        public void ApplyMemento(InstrumentMeasureLayoutModel? memento)
         {
-            ApplyMemento((InstrumentMeasureLayoutMembers)memento);
+            ApplyMemento(memento as InstrumentMeasureLayoutMembers);
         }
     }
 

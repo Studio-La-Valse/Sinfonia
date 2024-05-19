@@ -31,16 +31,22 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             collapsed.Reset();
         }
 
-        public void ApplyMemento(InstrumentRibbonLayoutMembers memento)
+        public void ApplyMemento(InstrumentRibbonLayoutMembers? memento)
         {
+            Restore();
+            if(memento is null)
+            {
+                return;
+            }
+
             abbreviatedName.Field = memento.AbbreviatedName;
             displayName.Field = memento.DisplayName;
             numberOfStaves.Field = memento.NumberOfStaves;
-            Collapsed = memento.Collapsed ?? false;
+            collapsed.Field = memento.Collapsed;
         }
-        public void ApplyMemento(InstrumentRibbonLayoutModel memento)
+        public void ApplyMemento(InstrumentRibbonLayoutModel? memento)
         {
-            ApplyMemento((InstrumentRibbonLayoutMembers)memento);
+            ApplyMemento(memento as InstrumentRibbonLayoutMembers);
         }
     }
 

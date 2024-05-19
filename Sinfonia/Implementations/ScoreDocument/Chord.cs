@@ -130,7 +130,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 var pitch = noteMemento.Pitch.Convert();
                 var noteLayout = new NoteLayout(documentStyleTemplate.NoteStyleTemplate, Grace);
-                var secondaryLayout = new SecondaryNoteLayout(noteMemento.Layout.Id, noteLayout);
+                var secondaryLayout = new SecondaryNoteLayout(noteMemento.Layout?.Id ?? Guid.NewGuid(), noteLayout);
                 var noteInMeasure = new Note(pitch, this, noteLayout, secondaryLayout, keyGenerator, noteMemento.Id);
                 measureElements.Add(noteInMeasure);
                 noteInMeasure.ApplyMemento(noteMemento);

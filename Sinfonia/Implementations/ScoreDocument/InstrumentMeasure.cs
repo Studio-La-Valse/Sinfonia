@@ -135,6 +135,10 @@ namespace Sinfonia.Implementations.ScoreDocument
         public void ApplyMemento(InstrumentMeasureModel memento)
         {
             Clear();
+
+            Layout.ApplyMemento(memento);
+            SecondaryLayout.ApplyMemento(memento.Layout);
+
             foreach (var voiceGroup in memento.MeasureBlocks.GroupBy(e => e.Voice))
             {
                 var voice = voiceGroup.Key;
@@ -144,11 +148,10 @@ namespace Sinfonia.Implementations.ScoreDocument
                 blockChain.Clear();
                 foreach (var block in voiceGroup)
                 {
-                    var newBlock = blockChain.AppendCore(block.Duration.Convert(), false, block.Id, block.Layout.Id);
+                    var newBlock = blockChain.AppendCore(block.Duration.Convert(), false, block.Id, block.Layout?.Id ?? Guid.NewGuid());
                     newBlock.ApplyMemento(block);
                 }
             }
-            Layout.ApplyMemento(memento.Layout);
         }
     }
 }

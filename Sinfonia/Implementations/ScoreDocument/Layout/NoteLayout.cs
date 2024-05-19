@@ -35,19 +35,22 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         }
 
 
-        public void ApplyMemento(NoteLayoutMembers memento)
+        public void ApplyMemento(NoteLayoutMembers? memento)
         {
+            Restore();
+            if(memento is null)
+            {
+                return;
+            }
+
             _StaffIndex.Field = memento.StaffIndex;
             _XOffset.Field = memento.XOffset;
             _ForceAccidental.Field = memento.ForceAccidental.HasValue ? (AccidentalDisplay)memento.ForceAccidental : null;
             _Scale.Field = memento.Scale;
         }
-        public void ApplyMemento(NoteLayoutModel memento)
+        public void ApplyMemento(NoteLayoutModel? memento)
         {
-            _StaffIndex.Field = memento.StaffIndex;
-            _XOffset.Field = memento.XOffset;
-            _ForceAccidental.Field = memento.ForceAccidental.HasValue ? (AccidentalDisplay)memento.ForceAccidental : null;
-            _Scale.Field = memento.Scale;
+            ApplyMemento(memento as NoteLayoutMembers);
         }
 
         public void Restore()

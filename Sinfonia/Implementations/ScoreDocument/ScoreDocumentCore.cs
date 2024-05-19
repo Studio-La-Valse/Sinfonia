@@ -186,7 +186,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             foreach (var instrumentMemento in memento.InstrumentRibbons)
             {
-                var instrumentRibbon = CreateInstrumentRibbonCore(instrumentMemento.Instrument.Convert(), instrumentMemento.Id, instrumentMemento.Layout.Id);
+                var instrumentRibbon = CreateInstrumentRibbonCore(instrumentMemento.Instrument.Convert(), instrumentMemento.Id, instrumentMemento.Layout?.Id ?? Guid.NewGuid());
                 contentTable.AddInstrumentRibbon(instrumentRibbon);
 
                 instrumentRibbon.ApplyMemento(instrumentMemento);
@@ -194,7 +194,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
             foreach (var scoreMeasureMemento in memento.ScoreMeasures)
             {
-                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.Layout.Id, scoreMeasureMemento.TimeSignature.Convert());
+                var scoreMeasure = CreateScoreMeasureCore(scoreMeasureMemento.Id, scoreMeasureMemento.Layout?.Id ?? Guid.NewGuid(), scoreMeasureMemento.TimeSignature.Convert());
                 contentTable.AddScoreMeasure(scoreMeasure);
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);

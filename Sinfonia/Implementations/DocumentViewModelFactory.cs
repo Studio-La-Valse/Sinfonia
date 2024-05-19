@@ -91,7 +91,7 @@ namespace Sinfonia.Implementations
 
                     var layoutMemento = scoreDocumentMemento.Layout;
                     var primaryLayout = new PrimaryScoreDocumentLayout(styleTemplate);
-                    var secondaryLayout = new SecondaryScoreDocumentLayout(primaryLayout, layoutMemento.Id);
+                    var secondaryLayout = new SecondaryScoreDocumentLayout(primaryLayout, layoutMemento?.Id ?? Guid.NewGuid());
                     var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
