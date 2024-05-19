@@ -35,7 +35,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             var syncItem = new MenuItemViewModel()
             {
                 Header = "Sync",
-                Command = commandFactory.Create(fileSyncService.UploadPrivate),
+                Command = commandFactory.Create(fileSyncService.UpdloadBorrowed),
                 Icon = new() { Kind = Material.Icons.MaterialIconKind.World }
             };
 
