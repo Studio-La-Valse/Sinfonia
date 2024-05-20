@@ -10,6 +10,13 @@
 	
 	<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="50">
 
+		<Button Padding="0" Margin="12">
+			<Button.Content>
+				<Image Source="/Assets/icon.ico"/>
+			</Button.Content>
+		</Button>
+
+
 		<Menu Grid.Column="1" ItemsSource="{Binding Items}">
 			<Menu.Styles>
 				<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
