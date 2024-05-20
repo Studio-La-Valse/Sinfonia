@@ -16,7 +16,6 @@
 			</Button.Content>
 		</Button>
 
-
 		<Menu Grid.Column="1" ItemsSource="{Binding Items}">
 			<Menu.Styles>
 				<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
@@ -29,28 +28,6 @@
 				</Style>
 			</Menu.Styles>
 		</Menu>
-		
-		<!--<ItemsControl Grid.Column="1" ItemsSource="{Binding Items}">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate x:DataType="vmb:MenuItemViewModel">
-					<Button Content="{Binding Icon}" DataContext="{Binding}" Command="{Binding Command}" IsEnabled="{Binding IsEnabled}">
-						<Button.Flyout>
-							<MenuFlyout ItemsSource="{Binding Items}" Placement="BottomEdgeAlignedLeft">
-								<MenuFlyout.ItemTemplate>
-									<DataTemplate x:DataType="vmb:MenuItemViewModel">
-										<MenuItem DataContext="{Binding}"/>
-									</DataTemplate >
-								</MenuFlyout.ItemTemplate >
-							</MenuFlyout>
-						</Button.Flyout>
-					</Button>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>-->
+
 	</Grid>
 </UserControl>
