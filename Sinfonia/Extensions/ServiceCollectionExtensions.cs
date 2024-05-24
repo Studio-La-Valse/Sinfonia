@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sinfonia.Implementations;
 using Sinfonia.Implementations.Addin;
+using Sinfonia.Implementations.PDF;
 using Sinfonia.Implementations.ScoreDocument.Converters;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument.Drawable.Scenes;
 
 namespace Sinfonia.Extensions
 {
@@ -15,7 +17,8 @@ namespace Sinfonia.Extensions
             return services.AddSingleton<IShellMethods, ShellMethods>()
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
-                .AddTransient<IMusicXmlImportService, MusicXmlImportService>();
+                .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
+                .AddSingleton<IPdfExportService, PdfExportService>();
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)

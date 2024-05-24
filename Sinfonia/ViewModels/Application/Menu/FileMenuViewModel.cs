@@ -7,6 +7,7 @@ namespace Sinfonia.ViewModels.Application.Menu
     {
         private readonly DocumentCollectionViewModel documentCollection;
         private readonly IShellMethods shellMethods;
+        private readonly IPdfExportService pdfExportService;
 
         public FileMenuViewModel(DocumentCollectionViewModel documentCollection,
                                  ImportMenuViewModel importMenuViewModel,
@@ -14,11 +15,11 @@ namespace Sinfonia.ViewModels.Application.Menu
                                  ICommandFactory commandFactory,
                                  IFileSaveService fileService,
                                  IFileSyncService fileSyncService,
-                                 IDocumentViewModelFactory documentViewModelFactory) : base("_File...")
+                                 IPdfExportService pdfExportService) : base("_File...")
         {
             this.documentCollection = documentCollection;
             this.shellMethods = shellMethods;
-
+            this.pdfExportService = pdfExportService;
             var openItem = new MenuItemViewModel()
             {
                 Header = "Open",
@@ -30,6 +31,13 @@ namespace Sinfonia.ViewModels.Application.Menu
                 Header = "Save as...",
                 Command = commandFactory.Create(fileService.SaveDocument),
                 Icon = new() { Kind = Material.Icons.MaterialIconKind.Floppy }
+            };
+
+            var pdfItem = new MenuItemViewModel()
+            {
+                Header = "Export PDF",
+                Command = commandFactory.Create(pdfExportService.Export),
+                Icon = new() { Kind = Material.Icons.MaterialIconKind.FilePdfBox }
             };
 
             var syncItem = new MenuItemViewModel()
@@ -55,6 +63,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             Items.Add(openItem);
             Items.Add(importMenuViewModel);
             Items.Add(saveItem);
+            Items.Add(pdfItem);
             Items.Add(syncItem);
             Items.Add(closeItem);
             Items.Add(exitItem);

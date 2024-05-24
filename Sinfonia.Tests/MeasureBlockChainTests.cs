@@ -1,13 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
-using Sinfonia.Implementations.ScoreDocument.Memento;
-using Sinfonia.Implementations.ScoreDocument.Memento.Layout;
+using StudioLaValse.ScoreDocument.Models;
 using Sinfonia.Interfaces;
 using StudioLaValse.CommandManager;
 using StudioLaValse.Drawable;
-using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Builder;
 using StudioLaValse.ScoreDocument.Core;
-using StudioLaValse.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Primitives;
 
@@ -20,7 +17,7 @@ namespace Sinfonia.Tests
         public MeasureBlockChainTests()
         {
             var serviceProvider = App.CreateHostBuilder().Build().Services;
-            var memento = ScoreDocumentMemento.Create();
+            var memento = ScoreDocumentModel.Create();
             builder = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento).ScoreBuilder;
         }
 

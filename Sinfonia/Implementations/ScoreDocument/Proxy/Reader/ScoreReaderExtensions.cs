@@ -6,10 +6,6 @@
         {
             return new ScoreDocumentReaderProxy(editor);
         }
-        public static PageReaderProxy Proxy(this Page page)
-        {
-            return new PageReaderProxy(page);
-        }
 
 
         public static InstrumentRibbonReaderProxy ProxyReader(this InstrumentRibbon instrumentRibbon)
@@ -47,23 +43,6 @@
         public static NoteReaderProxy ProxyReader(this Note noteEditor)
         {
             return new NoteReaderProxy(noteEditor);
-        }
-
-
-
-        public static StaffSystemReaderProxy Proxy(this StaffSystem staff)
-        {
-            return new StaffSystemReaderProxy(staff);
-        }
-
-        public static StaffGroupProxy Proxy(this StaffGroup staff)
-        {
-            return new StaffGroupProxy(staff);
-        }
-
-        public static StaffReaderProxy Proxy(this Staff staff)
-        {
-            return new StaffReaderProxy(staff);
         }
     }
 }

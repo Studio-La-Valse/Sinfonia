@@ -2,15 +2,12 @@
 using Sinfonia.Implementations.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Models;
-using StudioLaValse.ScoreDocument.Primitives;
-using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
     public class ScoreDocumentCore : ScoreElement, IMementoElement<ScoreDocumentModel>
     {
         private readonly ScoreContentTable contentTable;
-        private readonly PageGenerator pageGenerator;
         private readonly ScoreDocumentStyleTemplate styleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
 
@@ -28,7 +25,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         internal ScoreDocumentCore(ScoreContentTable contentTable,
-                                   PageGenerator pageGenerator,
                                    ScoreDocumentStyleTemplate styleTemplate,
                                    PrimaryScoreDocumentLayout primaryLayout,
                                    SecondaryScoreDocumentLayout secondaryLayout,
@@ -36,7 +32,6 @@ namespace Sinfonia.Implementations.ScoreDocument
                                    Guid guid) : base(keyGenerator, guid)
         {
             this.contentTable = contentTable;
-            this.pageGenerator = pageGenerator;
             this.styleTemplate = styleTemplate;
             this.keyGenerator = keyGenerator;
 
@@ -199,11 +194,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
                 scoreMeasure.ApplyMemento(scoreMeasureMemento);
             }
-        }
-
-        public IEnumerable<Page> GeneratePages()
-        {
-            return pageGenerator.Generate(this);
         }
     }
 }

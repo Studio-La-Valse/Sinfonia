@@ -1,4 +1,5 @@
 ﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Reader;
 
@@ -39,14 +40,21 @@ namespace Sinfonia.ViewModels.Application.Document
 
         public ScoreDocumentStyleTemplate ScoreDocumentStyle { get; }
         public ISelectionManager<IUniqueScoreElement> Selection { get; }
+        public IVisualPageFactory VisualPageFactory { get; }
 
-
-        public CanvasViewModel(INotifyEntityChanged<IUniqueScoreElement> observable, IScoreDocumentReader scoreDocumentReader, ISelectionManager<IUniqueScoreElement> selection, SceneManager<IUniqueScoreElement, int> sceneManager, ObservableBoundingBox observableBoundingBox, ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
+        public CanvasViewModel(INotifyEntityChanged<IUniqueScoreElement> observable,
+                               IScoreDocumentReader scoreDocumentReader,
+                               ISelectionManager<IUniqueScoreElement> selection,
+                               IVisualPageFactory visualPageFactory,
+                               SceneManager<IUniqueScoreElement, int> sceneManager,
+                               ObservableBoundingBox observableBoundingBox,
+                               ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
         {
             this.scoreDocumentReader = scoreDocumentReader;
 
             Invalidator = observable;
             Selection = selection;
+            VisualPageFactory = visualPageFactory;
             EnablePan = true;
             SceneManager = sceneManager;
             SelectionBorder = observableBoundingBox;

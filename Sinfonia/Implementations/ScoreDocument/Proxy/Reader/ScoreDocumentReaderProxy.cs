@@ -57,12 +57,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
             return source.GetScoreMeasureCore(indexInScore).ProxyReader();
         }
 
-        public IEnumerable<IPageReader> GeneratePages()
-        {
-            return source.GeneratePages().Select(e => e.Proxy());
-        }
-
-
         public override string ToString()
         {
             return $"Score Document : [{Guid}]";

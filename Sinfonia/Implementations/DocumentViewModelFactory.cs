@@ -81,18 +81,16 @@ namespace Sinfonia.Implementations
                 .AddSingleton<ScoreDocumentStyleTemplate>()
                 .AddSingleton<InstrumentMeasureFactory>()
                 .AddSingleton<ScoreContentTable>()
-                .AddSingleton<PageGenerator>()
                 .AddSingleton(services =>
                 {
                     var contentTable = services.GetRequiredService<ScoreContentTable>();
-                    var pageGenerator = services.GetRequiredService<PageGenerator>();
                     var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
                     var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
 
                     var layoutMemento = scoreDocumentMemento.Layout;
                     var primaryLayout = new PrimaryScoreDocumentLayout(styleTemplate);
                     var secondaryLayout = new SecondaryScoreDocumentLayout(primaryLayout, layoutMemento?.Id ?? Guid.NewGuid());
-                    var scoreDocument = new ScoreDocumentCore(contentTable, pageGenerator, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
+                    var scoreDocument = new ScoreDocumentCore(contentTable, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
                     return scoreDocument;
@@ -136,11 +134,13 @@ namespace Sinfonia.Implementations
                 .AddSingleton<IVisualInstrumentMeasureFactory, VisualInstrumentMeasureFactory>()
                 .AddSingleton<IVisualSystemMeasureFactory, VisualSystemMeasureFactory>()
                 .AddSingleton<IVisualStaffSystemFactory, VisualStaffSystemFactory>()
+                .AddSingleton<IVisualPageFactory, VisualPageFactory>()
                 .AddSingleton<IVisualScoreDocumentContentFactory, PageViewSceneFactory>(services =>
                 {
-                    var staffSystemContentFactory = services.GetRequiredService<IVisualStaffSystemFactory>();
+                    var staffSystemContentFactory = services.GetRequiredService<IVisualPageFactory>();
+                    var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
                     var layout = services.GetRequiredService<IScoreDocumentLayout>();
-                    return new PageViewSceneFactory(staffSystemContentFactory, 20, 50, layout);
+                    return new PageViewSceneFactory(staffSystemContentFactory, 20, 50, styleTemplate);
                 })
                 .AddSingleton<VisualScoreDocumentScene>()
                 .AddSingleton(services =>

@@ -67,10 +67,6 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager
 
 
 
-    public IEnumerable<IPageEditor> GeneratePages()
-    {
-        return score.GeneratePages().Select(p => p.ProxyEditor(commandManager, notifyEntityChanged));
-    }
 
     public IEnumerable<IScoreMeasureEditor> ReadScoreMeasures()
     {
@@ -120,5 +116,4 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager
         var command = new RestoreLayoutCommand<SecondaryScoreDocumentLayout, ScoreDocumentLayoutModel>(score.SecondaryLayout).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
-
 }
