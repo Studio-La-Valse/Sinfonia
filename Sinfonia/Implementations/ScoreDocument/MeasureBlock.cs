@@ -172,92 +172,8 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public void Rebeam()
         {
-            foreach (var chord in chords)
-            {
-                chord.ClearBeams();
-            }
-
-            for (var i = 8; i <= 64; i *= 2)
-            {
-                var duration = 1M / i;
-
-                for (var j = 0; j < chords.Count; j++)
-                {
-                    var leftChord = j >= 1 ? chords[j - 1] : null;
-                    var middleChord = chords[j];
-                    var rightChord = j < chords.Count - 1 ? chords[j + 1] : null;
-                    var middleChordBeams = middleChord.GetBeamTypes();
-
-                    if (middleChord.RythmicDuration.PowerOfTwo < 1 / duration)
-                    {
-                        continue;
-                    }
-
-                    var receives = leftChord is not null && leftChord.RythmicDuration.PowerOfTwo >= 1 / duration;
-                    var sends = rightChord is not null && rightChord.RythmicDuration.PowerOfTwo >= 1 / duration;
-
-                    if (leftChord is null && rightChord is null)
-                    {
-                        middleChord.SetBeamType(i, BeamType.Flag);
-                        continue;
-                    }
-
-                    if (receives && sends)
-                    {
-                        middleChord.SetBeamType(i, BeamType.Continue);
-                        continue;
-                    }
-                    else if (sends)
-                    {
-                        middleChord.SetBeamType(i, BeamType.Start);
-                        continue;
-                    }
-                    else if (receives)
-                    {
-                        middleChord.SetBeamType(i, BeamType.End);
-                        continue;
-                    }
-                    else if (leftChord is null)
-                    {
-                        middleChord.SetBeamType(i, BeamType.HookStart);
-                        continue;
-                    }
-                    else if (rightChord is null)
-                    {
-                        middleChord.SetBeamType(i, BeamType.HookEnd);
-                        continue;
-                    }
-                    else
-                    {
-                        if (!middleChord.TryGetBeamType(i / 2, out var beamUp))
-                        {
-                            throw new UnreachableException("Incoherent beaming strategy");
-                        }
-
-                        var toAdd = beamUp switch
-                        {
-                            BeamType.Continue => BeamType.HookStart,
-                            BeamType.End => BeamType.HookEnd,
-                            BeamType.HookEnd => BeamType.HookEnd,
-                            BeamType.HookStart => BeamType.HookStart,
-                            BeamType.Start => BeamType.HookStart,
-                            _ => throw new UnreachableException("Incoherent beaming strategy")
-                        };
-
-                        middleChord.SetBeamType(i, toAdd);
-                        continue;
-                    }
-
-                    throw new UnreachableException("Incoherent beaming strategy");
-                }
-            }
+            new RebeamStrategy().Rebeam(chords);
         }
-
-
-
-
-
-
 
 
 
@@ -273,6 +189,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                 Voice = host.Voice,
                 BeamAngle = Layout._BeamAngle.Field,
                 StemLength = Layout._StemLength.Field,
+                Position = Position.Convert()
             };
         }
 
@@ -296,3 +213,5 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
     }
 }
+
+

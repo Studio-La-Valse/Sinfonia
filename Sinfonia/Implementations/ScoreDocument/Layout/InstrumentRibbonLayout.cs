@@ -62,14 +62,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             displayName = new ReferenceTemplateProperty<string>(() => instrument.Name);
             numberOfStaves = new ValueTemplateProperty<int>(() => instrument.NumberOfStaves);
             collapsed = new ValueTemplateProperty<bool>(() => false);
-            abbreviatedName = new ReferenceTemplateProperty<string>(() => CreateDefaultNickName(displayName.Value));
-        }
-
-        public static string CreateDefaultNickName(string name)
-        {
-            return string.IsNullOrWhiteSpace(name)
-                ? ""
-                : name.Length == 1 ? string.Concat(name.AsSpan(0, 1), ".") : string.Concat(name.AsSpan(0, 2), ".");
+            abbreviatedName = new ReferenceTemplateProperty<string>(() => InstrumentRibbonLayoutExtensions.AbbreviateName(this.displayName.Value));
         }
     }
 
@@ -89,8 +82,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             collapsed = new ValueTemplateProperty<bool>(() => layout.Collapsed);
             abbreviatedName = new ReferenceTemplateProperty<string>(() => layout.AbbreviatedName);
         }
-
-
 
         public InstrumentRibbonLayoutModel GetMemento()
         {

@@ -6,15 +6,15 @@ using StudioLaValse.ScoreDocument.Primitives.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordModel>
+    public sealed class Chord : ScoreElement, IPositionElement, IMementoElement<ChordModel>, IBeamEditor
     {
         private readonly List<Note> measureElements;
         private readonly MeasureBlock hostBlock;
         private readonly ScoreDocumentStyleTemplate documentStyleTemplate;
         private readonly IKeyGenerator<int> keyGenerator;
-        private readonly Dictionary<int, BeamType> beamTypes = [];
+        private readonly Dictionary<PowerOfTwo, BeamType> beamTypes = [];
 
-
+        public Dictionary<PowerOfTwo, BeamType> BeamTypes => beamTypes;
         public RythmicDuration RythmicDuration { get; }
         public ChordLayout Layout { get; }
         public SecondaryChordLayout SecondaryLayout { get; }
@@ -116,7 +116,8 @@ namespace Sinfonia.Implementations.ScoreDocument
                 Notes = measureElements.Select(n => n.GetMemento()).ToList(),
                 RythmicDuration = RythmicDuration.Convert(),
                 Layout = SecondaryLayout.GetMemento(),
-                XOffset = Layout._XOffset.Field
+                XOffset = Layout._XOffset.Field,
+                Position = Position.Convert()
             };
         }
         public void ApplyMemento(ChordModel memento)
@@ -162,7 +163,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public BeamType? GetBeamType(PowerOfTwo i)
         {
-            return beamTypes.TryGetValue(i.Value, out var value) ? value : null;
+            return beamTypes.TryGetValue(i, out var value) ? value : null;
         }
         public IEnumerable<(BeamType beam, PowerOfTwo duration)> GetBeamTypes()
         {
