@@ -82,13 +82,41 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return ReadVoices().Select(ReadBlockChainAt);
+            return ReadVoices().Select(ReadBlockChainAt).SelectMany(e => e.ReadBlocks());
         }
 
         public void AddClefChange(ClefChange clefChange)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.AddClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
+        }
+
+        public void RemoveClefChange(ClefChange clefChange)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.RemoveClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
+        }
+
+        public void RequestPaddingBottom(int staffIndex, double? paddingBottom = null)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.PaddingBottom = paddingBottom).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
+        }
+
+        public void RequestCollapsed(bool collapse)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.Collapsed = collapse).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            transaction.Enqueue(command);
+        }
+
+        public void RequestNumberOfStaves(int? numberOfStaves = null)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<SecondaryInstrumentMeasureLayout, InstrumentMeasureLayoutModel>(source.SecondaryLayout, l => l.NumberOfStaves = numberOfStaves).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
             transaction.Enqueue(command);
         }
 

@@ -61,7 +61,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return ReadVoices().Select(ReadBlockChainAt);
+            return ReadVoices().Select(ReadBlockChainAt).SelectMany(e => e.ReadBlocks());
         }
 
         public IInstrumentMeasureLayout ReadLayout()

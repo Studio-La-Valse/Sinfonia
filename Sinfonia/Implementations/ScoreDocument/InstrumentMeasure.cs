@@ -126,7 +126,6 @@ namespace Sinfonia.Implementations.ScoreDocument
                 Layout = SecondaryLayout.GetMemento(),
                 ClefChanges = Layout._ClefChanges.Select(e => e.Convert()).ToList(),
                 Collapsed = Layout._Collapsed.Field,
-                IgnoredClefChanges = Layout._IgnoredClefChanges.Select(e => e.Convert()).ToList(),
                 NumberOfStaves = Layout._NumberOfStaves.Field,
                 PaddingBottom = Layout._PaddingBottom.Field,
                 StaffPaddingBottom = Layout._PaddingBottomForStaves.DeepCopy()

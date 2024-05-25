@@ -4,7 +4,7 @@ using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument.Layout
 {
-    public abstract class BaseInstrumentMeasureLayout
+    public abstract class BaseInstrumentMeasureLayout 
     {
         public abstract NullableTemplateProperty<int> _NumberOfStaves { get; }
         public abstract NullableTemplateProperty<double> _PaddingBottom { get; }
@@ -43,7 +43,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         public void ApplyMemento(InstrumentMeasureLayoutMembers? memento)
         {
             Restore();
-            if(memento is null)
+            if (memento is null)
             {
                 return;
             }
@@ -51,11 +51,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
             foreach (var clefChange in memento.ClefChanges ?? [])
             {
                 _ClefChanges.Add(clefChange.Convert());
-            }
-
-            foreach (var clefChange in memento.IgnoredClefChanges ?? [])
-            {
-                _IgnoredClefChanges.Add(clefChange.Convert());
             }
 
             foreach (var kv in memento.StaffPaddingBottom ?? [])
@@ -70,6 +65,16 @@ namespace Sinfonia.Implementations.ScoreDocument.Layout
         public void ApplyMemento(InstrumentMeasureLayoutModel? memento)
         {
             ApplyMemento(memento as InstrumentMeasureLayoutMembers);
+
+            if(memento is null)
+            {
+                return;
+            }
+
+            foreach (var clefChange in memento.IgnoredClefChanges ?? [])
+            {
+                _IgnoredClefChanges.Add(clefChange.Convert());
+            }
         }
     }
 
