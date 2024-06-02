@@ -1,9 +1,11 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
+using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ChordEditorProxy : IChordEditor, IUniqueScoreElement
+    public class ChordEditorProxy : IChordEditor
     {
         private readonly Chord source;
         private readonly ICommandManager commandManager;
@@ -17,10 +19,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public RythmicDuration RythmicDuration => source.RythmicDuration;
 
         public Tuplet Tuplet => source.Tuplet;
-
-        public Guid Guid => source.Guid;
-
-        public int Id => source.Id;
 
 
         public ChordEditorProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
@@ -65,13 +63,13 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IChordLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
 
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<SecondaryChordLayout, ChordLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new RestoreLayoutCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -79,7 +77,14 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void SetXOffset(double offset)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<SecondaryChordLayout, ChordLayoutModel>(source.SecondaryLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            transaction.Enqueue(command);
+        }
+
+        public void SetSpaceRight(double spaceRight)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout, s => s.SpaceRight = spaceRight).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
     }

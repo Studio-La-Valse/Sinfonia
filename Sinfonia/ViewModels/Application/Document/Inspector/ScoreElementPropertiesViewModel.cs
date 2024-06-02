@@ -1,9 +1,10 @@
 ﻿using Sinfonia.ViewModels.Base;
 
+
 namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
     public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor> : PropertyCollectionViewModel
-            where TEntity : IScoreEntity, IUniqueScoreElement
+            where TEntity : IUniqueScoreElement
             where TEditor : IScoreElementEditor
     {
         private readonly IScoreBuilder scoreBuilder;

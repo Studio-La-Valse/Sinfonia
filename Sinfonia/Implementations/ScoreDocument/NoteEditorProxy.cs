@@ -1,9 +1,11 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
-using StudioLaValse.ScoreDocument.Models;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Implementation.Extensions;
+using StudioLaValse.ScoreDocument.Implementation.Layout;
+using StudioLaValse.ScoreDocument.Models.Base;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+namespace Sinfonia.Implementations.ScoreDocument;
 
-internal class NoteEditorProxy(Note source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : INoteEditor, IUniqueScoreElement
+public class NoteEditorProxy(Note source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : INoteEditor
 {
     private readonly Note source = source;
     private readonly ICommandManager commandManager = commandManager;
@@ -22,10 +24,6 @@ internal class NoteEditorProxy(Note source, ICommandManager commandManager, INot
 
     public Tuplet Tuplet => source.Tuplet;
 
-    public Guid Guid => source.Guid;
-
-    public int Id => source.Id;
-
 
     public IEnumerable<IScoreElement> EnumerateChildren()
     {
@@ -34,41 +32,41 @@ internal class NoteEditorProxy(Note source, ICommandManager commandManager, INot
 
     public INoteLayout ReadLayout()
     {
-        return source.SecondaryLayout;
+        return source.AuthorLayout;
     }
 
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new RestoreLayoutCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetForceAccidental(AccidentalDisplay display)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.ForceAccidental = display).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout, s => s.ForceAccidental = display).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetScale(double scale)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.Scale = scale).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout, s => s.Scale = scale).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 
     public void SetStaffIndex(int staffIndex)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout, s => s.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, source.HostMeasure.HostMeasure.HostDocument);
         transaction.Enqueue(command);
     }
 
     public void SetXOffset(double offset)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryNoteLayout, NoteLayoutModel>(source.SecondaryLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+        var command = new MementoCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
 }

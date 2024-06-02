@@ -1,6 +1,9 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal static class ScoreReaderExtensions
+    public static class ScoreReaderExtensions
     {
         public static ScoreDocumentReaderProxy ProxyReader(this ScoreDocumentCore editor)
         {

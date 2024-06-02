@@ -1,10 +1,10 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlockReaderProxy : IMeasureBlockReader
+    public class MeasureBlockReaderProxy : IMeasureBlockReader
     {
         private readonly MeasureBlock source;
 
@@ -20,6 +20,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
         public RythmicDuration RythmicDuration => source.RythmicDuration;
 
         public int Id => source.Id;
+
         public Guid Guid => source.Guid;
 
         public Position Position => source.Position;
@@ -67,7 +68,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IMeasureBlockLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

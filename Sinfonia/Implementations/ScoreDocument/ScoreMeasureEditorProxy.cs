@@ -1,10 +1,13 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Implementation.Extensions;
+using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+namespace Sinfonia.Implementations.ScoreDocument;
 
-internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreMeasureEditor, IUniqueScoreElement
+public class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreMeasureEditor
 {
     private readonly ScoreMeasure source = source;
     private readonly ICommandManager commandManager = commandManager;
@@ -16,11 +19,7 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comm
 
     public TimeSignature TimeSignature => source.TimeSignature;
 
-    public KeySignature KeySignature => source.Layout.KeySignature;
-
-    public Guid Guid => source.Guid;
-
-    public int Id => source.Id;
+    public KeySignature KeySignature => source.AuthorLayout.KeySignature;
 
 
 
@@ -55,48 +54,41 @@ internal class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comm
 
     public IScoreMeasureLayout ReadLayout()
     {
-        return source.SecondaryLayout;
+        return source.UserLayout;
     }
 
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new RestoreLayoutCommand<AuthorScoreMeasureLayout, ScoreMeasureLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source.HostDocument);
         transaction.Enqueue(command);
     }
 
     public void SetKeySignature(KeySignature keySignature)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.KeySignature = keySignature).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<AuthorScoreMeasureLayout, ScoreMeasureLayoutMembers>(source.AuthorLayout, s => s.KeySignature = keySignature).ThenInvalidate(notifyEntityChanged, source.HostDocument);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingLeft(double padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingLeft = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<AuthorScoreMeasureLayout, ScoreMeasureLayoutMembers>(source.AuthorLayout, s => s.PaddingLeft = padding).ThenInvalidate(notifyEntityChanged, source.HostDocument);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingRight(double padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingRight = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
-        transaction.Enqueue(command);
-    }
-
-    public void SetWidth(double width)
-    {
-        var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.Width = width).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<AuthorScoreMeasureLayout, ScoreMeasureLayoutMembers>(source.AuthorLayout, s => s.PaddingRight = padding).ThenInvalidate(notifyEntityChanged, source.HostDocument);
         transaction.Enqueue(command);
     }
 
     public void SetPaddingBottom(double? padding)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new MementoCommand<SecondaryScoreMeasureLayout, ScoreMeasureLayoutModel>(source.SecondaryLayout, s => s.PaddingBottom = padding).ThenInvalidate(notifyEntityChanged, source.ScoreDocumentCore);
+        var command = new MementoCommand<AuthorScoreMeasureLayout, ScoreMeasureLayoutMembers>(source.AuthorLayout, s => s.PaddingBottom = padding).ThenInvalidate(notifyEntityChanged, source.HostDocument);
         transaction.Enqueue(command);
     }
 }

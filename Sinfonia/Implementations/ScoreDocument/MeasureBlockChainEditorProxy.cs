@@ -1,11 +1,10 @@
-﻿using Sinfonia.Implementations.Commands;
-using StudioLaValse.ScoreDocument.Core;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Implementation.Extensions;
 using StudioLaValse.ScoreDocument.Models;
-using StudioLaValse.ScoreDocument.Models.Base;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor, IUniqueScoreElement
+    public class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor
     {
         private readonly MeasureBlockChain source;
         private readonly ICommandManager commandManager;
@@ -14,10 +13,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
 
         public int Voice => source.Voice;
-
-        public Guid Guid => source.Guid;
-
-        public int Id => source.Id;
 
 
         public MeasureBlockChainEditorProxy(MeasureBlockChain source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)

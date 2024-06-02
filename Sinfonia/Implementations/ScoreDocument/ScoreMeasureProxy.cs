@@ -1,10 +1,11 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreMeasureReaderProxy : IScoreMeasureReader
+    public class ScoreMeasureReaderProxy : IScoreMeasureReader
     {
         private readonly ScoreMeasure source;
 
@@ -65,7 +66,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IScoreMeasureLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

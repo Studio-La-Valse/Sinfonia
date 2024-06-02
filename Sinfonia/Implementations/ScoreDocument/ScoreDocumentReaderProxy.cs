@@ -1,8 +1,9 @@
-﻿using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Reader;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ScoreDocumentReaderProxy : IScoreDocumentReader
+    public class ScoreDocumentReaderProxy : IScoreDocumentReader
     {
         private readonly ScoreDocumentCore source;
 
@@ -64,7 +65,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IScoreDocumentLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

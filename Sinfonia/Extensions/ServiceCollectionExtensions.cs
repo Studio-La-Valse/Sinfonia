@@ -2,14 +2,13 @@
 using Sinfonia.Implementations;
 using Sinfonia.Implementations.Addin;
 using Sinfonia.Implementations.PDF;
-using Sinfonia.Implementations.ScoreDocument.Converters;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;
-using StudioLaValse.ScoreDocument.Drawable.Scenes;
 
 namespace Sinfonia.Extensions
 {
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddModels(this IServiceCollection services)
@@ -35,8 +34,7 @@ namespace Sinfonia.Extensions
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             return services
-                .AddSingleton<IFileSaveService, FileSaveService>()
-                .AddSingleton<IFileSyncService, FileSyncSerivce>();
+                .AddSingleton<IFileSaveService, FileSaveService>();
         }
 
         public static IServiceCollection AddViews(this IServiceCollection services)

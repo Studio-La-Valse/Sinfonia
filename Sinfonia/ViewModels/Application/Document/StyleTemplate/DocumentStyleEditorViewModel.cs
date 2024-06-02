@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Sinfonia.ViewModels.Base;
 using System.IO;
@@ -157,8 +158,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.VerticalStaffLineThickness, v => { template.VerticalStaffLineThickness = v; canvasViewModel.Rerender(); }, "Vertical Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.StemLineThickness, v => { template.StemLineThickness = v; canvasViewModel.Rerender(); }, "Stem Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.FirstSystemIndent, v => { template.FirstSystemIndent = v; canvasViewModel.Rerender(); }, "First System Indent"));
-            Properties.Add(new PropertyViewModel<Color>(() => template.PageColor.T(), v => { template.PageColor = v.T(); canvasViewModel.Rerender(); }, "Page Color"));
-            Properties.Add(new PropertyViewModel<Color>(() => template.ForegroundColor.T(), v => { template.ForegroundColor = v.T(); canvasViewModel.Rerender(); }, "Foreground Color"));
+            Properties.Add(new PropertyViewModel<double>(() => template.ChordPositionFactor, v => { template.ChordPositionFactor = v; canvasViewModel.Rerender(); }, "Chord Position Factor"));
         }
     }
 
@@ -177,6 +177,9 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.MarginTop, v => { template.MarginTop = v; canvasViewModel.Rerender(); }, "Margin Top"));
             Properties.Add(new PropertyViewModel<double>(() => template.MarginRight, v => { template.MarginRight = v; canvasViewModel.Rerender(); }, "Margin Right"));
             Properties.Add(new PropertyViewModel<double>(() => template.MarginBottom, v => { template.MarginBottom = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
+
+            Properties.Add(new PropertyViewModel<Color>(() => template.PageColor.T(), v => { template.PageColor = v.T(); canvasViewModel.Rerender(); }, "Page Color"));
+            Properties.Add(new PropertyViewModel<Color>(() => template.ForegroundColor.T(), v => { template.ForegroundColor = v.T(); canvasViewModel.Rerender(); }, "Foreground Color"));
         }
     }
 
@@ -189,7 +192,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         {
             var template = canvasViewModel.ScoreDocumentStyle.StaffSystemStyleTemplate;
 
-            Properties.Add(new PropertyViewModel<double>(() => template.PaddingBottom, v => { template.PaddingBottom = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
+            Properties.Add(new PropertyViewModel<double>(() => template.DistanceToNext, v => { template.DistanceToNext = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
         }
     }
 
@@ -228,9 +231,8 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
         {
             var template = canvasViewModel.ScoreDocumentStyle.ScoreMeasureStyleTemplate;
 
-            Properties.Add(new PropertyViewModel<int>(() => template.Width, v => { template.Width = v; canvasViewModel.Rerender(); }, "Width"));
-            Properties.Add(new PropertyViewModel<int>(() => template.PaddingLeft, v => { template.PaddingLeft = v; canvasViewModel.Rerender(); }, "Space Left"));
-            Properties.Add(new PropertyViewModel<int>(() => template.PaddingRight, v => { template.PaddingRight = v; canvasViewModel.Rerender(); }, "Space Right"));
+            Properties.Add(new PropertyViewModel<double>(() => template.PaddingLeft, v => { template.PaddingLeft = v; canvasViewModel.Rerender(); }, "Space Left"));
+            Properties.Add(new PropertyViewModel<double>(() => template.PaddingRight, v => { template.PaddingRight = v; canvasViewModel.Rerender(); }, "Space Right"));
         }
     }
 
@@ -273,7 +275,9 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
 
         public ChordViewModel(CanvasViewModel canvasViewModel)
         {
+            var template = canvasViewModel.ScoreDocumentStyle.ChordStyleTemplate;
 
+            Properties.Add(new PropertyViewModel<double>(() => template.SpaceRight, v => { template.SpaceRight = v; canvasViewModel.Rerender(); }, "Space Right"));
         }
     }
 

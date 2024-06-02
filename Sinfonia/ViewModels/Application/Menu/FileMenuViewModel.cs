@@ -14,7 +14,6 @@ namespace Sinfonia.ViewModels.Application.Menu
                                  IShellMethods shellMethods,
                                  ICommandFactory commandFactory,
                                  IFileSaveService fileService,
-                                 IFileSyncService fileSyncService,
                                  IPdfExportService pdfExportService) : base("_File...")
         {
             this.documentCollection = documentCollection;
@@ -43,7 +42,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             var syncItem = new MenuItemViewModel()
             {
                 Header = "Sync",
-                Command = commandFactory.Create(fileSyncService.UpdloadBorrowed),
+                Command = commandFactory.Create(() => { }),
                 Icon = new() { Kind = Material.Icons.MaterialIconKind.World }
             };
 

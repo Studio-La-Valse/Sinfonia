@@ -1,18 +1,12 @@
-﻿using Avalonia.Controls.Documents;
-using Avalonia.Platform.Storage;
+﻿using Avalonia.Platform.Storage;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
-using PdfSharpTest;
-using Sinfonia.Implementations.CanvasPainters;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
-using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Reader;
 using StudioLaValse.ScoreDocument.Reader.Extensions;
-using System.Diagnostics;
-using static PdfSharp.Snippets.Font.SegoeWpFontResolver;
 using ColorARGB = StudioLaValse.Geometry.ColorARGB;
 
 namespace Sinfonia.Implementations.PDF;
@@ -57,7 +51,7 @@ internal class PdfExportService : IPdfExportService
             return;
         }
 
-        var bytes = GenerateBytes(scoreDocumentReader, visualPageFactory, scoreStyleTemplate);
+        var bytes = GenerateBytes(scoreDocumentReader, visualPageFactory);
 
         using (var stream = AsyncHelper.RunSync(result.OpenWriteAsync))
         {
@@ -65,16 +59,18 @@ internal class PdfExportService : IPdfExportService
         };
     }
 
-    public PdfDocument GenerateBytes(IScoreDocumentReader scoreDocumentReader, IVisualPageFactory visualPageFactory, ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
+    public PdfDocument GenerateBytes(IScoreDocumentReader scoreDocumentReader, IVisualPageFactory visualPageFactory)
     {
         var pdfDocument = new PdfDocument();
-        var pageColor = scoreDocumentStyleTemplate.PageColor;
-        var pageWidth = scoreDocumentStyleTemplate.PageStyleTemplate.PageWidth;
-        var pageHeight = scoreDocumentStyleTemplate.PageStyleTemplate.PageHeight;
 
-        foreach (var page in scoreDocumentReader.ReadPages(scoreDocumentStyleTemplate))
+        foreach (var page in scoreDocumentReader.ReadPages())
         {
-            var visualPage = visualPageFactory.CreateContent(page);
+            var pageLayout = page.ReadLayout();
+            var pageWidth = pageLayout.PageWidth;
+            var pageHeight = pageLayout.PageHeight;
+            var pageColor = pageLayout.PageColor;
+
+            var visualPage = visualPageFactory.CreateContent(page, 0, 0);
             var pdfPage = pdfDocument.AddPage();
             pdfPage.Width = pageWidth;
             pdfPage.Height = pageHeight;

@@ -1,12 +1,11 @@
-﻿using Sinfonia.Implementations.Commands;
-using Sinfonia.Implementations.ScoreDocument.Layout;
-using Sinfonia.Implementations.ScoreDocument.Proxy.Reader;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor;
+namespace Sinfonia.Implementations.ScoreDocument;
 
-internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreDocumentEditor, IUniqueScoreElement
+public class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IScoreDocumentEditor
 {
     private readonly ScoreDocumentCore score = score;
     private readonly ICommandManager commandManager = commandManager;
@@ -16,51 +15,47 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager
 
     public int NumberOfInstruments => score.NumberOfInstruments;
 
-    public Guid Guid => score.Guid;
-
-    public int Id => score.Id;
-
 
 
     public void AddInstrumentRibbon(Instrument instrument)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.AddInstrumentRibbon(instrument));
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.AddInstrumentRibbon(instrument)).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
     public void RemoveInstrumentRibbon(int indexInScore)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.RemoveInstrumentRibbon(indexInScore));
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.RemoveInstrumentRibbon(indexInScore)).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
     public void AppendScoreMeasure(TimeSignature? timeSignature = null)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.AppendScoreMeasure(timeSignature));
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.AppendScoreMeasure(timeSignature)).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
     public void InsertScoreMeasure(int index, TimeSignature? timeSignature = null)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.InsertScoreMeasure(index, timeSignature));
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.InsertScoreMeasure(index, timeSignature)).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
     public void RemoveScoreMeasure(int index)
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.RemoveScoreMeasure(index));
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.RemoveScoreMeasure(index)).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
     public void Clear()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        MementoCommand<ScoreDocumentCore, ScoreDocumentModel> command = new(score, s => s.Clear());
+        var command = new MementoCommand<ScoreDocumentCore, ScoreDocumentModel>(score, s => s.Clear()).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 
@@ -107,13 +102,13 @@ internal class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager
 
     public IScoreDocumentLayout ReadLayout()
     {
-        return score.SecondaryLayout;
+        return score.AuthorLayout;
     }
 
     public void RemoveLayout()
     {
         var transaction = commandManager.ThrowIfNoTransactionOpen();
-        var command = new RestoreLayoutCommand<SecondaryScoreDocumentLayout, ScoreDocumentLayoutModel>(score.SecondaryLayout).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
+        var command = new RestoreLayoutCommand<AuthorScoreDocumentLayout, ScoreDocumentLayoutMembers>(score.AuthorLayout).ThenInvalidate(notifyEntityChanged, score.ProxyReader());
         transaction.Enqueue(command);
     }
 }

@@ -1,9 +1,10 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlockChainReaderProxy : IMeasureBlockChainReader
+    public class MeasureBlockChainReaderProxy : IMeasureBlockChainReader
     {
         private readonly MeasureBlockChain source;
 

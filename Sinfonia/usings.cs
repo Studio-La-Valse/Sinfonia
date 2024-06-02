@@ -22,3 +22,4 @@ global using System.Collections.Generic;
 global using System.Collections.ObjectModel;
 global using System.Windows.Input;
 global using Sinfonia.Implementations.Commands;
+global using StudioLaValse.ScoreDocument.Reader;

@@ -46,6 +46,7 @@ namespace Sinfonia.ViewModels.Application.Document
                                IScoreDocumentReader scoreDocumentReader,
                                ISelectionManager<IUniqueScoreElement> selection,
                                IVisualPageFactory visualPageFactory,
+                               ICommandManager commandManager,
                                SceneManager<IUniqueScoreElement, int> sceneManager,
                                ObservableBoundingBox observableBoundingBox,
                                ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
@@ -66,7 +67,8 @@ namespace Sinfonia.ViewModels.Application.Document
                 .ThenHandleDefaultClick(SceneManager.VisualParents, _selectionManager)
                 .ThenHandleSelectionBorder(SceneManager.VisualParents, _selectionManager, SelectionBorder, Invalidator)
                 .ThenHandleTransformations(_selectionManager, SceneManager.VisualParents, Invalidator)
-                .ThenRender(Invalidator); ;
+                .ThenRender(Invalidator)
+                .UndoRedo(commandManager);
         }
 
         public void Rerender()

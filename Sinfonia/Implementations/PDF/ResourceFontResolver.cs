@@ -2,13 +2,13 @@
 using PdfSharp.Fonts;
 using System.IO;
 
-namespace PdfSharpTest
+namespace Sinfonia.Implementations.PDF
 {
     public class ResourceFontResolver : IFontResolver
     {
         public ResourceFontResolver()
         {
-            
+
         }
 
         public byte[]? GetFont(string faceName)

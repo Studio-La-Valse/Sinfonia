@@ -1,10 +1,13 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Core;
+using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Layout;
+using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class InstrumentMeasureReaderProxy : IInstrumentMeasureReader
+    public class InstrumentMeasureReaderProxy : IInstrumentMeasureReader
     {
         private readonly InstrumentMeasure source;
 
@@ -66,7 +69,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IInstrumentMeasureLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
 
         public override string ToString()

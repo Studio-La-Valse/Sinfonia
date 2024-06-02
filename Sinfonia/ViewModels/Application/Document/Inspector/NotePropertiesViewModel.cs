@@ -20,6 +20,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
         internal ChordPropertiesViewModel(IEnumerable<IChordReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
             Properties.Add(Create(l => l.ReadLayout().XOffset, (l, v) => l.SetXOffset(v), "X Offset"));
+            Properties.Add(Create(l => l.ReadLayout().SpaceRight, (l, v) => l.SetXOffset(v), "Space Right"));
         }
 
         public override string Header => "Chord Properties";
@@ -53,7 +54,6 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
             Properties.Add(Create(l => l.ReadLayout().KeySignature, (l, v) => l.SetKeySignature(v), "Key Signature"));
             Properties.Add(Create(l => l.ReadLayout().PaddingLeft, (l, v) => l.SetPaddingLeft(v), "Padding Left"));
             Properties.Add(Create(l => l.ReadLayout().PaddingRight, (l, v) => l.SetPaddingRight(v), "Padding Right"));
-            Properties.Add(Create(l => l.ReadLayout().Width, (l, v) => l.SetWidth(v), "Width"));
         }
 
         public override string Header => "Score Measure Properties";

@@ -1,10 +1,13 @@
-﻿using Sinfonia.Implementations.ScoreDocument.Layout;
+﻿using Sinfonia.Implementations.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
+using StudioLaValse.ScoreDocument.Models.Base;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class MeasureBlockEditorProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlockEditor, IUniqueScoreElement
+    public class MeasureBlockEditorProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlockEditor
     {
         private readonly MeasureBlock source = source;
         private readonly ICommandManager commandManager = commandManager;
@@ -18,10 +21,6 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public Position Position => source.Position;
 
         public Tuplet Tuplet => source.Tuplet;
-
-        public Guid Guid => source.Guid;
-
-        public int Id => source.Id;
 
         public InstrumentMeasure HostMeasure => source.RibbonMeasure;
 
@@ -50,21 +49,21 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
         public void RemoveLayout()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new RestoreLayoutCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void SetStemLength(double stemLength)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout, s => s.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout, s => s.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
         public void SetBeamAngle(double angle)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<SecondaryMeasureBlockLayout, MeasureBlockLayoutModel>(source.SecondaryLayout, s => s.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout, s => s.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -100,7 +99,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
 
         public IMeasureBlockLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

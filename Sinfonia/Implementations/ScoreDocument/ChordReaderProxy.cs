@@ -1,8 +1,9 @@
 ﻿using StudioLaValse.ScoreDocument.Reader;
+using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class ChordReaderProxy : IChordReader
+    public class ChordReaderProxy : IChordReader
     {
         private readonly Chord source;
 
@@ -60,7 +61,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IChordLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

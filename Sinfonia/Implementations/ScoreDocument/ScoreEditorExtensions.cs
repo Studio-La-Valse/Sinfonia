@@ -1,6 +1,9 @@
-﻿namespace Sinfonia.Implementations.ScoreDocument.Proxy.Editor
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
+
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal static class ScoreEditorExtensions
+    public static class ScoreEditorExtensions
     {
         public static ScoreDocumentEditorProxy ProxyEditor(this ScoreDocumentCore score, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {

@@ -1,9 +1,10 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class NoteReaderProxy : INoteReader
+    public class NoteReaderProxy : INoteReader
     {
         private readonly Note source;
 
@@ -47,7 +48,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public INoteLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

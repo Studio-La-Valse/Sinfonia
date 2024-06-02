@@ -1,9 +1,10 @@
-﻿using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 
-namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
+namespace Sinfonia.Implementations.ScoreDocument
 {
-    internal class InstrumentRibbonReaderProxy : IInstrumentRibbonReader
+    public class InstrumentRibbonReaderProxy : IInstrumentRibbonReader
     {
         private readonly InstrumentRibbon source;
 
@@ -49,7 +50,7 @@ namespace Sinfonia.Implementations.ScoreDocument.Proxy.Reader
 
         public IInstrumentRibbonLayout ReadLayout()
         {
-            return source.SecondaryLayout;
+            return source.AuthorLayout;
         }
     }
 }

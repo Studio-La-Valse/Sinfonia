@@ -1,7 +1,11 @@
-﻿namespace Sinfonia.Interfaces;
+﻿using System.Threading.Tasks;
+
+namespace Sinfonia.Interfaces;
 
 public interface IFileSyncService
 {
-    void UploadPrivate();
-    void UpdloadBorrowed();
+    Task CreateNew();
+    Task Download();
+    Task Save();
+    Task Delete();
 }

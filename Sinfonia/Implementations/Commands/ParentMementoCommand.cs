@@ -3,21 +3,23 @@ using System.Diagnostics;
 
 namespace Sinfonia.Implementations.Commands
 {
-    public class MementoCommand<TEntity, TMemento> : BaseCommand where TEntity : IMementoElement<TMemento>
+    public class ParentMementoCommand<TEntity, TParent, TMemento> : BaseCommand where TParent : IMementoElement<TMemento>
     {
+        private readonly TParent parent;
         private readonly TEntity entity;
         private readonly Action<TEntity> action;
         private TMemento? memento = default;
 
-        public MementoCommand(TEntity entity, Action<TEntity> action)
+        public ParentMementoCommand(TParent parent, TEntity entity, Action<TEntity> action)
         {
+            this.parent = parent;
             this.entity = entity;
             this.action = action;
         }
 
         public override void Do()
         {
-            memento = entity.GetMemento();
+            memento = parent.GetMemento();
             action(entity);
         }
 
@@ -28,7 +30,7 @@ namespace Sinfonia.Implementations.Commands
                 throw new UnreachableException("Memento not recorded; Undo() method called before do() method.");
             }
 
-            entity.ApplyMemento(memento);
+            parent.ApplyMemento(memento);
         }
     }
 }
