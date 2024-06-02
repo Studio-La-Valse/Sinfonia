@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Extensions;
 using StudioLaValse.ScoreDocument.Models;
 

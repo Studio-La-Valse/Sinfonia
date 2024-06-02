@@ -7,6 +7,7 @@ using StudioLaValse.ScoreDocument.Builder;
 using StudioLaValse.ScoreDocument.Core;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Tests
 {
@@ -37,7 +38,7 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>
@@ -74,7 +75,7 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>
@@ -108,7 +109,7 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>

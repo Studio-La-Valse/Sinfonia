@@ -266,6 +266,8 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
 
             Properties.Add(new PropertyViewModel<double>(() => template.StemLength, v => { template.StemLength = v; canvasViewModel.Rerender(); }, "Stem Length"));
             Properties.Add(new PropertyViewModel<double>(() => template.BeamAngle, v => { template.BeamAngle = v; canvasViewModel.Rerender(); }, "Bracket Angle"));
+            Properties.Add(new PropertyViewModel<double>(() => template.BeamThickness, v => { template.BeamThickness = v; canvasViewModel.Rerender(); }, "Bracket Thickness"));
+            Properties.Add(new PropertyViewModel<double>(() => template.BeamSpacing, v => { template.BeamSpacing = v; canvasViewModel.Rerender(); }, "Bracket Spacing"));
         }
     }
 

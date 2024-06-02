@@ -4,12 +4,12 @@ using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
 using StudioLaValse.ScoreDocument.Models;
-using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations
 {

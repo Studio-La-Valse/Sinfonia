@@ -1,5 +1,6 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
+using StudioLaValse.ScoreDocument.Reader.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
@@ -8,9 +9,10 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly ScoreDocumentCore source;
 
         public int NumberOfMeasures => source.NumberOfMeasures;
+
         public int NumberOfInstruments => source.NumberOfInstruments;
+
         public int Id => source.Id;
-        public Guid Guid => source.Guid;
 
 
 
@@ -51,6 +53,11 @@ namespace Sinfonia.Implementations.ScoreDocument
             {
                 yield return measure;
             }
+
+            foreach(var page in this.ReadPages())
+            {
+                yield return page;
+            }
         }
 
         public IScoreMeasureReader ReadScoreMeasure(int indexInScore)
@@ -60,7 +67,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Score Document : [{Guid}]";
+            return $"Score Document";
         }
 
         public IScoreDocumentLayout ReadLayout()

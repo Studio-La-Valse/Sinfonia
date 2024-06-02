@@ -1,5 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -12,8 +12,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         public int Id => source.Id;
-
-        public Guid Guid => source.Guid;
 
         public int IndexInScore => source.IndexInScore;
 
@@ -45,7 +43,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
         public override string ToString()
         {
-            return $"Instrument Ribbon : [{Guid}]";
+            return $"Instrument Ribbon : [{Instrument}]";
         }
 
         public IInstrumentRibbonLayout ReadLayout()

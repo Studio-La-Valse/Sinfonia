@@ -1,7 +1,7 @@
 ﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Layout.Templates;
-using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.ViewModels.Application.Document
 {

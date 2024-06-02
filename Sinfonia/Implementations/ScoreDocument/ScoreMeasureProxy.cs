@@ -1,5 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,8 +12,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         public int IndexInScore => source.IndexInScore;
-
-        public Guid Guid => source.Guid;
 
         public TimeSignature TimeSignature => source.TimeSignature;
 
@@ -61,7 +59,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Score Measure : [{Guid}]";
+            return $"Score Measure : [{IndexInScore}]";
         }
 
         public IScoreMeasureLayout ReadLayout()

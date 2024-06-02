@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Extensions;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
@@ -19,9 +20,7 @@ public class ScoreMeasureEditorProxy(ScoreMeasure source, ICommandManager comman
 
     public TimeSignature TimeSignature => source.TimeSignature;
 
-    public KeySignature KeySignature => source.AuthorLayout.KeySignature;
-
-
+    public int Id => source.Id;
 
     public bool TryReadNext([NotNullWhen(true)] out IScoreMeasureEditor? next)
     {

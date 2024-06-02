@@ -1,7 +1,7 @@
-﻿using StudioLaValse.ScoreDocument.Core;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Core;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Layout;
-using StudioLaValse.ScoreDocument.Primitives;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
@@ -22,8 +22,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Instrument Instrument => source.Instrument;
 
         public int Id => source.Id;
-
-        public Guid Guid => source.Guid;
 
 
 
@@ -64,7 +62,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return ReadVoices().Select(ReadBlockChainAt).SelectMany(e => e.ReadBlocks());
+            return ReadVoices().Select(ReadBlockChainAt);
         }
 
         public IInstrumentMeasureLayout ReadLayout()
@@ -74,7 +72,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Instrument Measure : [{Guid}]";
+            return $"Instrument Measure : [{MeasureIndex}]";
         }
     }
 }

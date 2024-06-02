@@ -1,5 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -10,7 +10,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         public int Voice => source.Voice;
-        public Guid Guid => source.Guid;
+
         public int Id => source.Id;
 
 
@@ -37,7 +37,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Measure Block Chain : [{Guid}]";
+            return $"Measure Block Chain : [{Voice}]";
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Extensions;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
@@ -14,12 +15,11 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public ScoreDocumentCore HostScoreDocument => source.HostScoreDocument;
-
         public int IndexInScore => source.IndexInScore;
 
         public Instrument Instrument => source.Instrument;
 
+        public int Id => source.Id;
 
         public InstrumentRibbonEditorProxy(InstrumentRibbon source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {

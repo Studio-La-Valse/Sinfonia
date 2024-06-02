@@ -1,4 +1,5 @@
 ﻿using Sinfonia.Implementations.ScoreDocument;
+using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
@@ -23,6 +24,8 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Tuplet Tuplet => source.Tuplet;
 
         public InstrumentMeasure HostMeasure => source.RibbonMeasure;
+
+        public int Id => source.Id;
 
 
         public void AppendChord(RythmicDuration rythmicDuration)

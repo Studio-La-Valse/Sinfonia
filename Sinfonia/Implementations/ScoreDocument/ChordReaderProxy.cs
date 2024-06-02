@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Reader;
 using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -19,8 +20,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Tuplet Tuplet => source.Tuplet;
 
         public int Id => source.Id;
-
-        public Guid Guid => source.Guid;
 
 
 
@@ -56,7 +55,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Chord : [{Guid}]";
+            return $"Chord : [{Position}]";
         }
 
         public IChordLayout ReadLayout()

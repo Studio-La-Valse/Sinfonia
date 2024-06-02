@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Extensions;
+﻿using StudioLaValse.ScoreDocument;
+
+namespace Sinfonia.Extensions;
 
 public static class ScoreElementExtensions
 {

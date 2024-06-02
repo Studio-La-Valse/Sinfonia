@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation.Layout;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
 using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
@@ -20,6 +21,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public Tuplet Tuplet => source.Tuplet;
 
+        public int Id => source.Id;
 
         public ChordEditorProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {

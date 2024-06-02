@@ -1,5 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {

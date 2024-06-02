@@ -1,7 +1,9 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
+using StudioLaValse.ScoreDocument.Reader.Extensions;
 
 namespace Sinfonia.Implementations.ScoreDocument;
 
@@ -15,7 +17,7 @@ public class ScoreDocumentEditorProxy(ScoreDocumentCore score, ICommandManager c
 
     public int NumberOfInstruments => score.NumberOfInstruments;
 
-
+    public int Id => score.Id;
 
     public void AddInstrumentRibbon(Instrument instrument)
     {

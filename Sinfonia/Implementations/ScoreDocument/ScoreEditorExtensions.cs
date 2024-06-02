@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
 
 namespace Sinfonia.Implementations.ScoreDocument

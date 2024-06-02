@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Extensions;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models.Base;
@@ -12,8 +13,6 @@ public class NoteEditorProxy(Note source, ICommandManager commandManager, INotif
     private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
 
-    public InstrumentMeasure HostMeasure => source.HostMeasure;
-
     public Pitch Pitch => source.Pitch;
 
     public bool Grace => source.Grace;
@@ -23,6 +22,9 @@ public class NoteEditorProxy(Note source, ICommandManager commandManager, INotif
     public RythmicDuration RythmicDuration => source.RythmicDuration;
 
     public Tuplet Tuplet => source.Tuplet;
+
+    public int Id => source.Id;
+
 
 
     public IEnumerable<IScoreElement> EnumerateChildren()

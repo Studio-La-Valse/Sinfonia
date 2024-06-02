@@ -12,6 +12,7 @@ using Avalonia.Media;
 using StudioLaValse.Drawable.Avalonia.Controls;
 using StudioLaValse.Drawable.DrawableElements;
 using StudioLaValse.Drawable.Text;
+using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Controls;
 

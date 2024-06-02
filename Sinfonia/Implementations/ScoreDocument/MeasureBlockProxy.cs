@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 using System.Diagnostics.CodeAnalysis;
 
@@ -20,8 +21,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public RythmicDuration RythmicDuration => source.RythmicDuration;
 
         public int Id => source.Id;
-
-        public Guid Guid => source.Guid;
 
         public Position Position => source.Position;
 
@@ -63,7 +62,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Measure Block : [{Guid}]";
+            return $"Measure Block : [{Position}]";
         }
 
         public IMeasureBlockLayout ReadLayout()

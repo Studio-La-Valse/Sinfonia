@@ -1,5 +1,5 @@
-﻿using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Primitives;
+﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Reader;
 
 namespace Sinfonia.Implementations.ScoreDocument
@@ -22,9 +22,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public int Id => source.Id;
 
-        public Guid Guid => source.Guid;
-
-
 
 
 
@@ -43,7 +40,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public override string ToString()
         {
-            return $"Note : [{Guid}]";
+            return $"Note : [{Pitch}]";
         }
 
         public INoteLayout ReadLayout()

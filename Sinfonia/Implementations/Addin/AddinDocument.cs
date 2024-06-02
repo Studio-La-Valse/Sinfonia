@@ -1,4 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Implementations.Addin
 {

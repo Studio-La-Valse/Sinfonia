@@ -1,4 +1,5 @@
 ﻿using StudioLaValse.Drawable.BitmapPainters;
+using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Implementations
 {
