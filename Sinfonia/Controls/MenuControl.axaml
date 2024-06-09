@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="using:Sinfonia.ViewModels.Application.Menu"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+             x:Class="Sinfonia.Controls.MenuControl"
+			 x:DataType="vm:MenuViewModel">
+	
+	<Grid ColumnDefinitions="50 240 *" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="50">
+
+		<Button Padding="0" Margin="12">
+			<Button.Content>
+				<Image Source="/Assets/icon.ico"/>
+			</Button.Content>
+		</Button>
+
+		<Menu Grid.Column="1" ItemsSource="{Binding Items}">
+			<Menu.Styles>
+				<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
+					<Setter Property="Header" Value="{Binding Header}"/>
+					<Setter Property="ItemsSource" Value="{Binding Items}"/>
+					<Setter Property="Command" Value="{Binding Command}"/>
+					<Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+					<Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+					<Setter Property="Icon" Value="{Binding Icon}"/>
+				</Style>
+			</Menu.Styles>
+		</Menu>
+
+	</Grid>
+</UserControl>

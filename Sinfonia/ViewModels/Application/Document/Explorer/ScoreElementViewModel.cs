@@ -1,4 +1,7 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Explorer
+﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument;
+
+namespace Sinfonia.ViewModels.Application.Document.Explorer
 {
     public class ScoreElementViewModel : BaseViewModel
     {

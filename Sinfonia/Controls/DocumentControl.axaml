@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="using:Sinfonia.Controls"
+			 xmlns:vm="using:Sinfonia.ViewModels.Application.Document"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:vme="using:Sinfonia.ViewModels.Application.Document.Explorer"
+			 xmlns:vms="using:Sinfonia.ViewModels.Application.Document.StyleTemplate"
+			 xmlns:vmi="using:Sinfonia.ViewModels.Application.Document.Inspector"
+			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:controls="using:Sinfonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sinfonia.Controls.DocumentControl"
+			 x:DataType="vm:DocumentViewModel">
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="400" MinWidth="120"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="400" MinWidth="120"/>
+		</Grid.ColumnDefinitions>
+		
+		<DockPanel DataContext="{Binding DocumentStyleEditorViewModel}">
+			<DockPanel DockPanel.Dock="Top">
+				<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Width="40">
+					<Button.Flyout>
+						<MenuFlyout Placement="BottomEdgeAlignedLeft">
+							<MenuItem Command="{Binding LoadYaml}" Header="Load Yaml"/>
+							<MenuItem Command="{Binding SaveYaml}" Header="Save Yaml"/>
+						</MenuFlyout>
+					</Button.Flyout>
+				</Button>
+				<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+				<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40" Command="{Binding ToggleExpandAllCommand}"/>
+				<TextBlock Text="Style Template" VerticalAlignment="Center"/>
+			</DockPanel>
+
+			<ScrollViewer>
+				<ItemsControl ItemsSource="{Binding Templates}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+							<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
+								<controls:PropertyCollectionControl/>
+							</Expander>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</DockPanel>		
+
+		<GridSplitter Grid.Column="1"/>
+
+		<local:CanvasControl Grid.Column="2"
+							 x:DataType="vm:CanvasViewModel"
+							 DataContext="{Binding CanvasViewModel}"
+							 SceneManager="{Binding SceneManager}"
+							 SelectionBorder="{Binding SelectionBorder}"
+							 EnablePan="{Binding EnablePan}"
+							 Invalidator="{Binding Invalidator}"
+							 Pipe="{Binding Pipe}"/>
+
+		<GridSplitter Grid.Column="3"/>
+
+		<Grid Grid.Column="4" RowDefinitions="* 5 *">
+
+			<DockPanel Grid.Row="0" DataContext="{Binding Explorer}" x:DataType="vme:ExplorerViewModel">
+
+				<DockPanel DockPanel.Dock="Top">
+					<DockPanel.Resources>
+						<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
+							<MenuItem Command="{Binding RebuildCommand}" Header="Rebuild"/>
+						</MenuFlyout>
+					</DockPanel.Resources>
+
+					<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40"/>
+					<TextBlock Text="Explorer" VerticalAlignment="Center"/>
+				</DockPanel>
+				
+				<TreeView Grid.Row="0" DataContext="{Binding ScoreDocument}" x:DataType="vme:ScoreElementViewModel" ItemsSource="{Binding ScoreElements}">
+					<TreeView.ItemTemplate>
+						<TreeDataTemplate ItemsSource="{Binding ScoreElements}">
+							<TextBlock Text="{Binding Name}"/>
+						</TreeDataTemplate>
+					</TreeView.ItemTemplate>
+				</TreeView>
+			</DockPanel>
+
+			<GridSplitter Grid.Row="1"/>
+
+			<DockPanel Grid.Row="2" DataContext="{Binding Inspector}">
+				<DockPanel DockPanel.Dock="Top" x:DataType="vmi:InspectorViewModel">
+					<DockPanel.Resources>
+						<MenuFlyout x:Key="TemplateMenuFlyout" Placement="BottomEdgeAlignedLeft">
+							
+						</MenuFlyout>
+					</DockPanel.Resources>
+					<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Flyout="{StaticResource TemplateMenuFlyout}" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
+					<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40" Command="{Binding ToggleExpandAllCommand}"/>
+					<TextBlock Text="Explorer" VerticalAlignment="Center"/>
+				</DockPanel>
+				<ScrollViewer  x:DataType="vmi:InspectorViewModel">
+					<ItemsControl ItemsSource="{Binding PropertiesViewModel}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel/>
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+								<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
+									<controls:PropertyCollectionControl/>
+								</Expander>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</DockPanel>
+		</Grid>
+	</Grid>
+</UserControl>

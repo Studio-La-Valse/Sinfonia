@@ -1,24 +1,23 @@
-﻿namespace Sinfonia.ViewModels.Application.Document.Inspector
+﻿using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument;
+
+
+namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
-    public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor, TLayout> : PropertyCollectionViewModel
-            where TEntity : IScoreEntity, IUniqueScoreElement
-            where TEditor : IScoreElementEditor, ILayoutEditor<TLayout>
-            where TLayout : class, ILayoutElement<TLayout>
+    public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor> : PropertyCollectionViewModel
+            where TEntity : IUniqueScoreElement
+            where TEditor : IScoreElementEditor
     {
         private readonly IScoreBuilder scoreBuilder;
-        private readonly IScoreDocumentLayout scoreLayoutProvider;
         private readonly IEnumerable<TEntity> notes;
 
-        internal ScoreElementPropertiesViewModel(IScoreBuilder scoreBuilder, IScoreDocumentLayout scoreLayoutProvider, IEnumerable<TEntity> notes)
+        internal ScoreElementPropertiesViewModel(IScoreBuilder scoreBuilder, IEnumerable<TEntity> notes)
         {
             this.scoreBuilder = scoreBuilder;
-            this.scoreLayoutProvider = scoreLayoutProvider;
             this.notes = notes;
         }
 
-        public abstract TLayout GetLayout(IScoreDocumentLayout scoreLayoutProvider, TEntity entity);
-
-        protected PropertyViewModel<TProperty> Create<TProperty>(Func<TLayout, TProperty> propertyGetter, Action<TLayout, TProperty> propertySetter, string title)
+        protected PropertyViewModel<TProperty> Create<TProperty>(Func<TEntity, TProperty> propertyGetter, Action<TEditor, TProperty> propertySetter, string title)
         {
 
             return new PropertyViewModel<TProperty>(
@@ -26,9 +25,7 @@
             {
                 TProperty getProperty(TEntity entity)
                 {
-                    var layout = GetLayout(scoreLayoutProvider, entity);
-                    var property = propertyGetter(layout);
-                    return property;
+                    return propertyGetter(entity);
                 }
 
                 var entities = notes;
@@ -41,9 +38,7 @@
                 scoreBuilder
                     .Edit<TEditor>(notes.Select(e => e.Id), (element) =>
                     {
-                        var layout = element.ReadLayout();
-                        propertySetter(layout, val);
-                        element.Apply(layout);
+                        propertySetter(element, val);
                     })
                     .Build();
 

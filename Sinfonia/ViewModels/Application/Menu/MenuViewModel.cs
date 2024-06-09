@@ -1,10 +1,27 @@
-﻿namespace Sinfonia.ViewModels.Application.Menu
+﻿using Sinfonia.ViewModels.Application.Menu;
+using Sinfonia.ViewModels.Base;
+
+namespace Sinfonia.ViewModels.Application.Menu
 {
-    public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseViewModel
     {
-        public MenuViewModel(FileMenuViewModel fileMenuViewModel)
+        public ObservableCollection<MenuItemViewModel> Items { get; set; }
+
+        public MenuViewModel(FileMenuViewModel fileMenuViewModel, IOptionsWindowService optionsWindowService, ICommandFactory commandFactory)
         {
-            MenuItems.Add(fileMenuViewModel);
+            fileMenuViewModel.Icon = new() { Kind = Material.Icons.MaterialIconKind.Menu, Width = 40};
+
+            var documentMenuViewModel = new MenuItemViewModel()
+            {
+                Header = "Options",
+                Command = commandFactory.Create(optionsWindowService.Show),
+                Icon = new() { Kind = Material.Icons.MaterialIconKind.Cog, Width = 40 }
+            };
+
+            Items =
+            [
+                fileMenuViewModel, documentMenuViewModel
+            ];
         }
     }
 }

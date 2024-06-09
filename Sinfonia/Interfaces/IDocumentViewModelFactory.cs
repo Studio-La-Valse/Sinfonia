@@ -1,7 +1,9 @@
-﻿namespace Sinfonia.Interfaces
+﻿using StudioLaValse.ScoreDocument.Models;
+
+namespace Sinfonia.Interfaces
 {
     public interface IDocumentViewModelFactory
     {
-        DocumentViewModel Create();
+        DocumentViewModel Create(ScoreDocumentModel scoreDocument);
     }
 }

@@ -1,10 +1,11 @@
-﻿namespace Sinfonia.Extensions
+﻿using StudioLaValse.ScoreDocument;
+
+namespace Sinfonia.Extensions;
+
+public static class ScoreElementExtensions
 {
-    public static class ScoreElementExtensions
+    public static IEnumerable<IScoreElement> EnumerateAllChildren(this IScoreElement editor)
     {
-        public static IEnumerable<IScoreElement> EnumerateAllChildren(this IScoreElement editor)
-        {
-            return editor.SelectRecursive(e => e.EnumerateChildren());
-        }
+        return editor.SelectRecursive(e => e.EnumerateChildren());
     }
 }

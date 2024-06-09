@@ -1,22 +1,23 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sinfonia.Implementations;
-using Sinfonia.Implementations.ScoreDocument;
+using Sinfonia.Implementations.Addin;
+using Sinfonia.Implementations.PDF;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
-using Sinfonia.Views;
-using StudioLaValse.Drawable.WPF.Commands;
-using IBrowseToFile = Sinfonia.Interfaces.IBrowseToFile;
+using Sinfonia.Windows;
 
 namespace Sinfonia.Extensions
 {
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddModels(this IServiceCollection services)
         {
             return services.AddSingleton<IShellMethods, ShellMethods>()
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
-                .AddSingleton<IScoreBuilderFactory, EmptyScoreBuilderFactory>()
-                .AddTransient<IYamlConverter, YamlConverter>();
+                .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
+                .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
+                .AddSingleton<IPdfExportService, PdfExportService>();
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
@@ -30,11 +31,16 @@ namespace Sinfonia.Extensions
                 .AddSingleton<MainViewModel>();
         }
 
+        public static IServiceCollection AddPersistence(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<IFileSaveService, FileSaveService>();
+        }
+
         public static IServiceCollection AddViews(this IServiceCollection services)
         {
             return services.AddSingleton<MainWindow>()
-                .AddScoped<IBrowseToFile, FileBrowser>()
-                .AddScoped<ISaveFile, SaveFile>();
+                .AddSingleton<IOptionsWindowService, OptionsWindowService>();
         }
 
         public static IServiceCollection RegisterExternalAddins(this IServiceCollection services)

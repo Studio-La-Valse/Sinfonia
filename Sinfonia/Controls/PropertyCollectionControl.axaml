@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:templates="using:Sinfonia.DataTemplates"
+			 xmlns:converters="using:Sinfonia.ValueConverters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sinfonia.Controls.PropertyCollectionControl"
+			 x:DataType="vmb:PropertyCollectionViewModel">
+	
+	<UserControl.Resources>
+		<converters:IntValueConverter x:Key="myIntConverter"/>
+	</UserControl.Resources>
+	
+	<UserControl.DataTemplates>
+		<templates:PropertyDataTemplate>
+			<DataTemplate DataType="vmb:PropertyViewModelDouble" x:Key="Double">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="1" />
+						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
+					<GridSplitter Grid.Column="1"/>
+					<TextBox Grid.Column="2" Text="{Binding Value}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+				</Grid>
+			</DataTemplate>
+
+			<DataTemplate DataType="vmb:PropertyViewModelInt" x:Key="Int">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"  />
+						<ColumnDefinition Width="1" />
+						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
+					<GridSplitter Grid.Column="1"/>
+					<TextBox Grid.Column="2" Text="{Binding Value, Converter={StaticResource myIntConverter}}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+				</Grid>
+			</DataTemplate>
+
+			<DataTemplate DataType="vmb:PropertyViewModelColor" x:Key="Color">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"  />
+						<ColumnDefinition Width="1" />
+						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
+					<GridSplitter Grid.Column="1"/>
+					<ColorPicker Color="{Binding Value}" Grid.Column="2" HorizontalAlignment="Left"/>
+				</Grid>
+			</DataTemplate>
+
+			<DataTemplate DataType="vmb:PropertyViewModelString" x:Key="String">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"  />
+						<ColumnDefinition Width="1" />
+						<ColumnDefinition Width="80" MinWidth="80" SharedSizeGroup="Key"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
+					<GridSplitter Grid.Column="1"/>
+					<TextBox Grid.Column="2" Text="{Binding Value}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+				</Grid>
+			</DataTemplate>
+		</templates:PropertyDataTemplate>
+	</UserControl.DataTemplates>
+
+	<ListBox ItemsSource="{Binding Properties}"
+			 HorizontalAlignment="Stretch"
+			 Grid.IsSharedSizeScope="True">
+		
+	</ListBox>
+</UserControl>

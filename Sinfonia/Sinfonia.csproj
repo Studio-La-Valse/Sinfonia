@@ -1,55 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  
   <ItemGroup>
     <None Remove="Resources\Bravura.otf" />
-    <None Remove="Resources\Kortjakje.musicxml" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.0" />
+    <PackageReference Include="Avalonia" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PDFsharp" Version="6.0.0" />
     <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.DependencyInjection.Microsoft" Version="1.0.0" />
-    <PackageReference Include="StudioLaValse.Drawable" Version="2.0.4" />
-    <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
-    <PackageReference Include="StudioLaValse.Drawable.WPF" Version="2.0.4" />
-    <PackageReference Include="StudioLaValse.Geometry" Version="1.0.0" />
-    <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.1.39" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="25.1.39" />
-    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="25.1.39" />
-    <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="YamlDotNet" Version="15.1.2" />
+    <PackageReference Include="StudioLaValse.Drawable.Avalonia" Version="2.1.1" />
+    <PackageReference Include="StudioLaValse.Drawable.Skia" Version="2.1.1" />
+    <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Builder\StudioLaValse.ScoreDocument.Builder.csproj" />
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Core\StudioLaValse.ScoreDocument.Core.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Avalonia\StudioLaValse.Drawable.Avalonia.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Interaction\StudioLaValse.Drawable.Interaction.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Layout\StudioLaValse.ScoreDocument.Layout.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Implementation\StudioLaValse.ScoreDocument.Implementation.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Bravura.otf" />
-    <EmbeddedResource Include="Resources\Kortjakje.musicxml" />
+    <AvaloniaResource Include="Resources\Bravura.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="External\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Compile Update="Controls\MainControl.axaml.cs">
+      <DependentUpon>MainControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -63,17 +69,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="External\Sinfonia.Native.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="External\Sinfonia.Native.Plugins.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="External\Sinfonia.Native.Scenes.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

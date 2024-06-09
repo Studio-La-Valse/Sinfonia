@@ -2,7 +2,7 @@
 using StudioLaValse.Key;
 using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Builder;
-using StudioLaValse.ScoreDocument.Core.Primitives;
+using StudioLaValse.ScoreDocument.Primitives;
 
 namespace Sinfonia.API
 {

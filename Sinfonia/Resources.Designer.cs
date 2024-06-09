@@ -59,15 +59,5 @@ namespace Sinfonia {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Kortjakje {
-            get {
-                object obj = ResourceManager.GetObject("Kortjakje", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

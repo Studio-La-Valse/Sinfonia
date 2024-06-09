@@ -1,23 +1,25 @@
 using Microsoft.Extensions.DependencyInjection;
+using StudioLaValse.ScoreDocument.Models;
 using Sinfonia.Interfaces;
 using StudioLaValse.CommandManager;
 using StudioLaValse.Drawable;
-using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Builder;
 using StudioLaValse.ScoreDocument.Core;
-using StudioLaValse.ScoreDocument.Core.Primitives;
-using StudioLaValse.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Tests
 {
     [TestClass]
     public class MeasureBlockChainTests
     {
-        private readonly IScoreBuilderFactory scoreBuilderFactory;
+        private readonly IScoreBuilder builder;
         public MeasureBlockChainTests()
         {
-            var serviceProvider = App.CreateHostBuilder([]).Build().Services;
-            scoreBuilderFactory = serviceProvider.GetRequiredService<IScoreBuilderFactory>();
+            var serviceProvider = App.CreateHostBuilder().Build().Services;
+            var memento = ScoreDocumentModel.Create();
+            builder = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento).ScoreBuilder;
         }
 
         [TestMethod]
@@ -36,12 +38,12 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>
                 {
+                    editor.Clear();
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
@@ -54,7 +56,7 @@ namespace Sinfonia.Tests
                 })
                 .Build();
 
-            var outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var outChain = score.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
             var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));
@@ -73,12 +75,12 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>
                 {
+                    editor.Clear();
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
@@ -107,12 +109,12 @@ namespace Sinfonia.Tests
         {
             var commandManager = CommandManager.CreateGreedy();
             var notifyEntityChanged = SceneManager<IUniqueScoreElement, int>.CreateObservable();
-            ScoreDocumentStyleTemplate style = new();
-            (var builder, var reader, var layout) = scoreBuilderFactory.Create(commandManager, notifyEntityChanged, style);
+            var style = ScoreDocumentStyleTemplate.Create();
 
             var score = builder
                 .Edit(editor =>
                 {
+                    editor.Clear();
                     editor.AddInstrumentRibbon(Instrument.Violin);
 
                     editor.AppendScoreMeasure(timeSignature);
@@ -125,7 +127,7 @@ namespace Sinfonia.Tests
                 })
                 .Build();
 
-            var outChain = reader.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var outChain = score.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
             var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));

@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Sinfonia.ViewModels.Application"
+			 xmlns:vmd="using:Sinfonia.ViewModels.Application.Document"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:views="using:Sinfonia.Controls"
+			 xmlns:templates="using:Sinfonia.DataTemplates"
+			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sinfonia.Controls.MainControl"
+             x:DataType="vm:MainViewModel">
+
+	<UserControl.DataTemplates>
+		<templates:DocumentDataTemplate/>
+	</UserControl.DataTemplates>
+
+	<UserControl.Styles>
+		<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
+			<Setter Property="Header" Value="{Binding Header}"/>
+			<Setter Property="ItemsSource" Value="{Binding Items}"/>
+			<Setter Property="Command" Value="{Binding Command}"/>
+			<Setter Property="CommandParameter" Value="{Binding CommandParameter}" />
+			<Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+		</Style>
+	</UserControl.Styles>
+
+	<DockPanel>
+		<views:MenuControl DataContext="{Binding MenuViewModel}" DockPanel.Dock="Top"/>
+
+		<Grid RowDefinitions="* 25">
+			<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
+				<TabControl.ItemTemplate>
+					<DataTemplate x:DataType="vmd:DocumentViewModel">
+						<Grid ColumnDefinitions="Auto, 4, 100, 4, Auto">
+							<i:MaterialIcon Kind="DocumentSign" Grid.Column="0"/>
+							<TextBlock Grid.Column="1" />
+							<TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
+							<TextBlock Grid.Column="3" />
+							<Button Grid.Column="4" Background="Transparent" Command="{Binding CloseCommand}" CommandParameter="{Binding}">
+								<i:MaterialIcon Kind="Close"/>
+							</Button>
+						</Grid>
+					</DataTemplate>
+				</TabControl.ItemTemplate>
+			</TabControl>
+
+			<Border Background="{DynamicResource SystemAccentColor}" Grid.Row="1"/>
+		</Grid>
+	</DockPanel>
+</UserControl>
