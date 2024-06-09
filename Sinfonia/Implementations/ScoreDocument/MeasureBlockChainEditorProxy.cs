@@ -15,6 +15,9 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public int Voice => source.Voice;
 
+        public TimeSignature TimeSignature => source.TimeSignature;
+
+
 
         public MeasureBlockChainEditorProxy(MeasureBlockChain source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
@@ -25,13 +28,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-
-        public void Append(RythmicDuration duration, bool grace)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Append(duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
-            transaction.Enqueue(command);
-        }
 
         public void Clear()
         {
@@ -45,27 +41,19 @@ namespace Sinfonia.Implementations.ScoreDocument
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Divide(steps)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
+        }
 
+        public void Divide(params RythmicDuration[] steps)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Divide(steps)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
+            transaction.Enqueue(command);
         }
 
         public void DivideEqual(int number)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.DivideEqual(number)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void Insert(Position position, RythmicDuration duration, bool grace)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Insert(position, duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void Prepend(RythmicDuration duration, bool grace)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new ParentMementoCommand<MeasureBlockChain, InstrumentMeasure, InstrumentMeasureModel>(source.RibbonMeasure, source, s => s.Prepend(duration, grace)).ThenInvalidate(notifyEntityChanged, source.RibbonMeasure);
             transaction.Enqueue(command);
         }
 

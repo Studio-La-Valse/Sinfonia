@@ -15,7 +15,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged = notifyEntityChanged;
 
 
-        public bool Grace => source.Grace;
 
         public RythmicDuration RythmicDuration => source.RythmicDuration;
 
@@ -28,10 +27,10 @@ namespace Sinfonia.Implementations.ScoreDocument
         public int Id => source.Id;
 
 
-        public void AppendChord(RythmicDuration rythmicDuration)
+        public void AppendChord(RythmicDuration rythmicDuration, params Pitch[] pitches)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<MeasureBlock, MeasureBlockModel>(source, (s) => s.AppendChord(rythmicDuration)).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new MementoCommand<MeasureBlock, MeasureBlockModel>(source, (s) => s.AppendChord(rythmicDuration, rebeam: true, pitches: pitches)).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 

@@ -13,7 +13,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public int Id => source.Id;
 
-
+        public TimeSignature TimeSignature => source.TimeSignature;
 
         public MeasureBlockChainReaderProxy(MeasureBlockChain source)
         {

@@ -11,8 +11,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public bool Grace => source.Grace;
-
         public Position Position => source.Position;
 
         public RythmicDuration RythmicDuration => source.RythmicDuration;
@@ -20,9 +18,6 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Tuplet Tuplet => source.Tuplet;
 
         public int Id => source.Id;
-
-
-
 
 
         public ChordReaderProxy(Chord source)
@@ -43,7 +38,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return ReadNotes();
         }
 
-        public IEnumerable<(BeamType beam, PowerOfTwo duration)> ReadBeamTypes()
+        public IEnumerable<KeyValuePair<PowerOfTwo, BeamType>> ReadBeamTypes()
         {
             return source.GetBeamTypes();
         }
@@ -61,6 +56,16 @@ namespace Sinfonia.Implementations.ScoreDocument
         public IChordLayout ReadLayout()
         {
             return source.AuthorLayout;
+        }
+
+        public IGraceGroupReader? ReadGraceGroup()
+        {
+            if(source.GraceGroup is null)
+            {
+                return null;
+            }
+
+            return new GraceGroupReaderProxy(source.GraceGroup);
         }
     }
 }

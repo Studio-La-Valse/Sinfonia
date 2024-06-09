@@ -12,8 +12,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public Pitch Pitch => source.Pitch;
 
-        public bool Grace => source.Grace;
-
         public Position Position => source.Position;
 
         public RythmicDuration RythmicDuration => source.RythmicDuration;

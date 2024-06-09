@@ -42,14 +42,29 @@ namespace Sinfonia.Implementations.ScoreDocument
             return new MeasureBlockEditorProxy(chordGroup, commandManager, notifyEntityChanged);
         }
 
+        public static GraceGroupEditorProxy ProxyEditor(this GraceGroup noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        {
+            return new GraceGroupEditorProxy(noteEditor, commandManager, notifyEntityChanged);
+        }
+
         public static ChordEditorProxy ProxyEditor(this Chord chordEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             return new ChordEditorProxy(chordEditor, commandManager, notifyEntityChanged);
         }
 
+        public static GraceChordEditorProxy ProxyEditor(this GraceChord noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        {
+            return new GraceChordEditorProxy(noteEditor, commandManager, notifyEntityChanged);
+        }
+
         public static NoteEditorProxy ProxyEditor(this Note noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             return new NoteEditorProxy(noteEditor, commandManager, notifyEntityChanged);
+        }
+
+        public static GraceNoteEditorProxy ProxyEditor(this GraceNote noteEditor, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
+        {
+            return new GraceNoteEditorProxy(noteEditor, commandManager, notifyEntityChanged);
         }
     }
 }
