@@ -16,8 +16,6 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
-        public bool Grace => source.Grace;
-
         public RythmicDuration RythmicDuration => source.RythmicDuration;
 
         public int Id => source.Id;
