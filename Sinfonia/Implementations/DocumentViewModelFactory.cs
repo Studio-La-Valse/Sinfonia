@@ -20,16 +20,19 @@ namespace Sinfonia.Implementations
         private readonly ICommandFactory commandFactory;
         private readonly IKeyGeneratorFactory<int> keyGeneratorFactory;
         private readonly IScoreStyleTemplateSaveService yamlConverter;
+        private readonly IUnitToPixelConverter unitToPixelConverter;
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
 
         public DocumentViewModelFactory(ICommandFactory commandFactory,
                                         IKeyGeneratorFactory<int> keyGeneratorFactory,
                                         IScoreStyleTemplateSaveService yamlConverter,
+                                        IUnitToPixelConverter unitToPixelConverter,
                                         DocumentCollectionViewModel documentCollectionViewModel)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
             this.yamlConverter = yamlConverter;
+            this.unitToPixelConverter = unitToPixelConverter;
             this.documentCollectionViewModel = documentCollectionViewModel;
         }
 
@@ -39,6 +42,7 @@ namespace Sinfonia.Implementations
             {
                 services
                     .AddSingleton(documentCollectionViewModel)
+                    .AddSingleton(unitToPixelConverter)
                     .AddSingleton(commandFactory)
                     .AddSingleton(yamlConverter)
                     .AddSingleton(keyGeneratorFactory.CreateKeyGenerator())
@@ -129,10 +133,6 @@ namespace Sinfonia.Implementations
         {
             return services
                 .AddSingleton<ObservableBoundingBox>()
-                .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>(e =>
-                {
-                    return new MmToPixelConverter(100);
-                })
                 .AddSingleton<IVisualNoteFactory, VisualNoteFactory>()
                 .AddSingleton<IVisualRestFactory, VisualRestFactory>()
                 .AddSingleton<IVisualNoteGroupFactory, VisualNoteGroupFactory>()

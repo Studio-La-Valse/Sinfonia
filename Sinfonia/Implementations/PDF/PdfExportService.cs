@@ -4,6 +4,7 @@ using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Reader;
 using StudioLaValse.ScoreDocument.Reader.Extensions;
@@ -22,18 +23,19 @@ internal class PdfExportService : IPdfExportService
 
     private readonly DocumentCollectionViewModel documentCollectionViewModel;
     private readonly MainWindow mainWindow;
+    private readonly IUnitToPixelConverter unitToPixelConverter;
 
-    public PdfExportService(DocumentCollectionViewModel documentCollectionViewModel, MainWindow mainWindow)
+    public PdfExportService(DocumentCollectionViewModel documentCollectionViewModel, MainWindow mainWindow, IUnitToPixelConverter unitToPixelConverter)
     {
         this.documentCollectionViewModel = documentCollectionViewModel;
         this.mainWindow = mainWindow;
+        this.unitToPixelConverter = unitToPixelConverter;
     }
 
     public void Export()
     {
         var activeDocument = documentCollectionViewModel.TryGetActiveDocument(out var d) ? d : throw new Exception();
         var scoreDocumentReader = activeDocument.ScoreDocumentReader;
-        var scoreStyleTemplate = activeDocument.CanvasViewModel.ScoreDocumentStyle;
         var visualPageFactory = activeDocument.CanvasViewModel.VisualPageFactory;
 
         var task = mainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
@@ -63,7 +65,7 @@ internal class PdfExportService : IPdfExportService
     {
         var pdfDocument = new PdfDocument();
 
-        foreach (var page in scoreDocumentReader.ReadPages(1.5))
+        foreach (var page in scoreDocumentReader.ReadPages(0.3968749995))
         {
             var pageLayout = page.ReadLayout();
             var pageWidth = pageLayout.PageWidth;
@@ -72,8 +74,8 @@ internal class PdfExportService : IPdfExportService
 
             var visualPage = visualPageFactory.CreateContent(page, 0, 0);
             var pdfPage = pdfDocument.AddPage();
-            pdfPage.Width = pageWidth;
-            pdfPage.Height = pageHeight;
+            pdfPage.Width = unitToPixelConverter.UnitsToPixels(pageWidth);
+            pdfPage.Height = unitToPixelConverter.UnitsToPixels(pageHeight);
 
             using var graphics = XGraphics.FromPdfPage(pdfPage);
             var painter = new PdfPageCanvasPainter(graphics, pageWidth, pageHeight);

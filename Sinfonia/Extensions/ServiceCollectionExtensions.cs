@@ -18,6 +18,7 @@ namespace Sinfonia.Extensions
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
+                .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>()
                 .AddSingleton<IPdfExportService, PdfExportService>();
         }
 
