@@ -74,5 +74,15 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return $"Instrument Measure : [{MeasureIndex}]";
         }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
+        }
     }
 }

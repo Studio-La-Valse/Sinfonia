@@ -66,5 +66,15 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return source.AuthorLayout;
         }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if(other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
+        }
     }
 }

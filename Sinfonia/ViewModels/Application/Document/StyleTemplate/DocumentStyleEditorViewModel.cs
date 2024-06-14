@@ -178,8 +178,24 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.MarginRight, v => { template.MarginRight = v; canvasViewModel.Rerender(); }, "Margin Right"));
             Properties.Add(new PropertyViewModel<double>(() => template.MarginBottom, v => { template.MarginBottom = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
 
-            Properties.Add(new PropertyViewModel<Color>(() => template.PageColor.T(), v => { template.PageColor = v.T(); canvasViewModel.Rerender(); }, "Page Color"));
-            Properties.Add(new PropertyViewModel<Color>(() => template.ForegroundColor.T(), v => { template.ForegroundColor = v.T(); canvasViewModel.Rerender(); }, "Foreground Color"));
+            Properties.Add(new PropertyViewModel<Color>(
+                () => template.PageColor.T(), 
+                v => 
+                { 
+                    template.PageColor = v.T(); 
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocumentReader, method:Method.Shallow);
+                    canvasViewModel.Invalidator.RenderChanges();
+                }, 
+                "Page Color"));
+            Properties.Add(new PropertyViewModel<Color>(
+                () => template.ForegroundColor.T(), 
+                v => 
+                { 
+                    template.ForegroundColor = v.T();
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocumentReader, method: Method.Deep);
+                    canvasViewModel.Invalidator.RenderChanges();
+                }, 
+                "Foreground Color"));
         }
     }
 

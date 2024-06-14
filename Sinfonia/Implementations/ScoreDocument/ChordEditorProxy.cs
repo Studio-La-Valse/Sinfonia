@@ -114,6 +114,14 @@ namespace Sinfonia.Implementations.ScoreDocument
             return source.GetBeamType(i);
         }
 
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
 
+            return other.Id == Id;
+        }
     }
 }

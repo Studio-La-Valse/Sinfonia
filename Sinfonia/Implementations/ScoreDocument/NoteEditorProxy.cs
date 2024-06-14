@@ -69,4 +69,14 @@ public class NoteEditorProxy(Note source, ICommandManager commandManager, INotif
         var command = new MementoCommand<AuthorNoteLayout, NoteLayoutMembers>(source.AuthorLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
         transaction.Enqueue(command);
     }
+
+    public bool Equals(IUniqueScoreElement? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return other.Id == Id;
+    }
 }

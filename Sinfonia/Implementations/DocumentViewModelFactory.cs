@@ -4,7 +4,9 @@ using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.Windows;
+using StudioLaValse.Drawable.Private;
 using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
@@ -127,6 +129,10 @@ namespace Sinfonia.Implementations
         {
             return services
                 .AddSingleton<ObservableBoundingBox>()
+                .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>(e =>
+                {
+                    return new MmToPixelConverter(100);
+                })
                 .AddSingleton<IVisualNoteFactory, VisualNoteFactory>()
                 .AddSingleton<IVisualRestFactory, VisualRestFactory>()
                 .AddSingleton<IVisualNoteGroupFactory, VisualNoteGroupFactory>()
@@ -134,12 +140,7 @@ namespace Sinfonia.Implementations
                 .AddSingleton<IVisualSystemMeasureFactory, VisualSystemMeasureFactory>()
                 .AddSingleton<IVisualStaffSystemFactory, VisualStaffSystemFactory>()
                 .AddSingleton<IVisualPageFactory, VisualPageFactory>()
-                .AddSingleton<IVisualScoreDocumentContentFactory, PageViewSceneFactory>(services =>
-                {
-                    var staffSystemContentFactory = services.GetRequiredService<IVisualPageFactory>();
-                    var layout = services.GetRequiredService<IScoreDocumentLayout>();
-                    return new PageViewSceneFactory(staffSystemContentFactory, 20, 50);
-                })
+                .AddSingleton<IVisualScoreDocumentContentFactory, PageViewSceneFactory>()
                 .AddSingleton<VisualScoreDocumentScene>()
                 .AddSingleton(services =>
                 {

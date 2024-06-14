@@ -39,6 +39,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Avalonia\StudioLaValse.Drawable.Avalonia.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Interaction\StudioLaValse.Drawable.Interaction.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable\StudioLaValse.Drawable.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Implementation\StudioLaValse.ScoreDocument.Implementation.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />

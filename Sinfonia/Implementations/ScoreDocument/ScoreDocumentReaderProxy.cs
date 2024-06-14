@@ -54,7 +54,7 @@ namespace Sinfonia.Implementations.ScoreDocument
                 yield return measure;
             }
 
-            foreach(var page in this.ReadPages())
+            foreach(var page in this.ReadPages(1.5))
             {
                 yield return page;
             }
@@ -73,6 +73,16 @@ namespace Sinfonia.Implementations.ScoreDocument
         public IScoreDocumentLayout ReadLayout()
         {
             return source.AuthorLayout;
+        }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using StudioLaValse.ScoreDocument;
+﻿using StudioLaValse.Drawable.Private;
+using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.Implementations.Addin
 {

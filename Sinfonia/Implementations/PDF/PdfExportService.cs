@@ -63,7 +63,7 @@ internal class PdfExportService : IPdfExportService
     {
         var pdfDocument = new PdfDocument();
 
-        foreach (var page in scoreDocumentReader.ReadPages())
+        foreach (var page in scoreDocumentReader.ReadPages(1.5))
         {
             var pageLayout = page.ReadLayout();
             var pageWidth = pageLayout.PageWidth;

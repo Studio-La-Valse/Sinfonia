@@ -65,7 +65,8 @@
 							 SelectionBorder="{Binding SelectionBorder}"
 							 EnablePan="{Binding EnablePan}"
 							 Invalidator="{Binding Invalidator}"
-							 Pipe="{Binding Pipe}"/>
+							 Pipe="{Binding Pipe}"
+							 Bounds="{Binding Bounds, Mode=OneWayToSource}"/>
 
 		<GridSplitter Grid.Column="3"/>
 

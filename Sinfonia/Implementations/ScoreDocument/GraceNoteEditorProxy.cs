@@ -53,5 +53,15 @@ namespace Sinfonia.Implementations.ScoreDocument
             var command = new MementoCommand<AuthorGraceNoteLayout, GraceNoteLayoutMembers>(graceNote.AuthorLayout, s => s.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
             transaction.Enqueue(command);
         }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
+        }
     }
 }

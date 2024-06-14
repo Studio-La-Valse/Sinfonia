@@ -36,5 +36,15 @@ namespace Sinfonia.Implementations.ScoreDocument
         {
             return graceGroup.AuthorLayout;
         }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
+        }
     }
 }
