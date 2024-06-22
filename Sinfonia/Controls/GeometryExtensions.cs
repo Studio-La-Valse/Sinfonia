@@ -1,9 +1,17 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Fonts;
+using Avalonia.Platform;
+using Avalonia.Styling;
+using SkiaSharp;
 using StudioLaValse.Drawable.DrawableElements;
 using StudioLaValse.Drawable.Text;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Controls;
+
 
 internal static class GeometryExtensions
 {

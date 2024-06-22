@@ -1,62 +1,20 @@
 ﻿using Avalonia;
+using Avalonia.Media;
 using PdfSharp.Fonts;
 using PdfSharp.Snippets.Font;
 using PdfSharp.WPFonts;
 using System;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Sinfonia.Implementations.PDF
 {
-    public class FontResolver : IFontResolver
-    {
-        private readonly SystemFontResolver systemFontResolver;
-        private readonly ResourceFontResolver resourceFontResolver;
-
-        public FontResolver(SystemFontResolver systemFontResolver, ResourceFontResolver resourceFontResolver)
-        {
-            this.systemFontResolver = systemFontResolver;
-            this.resourceFontResolver = resourceFontResolver;
-        }
-
-        public byte[]? GetFont(string faceName)
-        {
-            var bytes = resourceFontResolver.GetFont(faceName);
-            if (bytes is not null)
-            {
-                return bytes;
-            }
-
-            bytes = systemFontResolver.GetFont(faceName);
-            if (bytes is not null)
-            {
-                return bytes;
-            }
-
-            throw new Exception();
-        }
-
-        public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic)
-        {
-            var info = resourceFontResolver.ResolveTypeface(familyName, isBold, isItalic);
-            if (info is not null)
-            {
-                return info;
-            }
-
-            info = systemFontResolver.ResolveTypeface(familyName, isBold, isItalic);
-            if (info is not null)
-            {
-                return info;
-            }
-
-            throw new Exception();
-        }
-    }
-
     public class SystemFontResolver : IFontResolver
     {
+        readonly static ICollection<string> extensions = [".ttf", ".otf"];
+
         /// <summary>
         /// Identifies a font.
         /// </summary>
@@ -130,21 +88,25 @@ namespace Sinfonia.Implementations.PDF
                         continue;
                     }
 
-                    foreach (var fileInfo in new DirectoryInfo(fontDirectory)
-                        .EnumerateFiles(fontKey.FamilyName + "*.ttf", FontSearchOptions))
+                    foreach(var extension in extensions)
                     {
-                        if (desiredNames.Any(name => name.Equals(fileInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                        foreach (var fileInfo in new DirectoryInfo(fontDirectory).EnumerateFiles(fontKey.FamilyName + extension, FontSearchOptions))
                         {
-                            fileName = fileInfo.FullName;
-                            return new FontResolverInfo(fontKey.GetFaceName(), false, false);
-                        }
+                            if (desiredNames.Any(name => name.Equals(fileInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                fileName = fileInfo.FullName;
+                                return new FontResolverInfo(fontKey.GetFaceName(), false, false);
+                            }
 
-                        if (candidateFileInfo == null &&
-                            candidateNames.Any(name => name.Equals(fileInfo.Name, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            candidateFileInfo = fileInfo;
+                            if (candidateFileInfo == null &&
+                                candidateNames.Any(name => name.Equals(fileInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                candidateFileInfo = fileInfo;
+                            }
                         }
                     }
+
+                    
                 }
 
                 if (candidateFileInfo != null)
@@ -195,37 +157,37 @@ namespace Sinfonia.Implementations.PDF
         {
             if (fontKey.IsBold && fontKey.IsItalic)
             {
-                return new string[]
+                return extensions.SelectMany(extension => new[]
                 {
-                    fontKey.FamilyName + "bi.ttf",
-                    fontKey.FamilyName + "-BoldItalic.ttf",
-                    fontKey.FamilyName + "-BoldOblique.ttf"
-                };
+                    fontKey.FamilyName + "bi" + extension,
+                    fontKey.FamilyName + "-BoldItalic" + extension,
+                    fontKey.FamilyName + "-BoldOblique" + extension
+                }).ToList();
             }
             else if (fontKey.IsBold)
             {
-                return new string[]
+                return extensions.SelectMany(extension => new[]
                 {
-                    fontKey.FamilyName + "bd.ttf",
-                    fontKey.FamilyName + "-Bold.ttf"
-                };
+                    fontKey.FamilyName + "bd" + extension,
+                    fontKey.FamilyName + "-Bold" + extension
+                }).ToList(); 
             }
             else if (fontKey.IsItalic)
             {
-                return new string[]
+                return extensions.SelectMany(extension => new[]
                 {
-                    fontKey.FamilyName + "i.ttf",
-                    fontKey.FamilyName + "-Italic.ttf",
-                    fontKey.FamilyName + "-Oblique.ttf"
-                };
+                    fontKey.FamilyName + "i" + extension,
+                    fontKey.FamilyName + "-Italic" + extension,
+                    fontKey.FamilyName + "-Oblique" + extension
+                }).ToList();
             }
             else
             {
-                return new string[]
+                return extensions.SelectMany(extension => new[]
                 {
-                    fontKey.FamilyName + ".ttf",
-                    fontKey.FamilyName + "-Regular.ttf"
-                };
+                    fontKey.FamilyName + extension,
+                    fontKey.FamilyName + "-Regular" + extension
+                }).ToList();
             }
         }
 
@@ -236,11 +198,11 @@ namespace Sinfonia.Implementations.PDF
         {
             if (fontKey.IsBold || fontKey.IsItalic)
             {
-                return new string[]
+                return extensions.SelectMany(extension => new[]
                 {
-                    fontKey.FamilyName + ".ttf",
-                    fontKey.FamilyName + "-Regular.ttf"
-                };
+                    fontKey.FamilyName + extension,
+                    fontKey.FamilyName + "-Regular" + extension
+                }).ToList();
             }
             else
             {
@@ -278,6 +240,8 @@ namespace Sinfonia.Implementations.PDF
         /// </remarks>
         public byte[] GetFont(string faceName)
         {
+            var fontManager = FontManager.Current;
+
             try
             {
                 if (fontsByFace.TryGetValue(faceName, out var fontMeta))

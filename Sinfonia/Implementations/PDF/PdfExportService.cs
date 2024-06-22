@@ -2,6 +2,7 @@
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
+using PdfSharp.Snippets.Font;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable;
@@ -65,7 +66,7 @@ internal class PdfExportService : IPdfExportService
     {
         var pdfDocument = new PdfDocument();
 
-        foreach (var page in scoreDocumentReader.ReadPages(0.3968749995))
+        foreach (var page in scoreDocumentReader.ReadPages(12d / 72d * 25.4 / 4))
         {
             var pageLayout = page.ReadLayout();
             var pageWidth = pageLayout.PageWidth;

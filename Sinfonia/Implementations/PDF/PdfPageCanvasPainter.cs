@@ -197,7 +197,7 @@ public static class XELementExtensions
         var fontFamilyCore = drawableText.FontFamily;
         var fontPath = fontFamilyCore.Uri is null ?
             fontFamilyCore.Name :
-            System.IO.Path.Combine(fontFamilyCore.Uri.ToString(), fontFamilyCore.Name);
+            fontFamilyCore.Uri.ToString() + fontFamilyCore.Name;
         var xfont = new XFont(fontPath, drawableText.FontSize);
         return xfont;
     }

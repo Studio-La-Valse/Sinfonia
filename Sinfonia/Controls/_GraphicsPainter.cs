@@ -3,6 +3,7 @@ using StudioLaValse.Drawable.BitmapPainters;
 using Avalonia.Media;
 using StudioLaValse.Drawable.Avalonia.Controls;
 using StudioLaValse.Drawable.DrawableElements;
+using Sinfonia.Implementations.PDF;
 
 namespace Sinfonia.Controls;
 
@@ -22,7 +23,7 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
     /// <inheritdoc/>
     public override void DrawBackground(ColorARGB colorARGB)
     {
-        
+        drawingContext.Background = colorARGB.ToBrush();
     }
 
     /// <inheritdoc/>

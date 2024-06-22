@@ -66,7 +66,7 @@ namespace Sinfonia.ViewModels.Application.Document
                 {
                     if (!isInitialized)
                     {
-                        //ZoomFirst();
+                        ZoomFirstPage();
                         isInitialized = true;
                     }
                 }
@@ -117,7 +117,7 @@ namespace Sinfonia.ViewModels.Application.Document
             Invalidator.RenderChanges();
         }
 
-        public void ZoomFirst()
+        public void ZoomFirstPage()
         {
             var pageSize = PageSize.A4;
             var padding = 30;

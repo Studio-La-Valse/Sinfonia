@@ -14,7 +14,53 @@
 
   
   <ItemGroup>
-    <None Remove="Resources\Bravura.otf" />
+    <None Remove="Resources\Fonts\bravura\Bravura.otf" />
+    <None Remove="Resources\Fonts\bravura\BravuraText.otf" />
+    <None Remove="Resources\Fonts\campania\Campania.otf" />
+    <None Remove="Resources\Fonts\edwin\Edwin-BdIta.otf" />
+    <None Remove="Resources\Fonts\edwin\Edwin-Bold.otf" />
+    <None Remove="Resources\Fonts\edwin\Edwin-Italic.otf" />
+    <None Remove="Resources\Fonts\edwin\Edwin-Roman.otf" />
+    <None Remove="Resources\Fonts\finalebroadway\FinaleBroadway.otf" />
+    <None Remove="Resources\Fonts\finalebroadway\FinaleBroadwayText.otf" />
+    <None Remove="Resources\Fonts\finalemaestro\FinaleMaestro.otf" />
+    <None Remove="Resources\Fonts\finalemaestro\FinaleMaestroText-Regular.otf" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Resources\Fonts\bravura\Bravura.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\bravura\BravuraText.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\campania\Campania.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\edwin\Edwin-BdIta.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\edwin\Edwin-Bold.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\edwin\Edwin-Italic.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\edwin\Edwin-Roman.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\finalebroadway\FinaleBroadway.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\finalebroadway\FinaleBroadwayText.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\finalemaestro\FinaleMaestro.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources\Fonts\finalemaestro\FinaleMaestroText-Regular.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,12 +91,6 @@
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.MusicXml\StudioLaValse.ScoreDocument.MusicXml.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaResource Include="Resources\Bravura.otf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>

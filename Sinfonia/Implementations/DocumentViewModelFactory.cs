@@ -8,6 +8,7 @@ using StudioLaValse.Drawable.Private;
 using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
+using StudioLaValse.ScoreDocument.GlyphLibrary;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Layout.Templates;
@@ -133,6 +134,7 @@ namespace Sinfonia.Implementations
         {
             return services
                 .AddSingleton<ObservableBoundingBox>()
+                .AddSingleton<IGlyphLibrary, GenericGlyphLibrary>()
                 .AddSingleton<IVisualNoteFactory, VisualNoteFactory>()
                 .AddSingleton<IVisualRestFactory, VisualRestFactory>()
                 .AddSingleton<IVisualNoteGroupFactory, VisualNoteGroupFactory>()

@@ -21,7 +21,7 @@ namespace Sinfonia.ViewModels.Application.Menu
             }
 
             var canvas = activeDocument.CanvasViewModel;
-            canvas.ZoomFirst();
+            canvas.ZoomFirstPage();
         }
     }
 }
