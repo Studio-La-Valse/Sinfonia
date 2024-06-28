@@ -1,6 +1,11 @@
-﻿using Avalonia.Platform;
+﻿using Avalonia;
+using Avalonia.Controls.Documents;
+using Avalonia.Media;
+using Avalonia.Platform;
 using PdfSharp.Fonts;
+using System;
 using System.IO;
+using System.Reflection;
 
 namespace Sinfonia.Implementations.PDF
 {
@@ -18,10 +23,14 @@ namespace Sinfonia.Implementations.PDF
                 return null;
             }
 
+            if(!Uri.IsWellFormedUriString(faceName, UriKind.Absolute))
+            {
+                return null;
+            }
+
             try
             {
-                var fontLocation = faceName.Replace("#", "") + ".otf";
-                var uri = new Uri(fontLocation);
+                var uri = new Uri(faceName);
                 using var stream = AssetLoader.Open(uri);
                 using var memoryStream = new MemoryStream();
                 stream.CopyTo(memoryStream);
@@ -34,9 +43,41 @@ namespace Sinfonia.Implementations.PDF
             }
         }
 
-        public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic)
+        public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic) 
         {
-            return new FontResolverInfo(familyName, isBold, isItalic);
+            var resolverInfo = familyName switch
+            {
+                "avares://Sinfonia/Resources/Fonts/bravura#Bravura" => new("avares://Sinfonia/Resources/Fonts/bravura/Bravura.otf"),
+                "avares://Sinfonia/Resources/Fonts/campania#Campania" => new("avares://Sinfonia/Resources/Fonts/campania/Campania.otf"),
+                "avares://Sinfonia/Resources/Fonts/edwin#Edwin" =>  CreateEdwin(isBold, isItalic),
+                "avares://Sinfonia/Resources/Fonts/finalebroadway#Finale Broadway" => new("avares://Sinfonia/Resources/Fonts/finalebroadway/FinaleBroadway.otf"),
+                "avares://Sinfonia/Resources/Fonts/finalemaestro#Finale Maestro" => new("avares://Sinfonia/Resources/Fonts/finalemaestro/FinaleMaestro.otf"),
+                _ => null
+            };
+
+            return resolverInfo;
+        }
+
+        private static FontResolverInfo? CreateEdwin(bool isBold, bool isItalic)
+        {
+            if (isBold && isItalic)
+            {
+                return new("avares://Sinfonia/Resources/Fonts/edwin/Edwin-Bdlta.otf");
+            }
+            else
+            {
+                if (isBold)
+                {
+                    return new("avares://Sinfonia/Resources/Fonts/edwin/Edwin-Bold.otf");
+                }
+                
+                if(isItalic)
+                {
+                    return new("avares://Sinfonia/Resources/Fonts/edwin/Edwin-Italic.otf");
+                }
+
+                return new("avares://Sinfonia/Resources/Fonts/edwin/Edwin-Roman.otf");
+            }
         }
     }
 }

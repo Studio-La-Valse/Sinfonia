@@ -1,45 +1,45 @@
-﻿using StudioLaValse.ScoreDocument.Reader;
+﻿using StudioLaValse.ScoreDocument;
 
 namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
-    public class NotePropertiesViewModel : ScoreElementPropertiesViewModel<INoteReader, INoteEditor>
+    public class NotePropertiesViewModel : ScoreElementPropertiesViewModel<INote>
     {
-        internal NotePropertiesViewModel(IEnumerable<INoteReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal NotePropertiesViewModel(IEnumerable<INote> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.ReadLayout().StaffIndex, (l, v) => l.SetStaffIndex(v), "Staff Index"));
-            Properties.Add(Create(l => l.ReadLayout().XOffset, (l, v) => l.SetXOffset(v), "X Offset"));
-            Properties.Add(Create(l => l.ReadLayout().ForceAccidental, (l, v) => l.SetForceAccidental(v), "Accidental"));
-            Properties.Add(Create(l => l.ReadLayout().Scale, (l, v) => l.SetScale(v), "Scale"));
+            Properties.Add(Create(l => l.StaffIndex, (l, v) => l.StaffIndex.Value = v, "Staff Index"));
+            Properties.Add(Create(l => l.XOffset, (l, v) => l.XOffset.Value = v, "X Offset"));
+            Properties.Add(Create(l => l.ForceAccidental, (l, v) => l.ForceAccidental.Value = v, "Accidental"));
+            Properties.Add(Create(l => l.Scale, (l, v) => l.Scale.Value = v, "Scale"));
         }
 
         public override string Header => "Note Properties";
     }
 
-    public class ChordPropertiesViewModel : ScoreElementPropertiesViewModel<IChordReader, IChordEditor>
+    public class ChordPropertiesViewModel : ScoreElementPropertiesViewModel<IChord>
     {
-        internal ChordPropertiesViewModel(IEnumerable<IChordReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal ChordPropertiesViewModel(IEnumerable<IChord> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.ReadLayout().XOffset, (l, v) => l.SetXOffset(v), "X Offset"));
-            Properties.Add(Create(l => l.ReadLayout().SpaceRight, (l, v) => l.SetXOffset(v), "Space Right"));
+            Properties.Add(Create(l => l.XOffset, (l, v) => l.XOffset.Value = v, "X Offset"));
+            Properties.Add(Create(l => l.SpaceRight, (l, v) => l.SpaceRight.Value = v, "Space Right"));
         }
 
         public override string Header => "Chord Properties";
     }
 
-    public class MeasureBlockPropertiesViewModel : ScoreElementPropertiesViewModel<IMeasureBlockReader, IMeasureBlockEditor>
+    public class MeasureBlockPropertiesViewModel : ScoreElementPropertiesViewModel<IMeasureBlock>
     {
-        internal MeasureBlockPropertiesViewModel(IEnumerable<IMeasureBlockReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal MeasureBlockPropertiesViewModel(IEnumerable<IMeasureBlock> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.ReadLayout().StemLength, (l, v) => l.SetStemLength(v), "Stem Length"));
-            Properties.Add(Create(l => l.ReadLayout().BeamAngle, (l, v) => l.SetBeamAngle(v), "Beam Angle"));
+            Properties.Add(Create(l => l.StemLength, (l, v) => l.StemLength.Value = v, "Stem Length"));
+            Properties.Add(Create(l => l.BeamAngle, (l, v) => l.BeamAngle.Value = v, "Beam Angle"));
         }
 
         public override string Header => "Measure Block Properties";
     }
 
-    public class InstrumentMeasurePropertiesViewModel : ScoreElementPropertiesViewModel<IInstrumentMeasureReader, IInstrumentMeasureEditor>
+    public class InstrumentMeasurePropertiesViewModel : ScoreElementPropertiesViewModel<IInstrumentMeasure>
     {
-        internal InstrumentMeasurePropertiesViewModel(IEnumerable<IInstrumentMeasureReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal InstrumentMeasurePropertiesViewModel(IEnumerable<IInstrumentMeasure> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
 
         }
@@ -47,34 +47,32 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
         public override string Header => "Instrument Measure Properties";
     }
 
-    public class ScoreMeasurePropertiesViewModel : ScoreElementPropertiesViewModel<IScoreMeasureReader, IScoreMeasureEditor>
+    public class ScoreMeasurePropertiesViewModel : ScoreElementPropertiesViewModel<IScoreMeasure>
     {
-        internal ScoreMeasurePropertiesViewModel(IEnumerable<IScoreMeasureReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal ScoreMeasurePropertiesViewModel(IEnumerable<IScoreMeasure> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.ReadLayout().KeySignature, (l, v) => l.SetKeySignature(v), "Key Signature"));
-            Properties.Add(Create(l => l.ReadLayout().PaddingLeft, (l, v) => l.SetPaddingLeft(v), "Padding Left"));
-            Properties.Add(Create(l => l.ReadLayout().PaddingRight, (l, v) => l.SetPaddingRight(v), "Padding Right"));
+            Properties.Add(Create(l => l.KeySignature, (l, v) => l.KeySignature.Value = v, "Key Signature"));
         }
 
         public override string Header => "Score Measure Properties";
     }
 
-    public class InstrumentRibbonPropertiesViewModel : ScoreElementPropertiesViewModel<IInstrumentRibbonReader, IInstrumentRibbonEditor>
+    public class InstrumentRibbonPropertiesViewModel : ScoreElementPropertiesViewModel<IInstrumentRibbon>
     {
-        internal InstrumentRibbonPropertiesViewModel(IEnumerable<IInstrumentRibbonReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal InstrumentRibbonPropertiesViewModel(IEnumerable<IInstrumentRibbon> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.ReadLayout().AbbreviatedName, (l, v) => l.SetAbbreviatedName(v), "Nick Name"));
-            Properties.Add(Create(l => l.ReadLayout().DisplayName, (l, v) => l.SetDisplayName(v), "Instrument Name"));
-            Properties.Add(Create(l => l.ReadLayout().NumberOfStaves, (l, v) => l.SetNumberOfStaves(v), "Number of Staves"));
-            Properties.Add(Create(l => l.ReadLayout().Collapsed, (l, v) => l.SetCollapsed(v), "Collapsed"));
+            Properties.Add(Create(l => l.AbbreviatedName, (l, v) => l.AbbreviatedName.Value = v, "Nick Name"));
+            Properties.Add(Create(l => l.DisplayName, (l, v) => l.DisplayName.Value = v, "Instrument Name"));
+            Properties.Add(Create(l => l.NumberOfStaves, (l, v) => l.NumberOfStaves.Value = v, "Number of Staves"));
+            Properties.Add(Create(l => l.Collapsed, (l, v) => l.Collapsed.Value = v, "Collapsed"));
         }
 
         public override string Header => "Instrument Ribbon Properties";
     }
 
-    public class ScoreDocumentPropertiesViewModel : ScoreElementPropertiesViewModel<IScoreDocumentReader, IScoreDocumentEditor>
+    public class ScoreDocumentPropertiesViewModel : ScoreElementPropertiesViewModel<IScoreDocument>
     {
-        internal ScoreDocumentPropertiesViewModel(IEnumerable<IScoreDocumentReader> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
+        internal ScoreDocumentPropertiesViewModel(IEnumerable<IScoreDocument> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
 
         }

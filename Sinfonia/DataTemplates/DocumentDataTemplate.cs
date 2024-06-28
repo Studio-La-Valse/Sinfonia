@@ -6,7 +6,7 @@ namespace Sinfonia.DataTemplates
 {
     public class DocumentDataTemplate : IDataTemplate
     {
-        private Dictionary<DocumentViewModel, DocumentControl> _cache = new Dictionary<DocumentViewModel, DocumentControl>();
+        private readonly Dictionary<DocumentViewModel, DocumentControl> _cache = new Dictionary<DocumentViewModel, DocumentControl>();
         public Control? Build(object? data)
         {
             if (data is not DocumentViewModel documentViewModel)

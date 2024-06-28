@@ -1,13 +1,14 @@
-﻿using Sinfonia.Extensions;
-using StudioLaValse.ScoreDocument;
+﻿using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
+using StudioLaValse.ScoreDocument.Layout;
 using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
+using YamlDotNet.Core.Tokens;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class GraceGroupEditorProxy : IGraceGroupEditor
+    public class GraceGroupEditorProxy : IGraceGroup
     {
         private readonly GraceGroup graceGroup;
         private readonly ICommandManager commandManager;
@@ -18,6 +19,27 @@ namespace Sinfonia.Implementations.ScoreDocument
         public int Length => graceGroup.Length;
 
         public Position Target => graceGroup.Target;
+
+        public TemplateProperty<RythmicDuration> BlockDuration => graceGroup.AuthorLayout.ChordDuration.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<bool> OccupySpace => graceGroup.AuthorLayout.OccupySpace.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<double> ChordSpacing => graceGroup.AuthorLayout.ChordSpacing.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<RythmicDuration> ChordDuration => graceGroup.AuthorLayout.ChordDuration.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<double> Scale => graceGroup.AuthorLayout.Scale.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<StemDirection> StemDirection => graceGroup.AuthorLayout.StemDirection.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<double> StemLength => graceGroup.AuthorLayout.StemLength.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public TemplateProperty<double> BeamAngle => graceGroup.AuthorLayout.BeamAngle.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
+
+        public ReadonlyTemplateProperty<double> BeamThickness => graceGroup.AuthorLayout.BeamThickness;
+
+        public ReadonlyTemplateProperty<double> BeamSpacing => graceGroup.AuthorLayout.BeamSpacing;
+
 
         public GraceGroupEditorProxy(GraceGroup graceGroup, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
@@ -33,7 +55,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return ReadChords();
         }
 
-        public IEnumerable<IGraceChordEditor> ReadChords()
+        public IEnumerable<IGraceChord> ReadChords()
         {
             return graceGroup.Chords.Select(c => c.ProxyEditor(commandManager, notifyEntityChanged));
         }
@@ -43,24 +65,10 @@ namespace Sinfonia.Implementations.ScoreDocument
             return graceGroup.AuthorLayout;
         }
 
-        public void RemoveLayout()
+        public void Restore()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new RestoreLayoutCommand<AuthorGraceGroupLayout, GraceGroupLayoutMembers>(graceGroup.AuthorLayout).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void SetBeamAngle(double angle)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorGraceGroupLayout, GraceGroupLayoutMembers>(graceGroup.AuthorLayout, s => s.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void SetStemLength(double stemLength)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorGraceGroupLayout, GraceGroupLayoutMembers>(graceGroup.AuthorLayout, s => s.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, graceGroup.HostMeasure);
             transaction.Enqueue(command);
         }
 
@@ -85,5 +93,9 @@ namespace Sinfonia.Implementations.ScoreDocument
             transaction.Enqueue(command);
         }
 
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            return other is not null && other.Id == Id;
+        }
     }
 }

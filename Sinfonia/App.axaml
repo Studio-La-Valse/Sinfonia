@@ -4,12 +4,16 @@
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-	
+
 	<Application.Resources>
-		<FontFamily x:Key="Bravura">avares://Sinfonia/Resources/#Bravura</FontFamily>
+		<FontFamily x:Key="BravuraFont">avares://Sinfonia/Resources/Fonts/bravura#Bravura</FontFamily>
+		<FontFamily x:Key="CampaniaFont">avares://Sinfonia/Resources/Fonts/campania#Campania</FontFamily>
+		<FontFamily x:Key="EdwinFont">avares://Sinfonia/Resources/Fonts/edwin#Edwin</FontFamily>
+		<FontFamily x:Key="FinaleBroadwayFont">avares://Sinfonia/Resources/Fonts/finalebroadway#Finale Broadway</FontFamily>
+		<FontFamily x:Key="FinaleMaestroFont">avares://Sinfonia/Resources/Fonts/finalemaestro#Finale Maestro</FontFamily>
 	</Application.Resources>
-	
-    <Application.Styles>
+
+	<Application.Styles>
         <FluentTheme DensityStyle="Compact">
 			<FluentTheme.Palettes>
 				 <!--Palette for Light theme variant--> 

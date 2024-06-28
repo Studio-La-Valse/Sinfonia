@@ -1,19 +1,40 @@
 ﻿using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
+using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
+using YamlDotNet.Core.Tokens;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class GraceNoteEditorProxy : IGraceNoteEditor
+    public class GraceNoteEditorProxy : IGraceNote
     {
         private readonly GraceNote graceNote;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
-        public Pitch Pitch => graceNote.Pitch;
-
         public int Id => graceNote.Id;
+
+        public IGraceNoteLayout AuthorLayout => graceNote.AuthorLayout;
+
+        public ReadonlyTemplateProperty<double> Scale => AuthorLayout.Scale;
+
+        public ReadonlyTemplateProperty<double> XOffset => AuthorLayout.XOffset;
+
+        public Pitch Pitch
+        {
+            get => graceNote.Pitch;
+            set
+            {
+                var transaction = commandManager.ThrowIfNoTransactionOpen();
+                var command = new MementoCommand<GraceNote, GraceNoteModel>(graceNote, s => s.Pitch = value).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
+                transaction.Enqueue(command);
+            }
+        }
+
+        public TemplateProperty<AccidentalDisplay> ForceAccidental => AuthorLayout.ForceAccidental.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure);
+
+        public TemplateProperty<int> StaffIndex => AuthorLayout.StaffIndex.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
 
 
 
@@ -35,23 +56,35 @@ namespace Sinfonia.Implementations.ScoreDocument
             graceNote.Pitch = pitch;
         }
 
-        public void RemoveLayout()
+        public void ResetAccidental()
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<AuthorGraceNoteLayout, GraceNoteLayoutMembers>(graceNote.AuthorLayout, s => s.ResetAccidental()).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
+            transaction.Enqueue(command);
+        }
+
+        public void ResetStaffIndex()
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new MementoCommand<AuthorGraceNoteLayout, GraceNoteLayoutMembers>(graceNote.AuthorLayout, s => s.ResetStaffIndex()).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
+            transaction.Enqueue(command);
+        }
+
+        public void Restore()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new RestoreLayoutCommand<AuthorGraceNoteLayout, GraceNoteLayoutMembers>(graceNote.AuthorLayout).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure);
             transaction.Enqueue(command);
         }
 
-        public INoteLayout ReadLayout()
+        public bool Equals(IUniqueScoreElement? other)
         {
-            return graceNote.AuthorLayout;
-        }
+            if (other is null)
+            {
+                return false;
+            }
 
-        public void SetStaffIndex(int staffIndex)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorGraceNoteLayout, GraceNoteLayoutMembers>(graceNote.AuthorLayout, s => s.StaffIndex = staffIndex).ThenInvalidate(notifyEntityChanged, graceNote.InstrumentMeasure.HostMeasure.HostDocument);
-            transaction.Enqueue(command);
+            return other.Id == Id;
         }
     }
 }

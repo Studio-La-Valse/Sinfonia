@@ -39,7 +39,7 @@ internal class UndoRedoPipe : IPipe
 
     public void HandleRightMouseButtonUp()
     {
-        next.HandleLeftMouseButtonUp();
+        next.HandleRightMouseButtonUp();
     }
 
     public void HandleSetMousePosition(XY position)

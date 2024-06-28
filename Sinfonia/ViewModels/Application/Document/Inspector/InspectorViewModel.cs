@@ -63,46 +63,46 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
                 return;
             }
 
-            var notes = selectedElements.OfType<INoteReader>();
+            var notes = selectedElements.OfType<INote>();
             if (notes.Any())
             {
-                PropertiesViewModel.Add(new NotePropertiesViewModel(selectedElements.OfType<INoteReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new NotePropertiesViewModel(selectedElements.OfType<INote>(), scoreBuilder));
             }
 
-            var chords = selectedElements.OfType<IChordReader>();
+            var chords = selectedElements.OfType<IChord>();
             if (chords.Any())
             {
-                PropertiesViewModel.Add(new ChordPropertiesViewModel(selectedElements.OfType<IChordReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new ChordPropertiesViewModel(selectedElements.OfType<IChord>(), scoreBuilder));
             }
 
-            var blocks = selectedElements.OfType<IMeasureBlockReader>();
+            var blocks = selectedElements.OfType<IMeasureBlock>();
             if (blocks.Any())
             {
-                PropertiesViewModel.Add(new MeasureBlockPropertiesViewModel(selectedElements.OfType<IMeasureBlockReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new MeasureBlockPropertiesViewModel(selectedElements.OfType<IMeasureBlock>(), scoreBuilder));
             }
 
-            var instrumentMeasures = selectedElements.OfType<IInstrumentMeasureReader>();
+            var instrumentMeasures = selectedElements.OfType<IInstrumentMeasure>();
             if (instrumentMeasures.Any())
             {
-                PropertiesViewModel.Add(new InstrumentMeasurePropertiesViewModel(selectedElements.OfType<IInstrumentMeasureReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new InstrumentMeasurePropertiesViewModel(selectedElements.OfType<IInstrumentMeasure>(), scoreBuilder));
             }
 
-            var scoreMeasures = selectedElements.OfType<IScoreMeasureReader>();
+            var scoreMeasures = selectedElements.OfType<IScoreMeasure>();
             if (scoreMeasures.Any())
             {
-                PropertiesViewModel.Add(new ScoreMeasurePropertiesViewModel(selectedElements.OfType<IScoreMeasureReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new ScoreMeasurePropertiesViewModel(selectedElements.OfType<IScoreMeasure>(), scoreBuilder));
             }
 
-            var ribbons = selectedElements.OfType<IInstrumentRibbonReader>();
+            var ribbons = selectedElements.OfType<IInstrumentRibbon>();
             if (ribbons.Any())
             {
-                PropertiesViewModel.Add(new InstrumentRibbonPropertiesViewModel(selectedElements.OfType<IInstrumentRibbonReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new InstrumentRibbonPropertiesViewModel(selectedElements.OfType<IInstrumentRibbon>(), scoreBuilder));
             }
 
-            var scores = selectedElements.OfType<IScoreDocumentReader>();
+            var scores = selectedElements.OfType<IScoreDocument>();
             if (scores.Any())
             {
-                PropertiesViewModel.Add(new ScoreDocumentPropertiesViewModel(selectedElements.OfType<IScoreDocumentReader>(), scoreBuilder));
+                PropertiesViewModel.Add(new ScoreDocumentPropertiesViewModel(selectedElements.OfType<IScoreDocument>(), scoreBuilder));
             }
         }
 

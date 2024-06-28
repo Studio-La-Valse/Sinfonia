@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using StudioLaValse.ScoreDocument.Implementation.Interfaces;
+﻿using StudioLaValse.ScoreDocument.Implementation.Interfaces;
+using System.Diagnostics;
 
 namespace Sinfonia.Implementations.Commands
 {

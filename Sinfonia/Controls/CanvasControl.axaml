@@ -8,7 +8,10 @@
              x:Class="Sinfonia.Controls.CanvasControl"
 			 x:DataType="vm:CanvasViewModel">
 	<Grid>
-		<c:InteractiveControl Name="canvas"/>
+		<c:InteractiveControl Name="canvas"
+							  Zoom="{Binding Zoom}"
+							  TranslateX="{Binding TranslateX}"
+							  TranslateY="{Binding TranslateY}"/>
 		<c:SelectionBorder Name="selectionBorder"/>
 	</Grid>
 </UserControl>

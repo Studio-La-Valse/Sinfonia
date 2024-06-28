@@ -5,6 +5,7 @@ using Sinfonia.Implementations.PDF;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument.Drawable;
 
 namespace Sinfonia.Extensions
 {
@@ -17,6 +18,7 @@ namespace Sinfonia.Extensions
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
+                .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>()
                 .AddSingleton<IPdfExportService, PdfExportService>();
         }
 
@@ -26,6 +28,7 @@ namespace Sinfonia.Extensions
                 .AddSingleton<ICommandFactory, CommandFactory>()
                 .AddSingleton<ImportMenuViewModel>()
                 .AddSingleton<FileMenuViewModel>()
+                .AddSingleton<ViewMenuViewModel>()
                 .AddSingleton<MenuViewModel>()
                 .AddSingleton<DocumentCollectionViewModel>()
                 .AddSingleton<MainViewModel>();

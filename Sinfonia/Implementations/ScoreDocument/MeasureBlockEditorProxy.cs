@@ -5,10 +5,11 @@ using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
 using System.Diagnostics.CodeAnalysis;
+using YamlDotNet.Core.Tokens;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class MeasureBlockEditorProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlockEditor
+    public class MeasureBlockEditorProxy(MeasureBlock source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged) : IMeasureBlock
     {
         private readonly MeasureBlock source = source;
         private readonly ICommandManager commandManager = commandManager;
@@ -17,14 +18,20 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
         public RythmicDuration RythmicDuration => source.RythmicDuration;
-
         public Position Position => source.Position;
-
         public Tuplet Tuplet => source.Tuplet;
-
         public InstrumentMeasure HostMeasure => source.RibbonMeasure;
-
         public int Id => source.Id;
+
+
+        public AuthorMeasureBlockLayout Layout => source.AuthorLayout;  
+        public TemplateProperty<StemDirection> StemDirection => Layout.StemDirection.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, HostMeasure);
+        public TemplateProperty<double> StemLength => Layout.StemLength.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, HostMeasure);
+        public TemplateProperty<double> BeamAngle => Layout.BeamAngle.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, HostMeasure);
+        public ReadonlyTemplateProperty<double> BeamThickness => Layout.BeamThickness;
+        public ReadonlyTemplateProperty<double> BeamSpacing => Layout.BeamSpacing;
+
+
 
 
         public void AppendChord(RythmicDuration rythmicDuration, params Pitch[] pitches)
@@ -48,28 +55,14 @@ namespace Sinfonia.Implementations.ScoreDocument
             transaction.Enqueue(command);
         }
 
-        public void RemoveLayout()
+        public void Restore()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, HostMeasure);
+            var command = new RestoreLayoutCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(Layout).ThenInvalidate(notifyEntityChanged, HostMeasure);
             transaction.Enqueue(command);
         }
 
-        public void SetStemLength(double stemLength)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout, s => s.StemLength = stemLength).ThenInvalidate(notifyEntityChanged, HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void SetBeamAngle(double angle)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorMeasureBlockLayout, MeasureBlockLayoutMembers>(source.AuthorLayout, s => s.BeamAngle = angle).ThenInvalidate(notifyEntityChanged, HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public bool TryReadNext([NotNullWhen(true)] out IMeasureBlockEditor? right)
+        public bool TryReadNext([NotNullWhen(true)] out IMeasureBlock? right)
         {
             right = null;
             if (source.TryReadNext(out var _right))
@@ -79,7 +72,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return right is not null;
         }
 
-        public bool TryReadPrevious([NotNullWhen(true)] out IMeasureBlockEditor? previous)
+        public bool TryReadPrevious([NotNullWhen(true)] out IMeasureBlock? previous)
         {
             previous = null;
             if (source.TryReadNext(out var _prev))
@@ -89,7 +82,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return previous is not null;
         }
 
-        public IEnumerable<IChordEditor> ReadChords()
+        public IEnumerable<IChord> ReadChords()
         {
             return source.GetChordsCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
         }
@@ -99,9 +92,14 @@ namespace Sinfonia.Implementations.ScoreDocument
             return ReadChords();
         }
 
-        public IMeasureBlockLayout ReadLayout()
+        public bool Equals(IUniqueScoreElement? other)
         {
-            return source.AuthorLayout;
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
         }
     }
 }

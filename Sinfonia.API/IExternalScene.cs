@@ -1,6 +1,6 @@
-﻿//using StudioLaValse.Drawable.ContentWrappers;
-//using StudioLaValse.ScoreDocument;
-//using StudioLaValse.ScoreDocument.Core.Primitives;
+﻿//using Sinfonia.API.ScoreDocument;
+//using StudioLaValse.Drawable.ContentWrappers;
+//using StudioLaValse.ScoreDocument.Drawable.Score;
 //using StudioLaValse.ScoreDocument.Layout;
 
 //namespace Sinfonia.API
@@ -14,6 +14,6 @@
 //    {
 //        IScoreDocumentLayout ScoreDocumentLayout { get; }
 //        void RegisterSettings(IAddinSettingsManager animationSettingsManager);
-//        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocumentReader scoreDocument);
+//        BaseVisualParent<IUniqueScoreElement> CreateScene(IScoreDocument scoreDocument);
 //    }
 //}

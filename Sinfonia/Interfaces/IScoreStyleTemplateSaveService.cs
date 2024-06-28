@@ -1,4 +1,4 @@
-﻿using StudioLaValse.ScoreDocument.Layout.Templates;
+﻿using StudioLaValse.ScoreDocument.Templates;
 
 namespace Sinfonia.Interfaces
 {

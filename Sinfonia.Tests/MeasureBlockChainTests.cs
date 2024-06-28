@@ -3,11 +3,10 @@ using StudioLaValse.ScoreDocument.Models;
 using Sinfonia.Interfaces;
 using StudioLaValse.CommandManager;
 using StudioLaValse.Drawable;
-using StudioLaValse.ScoreDocument.Builder;
 using StudioLaValse.ScoreDocument.Core;
-using StudioLaValse.ScoreDocument.Layout.Templates;
-using StudioLaValse.ScoreDocument.Primitives;
+using StudioLaValse.ScoreDocument.Templates;
 using StudioLaValse.ScoreDocument;
+using Sinfonia.API;
 
 namespace Sinfonia.Tests
 {
@@ -15,11 +14,14 @@ namespace Sinfonia.Tests
     public class MeasureBlockChainTests
     {
         private readonly IScoreBuilder builder;
+        private readonly IScoreDocument scoreDocument;
         public MeasureBlockChainTests()
         {
             var serviceProvider = App.CreateHostBuilder().Build().Services;
             var memento = ScoreDocumentModel.Create();
-            builder = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento).ScoreBuilder;
+            var document = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento);
+            builder = document.ScoreBuilder;
+            scoreDocument = document.ScoreDocument;
         }
 
         [TestMethod]
@@ -56,7 +58,7 @@ namespace Sinfonia.Tests
                 })
                 .Build();
 
-            var outChain = score.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var outChain = scoreDocument.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
             var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));
@@ -127,7 +129,7 @@ namespace Sinfonia.Tests
                 })
                 .Build();
 
-            var outChain = score.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
+            var outChain = scoreDocument.ReadScoreMeasure(0).ReadMeasure(0).ReadBlockChainAt(0);
             var lengths = outChain.ReadBlocks().Select(b => b.RythmicDuration).ToArray();
 
             Assert.IsTrue(lengths.SequenceEqual(expectedLenghts));

@@ -1,9 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Sinfonia.ViewModels.Base;
-using System.IO;
-using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
+using ColorARGB = StudioLaValse.ScoreDocument.Templates.ColorARGB;
 
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
@@ -158,7 +155,6 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.VerticalStaffLineThickness, v => { template.VerticalStaffLineThickness = v; canvasViewModel.Rerender(); }, "Vertical Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.StemLineThickness, v => { template.StemLineThickness = v; canvasViewModel.Rerender(); }, "Stem Line Thickness"));
             Properties.Add(new PropertyViewModel<double>(() => template.FirstSystemIndent, v => { template.FirstSystemIndent = v; canvasViewModel.Rerender(); }, "First System Indent"));
-            Properties.Add(new PropertyViewModel<double>(() => template.ChordPositionFactor, v => { template.ChordPositionFactor = v; canvasViewModel.Rerender(); }, "Chord Position Factor"));
         }
     }
 
@@ -178,8 +174,24 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
             Properties.Add(new PropertyViewModel<double>(() => template.MarginRight, v => { template.MarginRight = v; canvasViewModel.Rerender(); }, "Margin Right"));
             Properties.Add(new PropertyViewModel<double>(() => template.MarginBottom, v => { template.MarginBottom = v; canvasViewModel.Rerender(); }, "Margin Bottom"));
 
-            Properties.Add(new PropertyViewModel<Color>(() => template.PageColor.T(), v => { template.PageColor = v.T(); canvasViewModel.Rerender(); }, "Page Color"));
-            Properties.Add(new PropertyViewModel<Color>(() => template.ForegroundColor.T(), v => { template.ForegroundColor = v.T(); canvasViewModel.Rerender(); }, "Foreground Color"));
+            Properties.Add(new PropertyViewModel<Color>(
+                () => template.PageColor.T(), 
+                v => 
+                { 
+                    template.PageColor = v.T(); 
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocument, method:Method.Shallow);
+                    canvasViewModel.Invalidator.RenderChanges();
+                }, 
+                "Page Color"));
+            Properties.Add(new PropertyViewModel<Color>(
+                () => template.ForegroundColor.T(), 
+                v => 
+                { 
+                    template.ForegroundColor = v.T();
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocument, method: Method.Deep);
+                    canvasViewModel.Invalidator.RenderChanges();
+                }, 
+                "Foreground Color"));
         }
     }
 

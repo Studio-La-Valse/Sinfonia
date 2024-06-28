@@ -4,9 +4,10 @@ using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
+using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
-using StudioLaValse.ScoreDocument.Reader;
-using StudioLaValse.ScoreDocument.Reader.Extensions;
+using StudioLaValse.ScoreDocument.Extensions;
 using ColorARGB = StudioLaValse.Geometry.ColorARGB;
 
 namespace Sinfonia.Implementations.PDF;
@@ -22,18 +23,19 @@ internal class PdfExportService : IPdfExportService
 
     private readonly DocumentCollectionViewModel documentCollectionViewModel;
     private readonly MainWindow mainWindow;
+    private readonly IUnitToPixelConverter unitToPixelConverter;
 
-    public PdfExportService(DocumentCollectionViewModel documentCollectionViewModel, MainWindow mainWindow)
+    public PdfExportService(DocumentCollectionViewModel documentCollectionViewModel, MainWindow mainWindow, IUnitToPixelConverter unitToPixelConverter)
     {
         this.documentCollectionViewModel = documentCollectionViewModel;
         this.mainWindow = mainWindow;
+        this.unitToPixelConverter = unitToPixelConverter;
     }
 
     public void Export()
     {
         var activeDocument = documentCollectionViewModel.TryGetActiveDocument(out var d) ? d : throw new Exception();
-        var scoreDocumentReader = activeDocument.ScoreDocumentReader;
-        var scoreStyleTemplate = activeDocument.CanvasViewModel.ScoreDocumentStyle;
+        var scoreDocumentReader = activeDocument.ScoreDocument;
         var visualPageFactory = activeDocument.CanvasViewModel.VisualPageFactory;
 
         var task = mainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
@@ -59,21 +61,20 @@ internal class PdfExportService : IPdfExportService
         };
     }
 
-    public PdfDocument GenerateBytes(IScoreDocumentReader scoreDocumentReader, IVisualPageFactory visualPageFactory)
+    public PdfDocument GenerateBytes(IScoreDocument scoreDocumentReader, IVisualPageFactory visualPageFactory)
     {
         var pdfDocument = new PdfDocument();
 
         foreach (var page in scoreDocumentReader.ReadPages())
         {
-            var pageLayout = page.ReadLayout();
-            var pageWidth = pageLayout.PageWidth;
-            var pageHeight = pageLayout.PageHeight;
-            var pageColor = pageLayout.PageColor;
+            var pageWidth = page.PageWidth;
+            var pageHeight = page.PageHeight;
+            var pageColor = page.PageColor.Value;
 
             var visualPage = visualPageFactory.CreateContent(page, 0, 0);
             var pdfPage = pdfDocument.AddPage();
-            pdfPage.Width = pageWidth;
-            pdfPage.Height = pageHeight;
+            pdfPage.Width = unitToPixelConverter.UnitsToPixels(pageWidth);
+            pdfPage.Height = unitToPixelConverter.UnitsToPixels(pageHeight);
 
             using var graphics = XGraphics.FromPdfPage(pdfPage);
             var painter = new PdfPageCanvasPainter(graphics, pageWidth, pageHeight);

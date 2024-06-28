@@ -21,7 +21,7 @@ internal static class AsyncHelper
     {
         _myTaskFactory
           .StartNew(func)
-          .Unwrap()
+        .Unwrap()
           .GetAwaiter()
           .GetResult();
     }
