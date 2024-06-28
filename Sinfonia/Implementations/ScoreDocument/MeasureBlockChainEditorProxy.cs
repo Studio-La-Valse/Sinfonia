@@ -5,7 +5,7 @@ using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class MeasureBlockChainEditorProxy : IMeasureBlockChainEditor
+    public class MeasureBlockChainEditorProxy : IMeasureBlockChain
     {
         private readonly MeasureBlockChain source;
         private readonly ICommandManager commandManager;
@@ -57,7 +57,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             transaction.Enqueue(command);
         }
 
-        public IEnumerable<IMeasureBlockEditor> ReadBlocks()
+        public IEnumerable<IMeasureBlock> ReadBlocks()
         {
             return source.GetBlocksCore().Select(e => e.ProxyEditor(commandManager, notifyEntityChanged));
         }

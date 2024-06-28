@@ -1,16 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using StudioLaValse.Drawable.Avalonia.Painters;
 using StudioLaValse.Drawable.BitmapPainters;
-using StudioLaValse.Drawable.Interaction.UserInput;
-using StudioLaValse.Drawable.Interaction.Extensions;
-using StudioLaValse.Geometry;
-using StudioLaValse.Key;
-using System;
-using Avalonia.ReactiveUI;
 using StudioLaValse.ScoreDocument;
-using StudioLaValse.ScoreDocument.Reader.Extensions;
-using Avalonia.Interactivity;
 
 namespace Sinfonia.Controls;
 

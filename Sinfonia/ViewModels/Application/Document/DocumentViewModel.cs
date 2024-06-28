@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.ViewModels.Base;
 using StudioLaValse.ScoreDocument;
@@ -17,7 +16,7 @@ namespace Sinfonia.ViewModels.Application.Document
 
 
         public IScoreBuilder ScoreBuilder { get; }
-        public IScoreDocumentReader ScoreDocumentReader { get; }
+        public IScoreDocument ScoreDocument { get; }
         public IKeyGenerator<int> KeyGenerator { get; }
         public ISelection<IUniqueScoreElement> Selection { get; }
         public ICommand CloseCommand { get; }
@@ -35,14 +34,14 @@ namespace Sinfonia.ViewModels.Application.Document
                                  ScoreDocumentCore scoreDocumentCore,
                                  ISelection<IUniqueScoreElement> selection,
                                  IScoreBuilder scoreDocumentEditor,
-                                 IScoreDocumentReader scoreDocumentReader,
+                                 IScoreDocument scoreDocument,
                                  IKeyGenerator<int> keyGenerator)
         {
             Selection = selection;
             CanvasViewModel = canvasViewModel;
             Header = Guid.NewGuid().ToString();
             ScoreBuilder = scoreDocumentEditor;
-            ScoreDocumentReader = scoreDocumentReader;
+            ScoreDocument = scoreDocument;
             Explorer = explorerViewModel;
             Inspector = inspectorViewModel;
             DocumentStyleEditorViewModel = documentStyleEditorViewModel;

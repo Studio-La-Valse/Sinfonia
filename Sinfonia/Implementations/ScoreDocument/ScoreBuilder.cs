@@ -1,60 +1,57 @@
-﻿using StudioLaValse.ScoreDocument;
-using StudioLaValse.ScoreDocument.Implementation;
+﻿namespace Sinfonia.Implementations.ScoreDocument;
 
-namespace Sinfonia.Implementations.ScoreDocument
+internal class ScoreBuilder : IScoreBuilder
 {
-    public class ScoreBuilder : IScoreBuilder
+    private readonly IScoreDocument scoreDocument;
+    private readonly ICommandManager commandManager;
+    private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
+    private readonly Queue<Action<IScoreDocument>> pendingEdits = [];
+    private readonly IEqualityComparer<IUniqueScoreElement> equalityComparer = new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id);
+
+    public ScoreBuilder(IScoreDocument scoreDocument, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
     {
-        private readonly ScoreDocumentCore scoreDocument;
-        private readonly ICommandManager commandManager;
-        private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
-        private readonly Queue<Action<IScoreDocumentEditor>> pendingEdits = [];
+        this.scoreDocument = scoreDocument;
+        this.commandManager = commandManager;
+        this.notifyEntityChanged = notifyEntityChanged;
+    }
 
-        public ScoreBuilder(ScoreDocumentCore scoreDocument, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
-        {
-            this.scoreDocument = scoreDocument;
-            this.commandManager = commandManager;
-            this.notifyEntityChanged = notifyEntityChanged;
-        }
+    public IScoreBuilder Edit(Action<IScoreDocument> action)
+    {
+        pendingEdits.Enqueue(action);
+        return this;
+    }
 
-        public IScoreBuilder Edit(Action<IScoreDocumentEditor> action)
+    public IScoreBuilder Edit<TElement>(IEnumerable<int> elementIds, Action<TElement> action) where TElement : IUniqueScoreElement
+    {
+        void _action(IScoreDocument editor)
         {
-            pendingEdits.Enqueue(action);
-            return this;
-        }
+            var children = ((IScoreElement)editor).SelectRecursive(e => e.EnumerateChildren())
+                .OfType<IUniqueScoreElement>()
+                .Distinct(equalityComparer)
+                .Where(e => elementIds.Contains(e.Id))
+                .OfType<TElement>();
 
-        public IScoreBuilder Edit<TElement>(IEnumerable<int> elementIds, Action<TElement> action) where TElement : IScoreElementEditor
-        {
-            void _action(IScoreDocumentEditor editor)
+            foreach (var child in children)
             {
-                var children = ((IScoreElement)editor).SelectRecursive(e => e.EnumerateChildren())
-                    .OfType<IUniqueScoreElement>()
-                    .Distinct(new KeyEqualityComparer<IUniqueScoreElement, int>(e => e.Id))
-                    .Where(e => elementIds.Contains(e.Id))
-                    .OfType<TElement>();
-
-                foreach (var child in children)
-                {
-                    action(child);
-                }
+                action(child);
             }
-            pendingEdits.Enqueue(_action);
-            return this;
         }
+        pendingEdits.Enqueue(_action);
+        return this;
+    }
 
 
-        public IScoreDocumentReader Build()
+    public IScoreBuilder Build()
+    {
+        while (pendingEdits.Count > 0)
         {
-            while (pendingEdits.Count > 0)
-            {
-                var pendingAction = pendingEdits.Dequeue();
-                using var transaction = commandManager.OpenTransaction("Generic score document edit");
-                pendingAction.Invoke(scoreDocument.ProxyEditor(commandManager, notifyEntityChanged));
-            }
-
-            notifyEntityChanged.RenderChanges();
-
-            return scoreDocument.ProxyReader();
+            var pendingAction = pendingEdits.Dequeue();
+            using var transaction = commandManager.OpenTransaction("Generic score document edit");
+            pendingAction.Invoke(scoreDocument);
         }
+
+        notifyEntityChanged.RenderChanges();
+
+        return this;
     }
 }

@@ -94,8 +94,8 @@ internal class PdfPageCanvasPainter : BaseLazyBitmapPainter<XGraphics>
         {
             Height = ellipse.Height,
             Width = ellipse.Width,
-            X = ellipse.CenterX - ellipse.Width / 2,
-            Y = ellipse.CenterY - ellipse.Height / 2,
+            X = ellipse.CenterX - (ellipse.Width / 2),
+            Y = ellipse.CenterY - (ellipse.Height / 2),
         };
         if (ellipse.StrokeColor is not null && ellipse.StrokeWeight > 0)
         {

@@ -7,15 +7,20 @@ using StudioLaValse.ScoreDocument.Models.Base;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class GraceChordEditorProxy : IGraceChordEditor
+    public class GraceChordEditorProxy : IGraceChord
     {
         private readonly GraceChord graceChord;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
+
         public int Id => graceChord.Id;
 
         public int IndexInGroup => graceChord.IndexInGroup;
+
+        public ReadonlyTemplateProperty<double> SpaceRight => ReadLayout().SpaceRight;
+
+
 
         public GraceChordEditorProxy(GraceChord graceChord, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
@@ -27,7 +32,7 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public IEnumerable<IScoreElement> EnumerateChildren()
         {
-            return graceChord.EnumerateNotes().Select(n => new GraceNoteReaderProxy(n));
+            return ReadNotes();
         }
 
         public BeamType? ReadBeamType(PowerOfTwo i)
@@ -41,12 +46,12 @@ namespace Sinfonia.Implementations.ScoreDocument
             return graceChord.BeamTypes;
         }
 
-        public IEnumerable<IGraceNoteEditor> ReadNotes()
+        public IEnumerable<IGraceNote> ReadNotes()
         {
             return graceChord.EnumerateNotes().Select(n => n.ProxyEditor(commandManager, notifyEntityChanged));
         }
 
-        public IGraceGroupEditor? ReadGraceGroup()
+        public IGraceGroup? ReadGraceGroup()
         {
             if (graceChord.GraceGroup is null)
             {
@@ -77,23 +82,33 @@ namespace Sinfonia.Implementations.ScoreDocument
             transaction.Enqueue(command);
         }
 
-        public void Grace(params Pitch[] pitches)
+        public void Grace(RythmicDuration rythmicDuration, params Pitch[] pitches)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<GraceChord, GraceChordModel>(graceChord, s => s.Grace(pitches)).ThenInvalidate(notifyEntityChanged, graceChord.HostMeasure);
+            var command = new MementoCommand<GraceChord, GraceChordModel>(graceChord, s => s.Grace(rythmicDuration, pitches)).ThenInvalidate(notifyEntityChanged, graceChord.HostMeasure);
             transaction.Enqueue(command);
         }
 
-        public void RemoveLayout()
+        public void Restore()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new RestoreLayoutCommand<AuthorGraceChordLayout, GraceChordLayoutMembers>(graceChord.AuthorLayout).ThenInvalidate(notifyEntityChanged, graceChord.HostMeasure);
             transaction.Enqueue(command);
         }
 
-        public IChordLayout ReadLayout()
+        public IGraceChordLayout ReadLayout()
         {
             return graceChord.AuthorLayout;
+        }
+
+        public bool Equals(IUniqueScoreElement? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
         }
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Sinfonia.ViewModels.Base;
-using StudioLaValse.Drawable.Private;
 using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Templates;
+
 namespace Sinfonia.ViewModels.Application.Document
 {
     public class CanvasViewModel : BaseViewModel
     {
-        private readonly IScoreDocumentReader scoreDocumentReader;
         private readonly IUnitToPixelConverter unitToPixelConverter;
         private bool isInitialized = false;
 
@@ -74,13 +73,13 @@ namespace Sinfonia.ViewModels.Application.Document
         }
         public ScoreDocumentStyleTemplate ScoreDocumentStyle { get; }
         public ISelectionManager<IUniqueScoreElement> Selection { get; }
+        public IScoreDocument ScoreDocument { get; }
         public IVisualPageFactory VisualPageFactory { get; }
 
-        public IScoreDocumentReader ScoreDocumentReader => this.scoreDocumentReader;
 
         public CanvasViewModel(INotifyEntityChanged<IUniqueScoreElement> observable,
-                               IScoreDocumentReader scoreDocumentReader,
                                ISelectionManager<IUniqueScoreElement> selection,
+                               IScoreDocument scoreDocument,
                                IVisualPageFactory visualPageFactory,
                                ICommandManager commandManager,
                                IUnitToPixelConverter unitToPixelConverter,
@@ -88,12 +87,12 @@ namespace Sinfonia.ViewModels.Application.Document
                                ObservableBoundingBox observableBoundingBox,
                                ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
         {
-            this.scoreDocumentReader = scoreDocumentReader;
+            this.unitToPixelConverter = unitToPixelConverter;
 
             Invalidator = observable;
             Selection = selection;
+            ScoreDocument = scoreDocument;
             VisualPageFactory = visualPageFactory;
-            this.unitToPixelConverter = unitToPixelConverter;
             EnablePan = true;
             SceneManager = sceneManager;
             SelectionBorder = observableBoundingBox;
@@ -113,7 +112,7 @@ namespace Sinfonia.ViewModels.Application.Document
 
         public void Rerender()
         {
-            Invalidator.Invalidate(ScoreDocumentReader);
+            Invalidator.Invalidate(ScoreDocument);
             Invalidator.RenderChanges();
         }
 
@@ -121,7 +120,7 @@ namespace Sinfonia.ViewModels.Application.Document
         {
             var pageSize = PageSize.A4;
             var padding = 30;
-            var desiredHeight = unitToPixelConverter.UnitsToPixels(pageSize.Height) + padding * 2;
+            var desiredHeight = unitToPixelConverter.UnitsToPixels(pageSize.Height) + (padding * 2);
             var desiredZoom = Bounds.Height / desiredHeight;
             if(!double.IsNormal(desiredZoom))
             {

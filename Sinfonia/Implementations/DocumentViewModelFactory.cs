@@ -3,15 +3,13 @@ using Microsoft.Extensions.Hosting;
 using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Document.StyleTemplate;
-using Sinfonia.Windows;
-using StudioLaValse.Drawable.Private;
 using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.GlyphLibrary;
 using StudioLaValse.ScoreDocument.Implementation;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Templates;
 using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations
@@ -95,7 +93,7 @@ namespace Sinfonia.Implementations
 
                     var layoutMemento = scoreDocumentMemento.Layout;
                     var primaryLayout = new AuthorScoreDocumentLayout(styleTemplate);
-                    var secondaryLayout = new UserScoreDocumentLayout(primaryLayout, layoutMemento?.Id ?? Guid.NewGuid());
+                    var secondaryLayout = new UserScoreDocumentLayout(styleTemplate, layoutMemento?.Id ?? Guid.NewGuid());
                     var scoreDocument = new ScoreDocumentCore(contentTable, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
                     scoreDocument.ApplyMemento(scoreDocumentMemento);
 
@@ -103,8 +101,7 @@ namespace Sinfonia.Implementations
                 })
                 .AddSingleton<IScoreDocumentLayout>(services => services.GetRequiredService<ScoreDocumentCore>().UserLayout)
                 .AddSingleton<IScoreBuilder, ScoreBuilder>()
-                .AddSingleton<IScoreDocumentReader, ScoreDocumentReaderProxy>()
-                .AddSingleton<IScoreDocumentEditor, ScoreDocumentEditorProxy>();
+                .AddSingleton<IScoreDocument, ScoreDocumentEditorProxy>();
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)

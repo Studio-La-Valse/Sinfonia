@@ -7,12 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class InstrumentMeasureEditorProxy : IInstrumentMeasureEditor
+    public class InstrumentMeasureEditorProxy : IInstrumentMeasure
     {
         private readonly InstrumentMeasure source;
         private readonly ICommandManager commandManager;
         private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
 
+
+        public IInstrumentMeasureLayout AuthoLayout => source.AuthorLayout;
 
         public int MeasureIndex => source.MeasureIndex;
 
@@ -24,6 +26,16 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public int Id => source.Id;
 
+        public ReadonlyTemplateProperty<KeySignature> KeySignature => AuthoLayout.KeySignature;
+
+        public TemplateProperty<double?> PaddingBottom => AuthoLayout.PaddingBottom.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, source.HostMeasure.HostDocument);
+
+        public TemplateProperty<bool?> Collapsed => AuthoLayout.Collapsed.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, source.HostMeasure.HostDocument);
+
+        public TemplateProperty<int?> NumberOfStaves => AuthoLayout.NumberOfStaves.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, source.HostMeasure.HostDocument);
+
+
+
         public InstrumentMeasureEditorProxy(InstrumentMeasure source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
             this.source = source;
@@ -33,41 +45,77 @@ namespace Sinfonia.Implementations.ScoreDocument
 
 
 
+        public IEnumerable<ClefChange> EnumerateClefChanges() => AuthoLayout.EnumerateClefChanges();
 
         public void AddVoice(int voice)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.AddVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.AddVoice(voice)).ThenInvalidate(notifyEntityChanged, source);
             transaction.Enqueue(command);
         }
 
         public void RemoveVoice(int voice)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.RemoveVoice(voice)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.RemoveVoice(voice)).ThenInvalidate(notifyEntityChanged, source);
             transaction.Enqueue(command);
         }
 
         public void Clear()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
+            var command = new MementoCommand<InstrumentMeasure, InstrumentMeasureModel>(source, s => s.Clear()).ThenInvalidate(notifyEntityChanged, source);
             transaction.Enqueue(command);
         }
 
-        public IMeasureBlockChainEditor ReadBlockChainAt(int voice)
+        public void AddClefChange(ClefChange clefChange)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.AddClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source);
+            transaction.Enqueue(command);
+        }
+
+        public void RemoveClefChange(ClefChange clefChange)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.RemoveClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source);
+            transaction.Enqueue(command);
+        }
+
+        public void RequestPaddingBottom(int staffIndex, double? paddingBottom = null)
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.PaddingBottom.Value = paddingBottom).ThenInvalidate(notifyEntityChanged, source);
+            transaction.Enqueue(command);
+        }
+
+        public void ClearClefChanges()
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.ClearClefChanges()).ThenInvalidate(notifyEntityChanged, source);
+            transaction.Enqueue(command);
+        }
+
+        public void Restore()
+        {
+            var transaction = commandManager.ThrowIfNoTransactionOpen();
+            var command = new RestoreLayoutCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source);
+            transaction.Enqueue(command);
+        }
+
+        public IMeasureBlockChain ReadBlockChainAt(int voice)
         {
             return source.GetBlockChainOrThrowCore(voice).ProxyEditor(commandManager, notifyEntityChanged);
         }
 
-        public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasureEditor? previous)
+        public bool TryReadPrevious([NotNullWhen(true)] out IInstrumentMeasure? previous)
         {
             _ = source.TryReadPrevious(out var _previous);
             previous = _previous?.ProxyEditor(commandManager, notifyEntityChanged);
             return previous != null;
         }
 
-        public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasureEditor? next)
+        public bool TryReadNext([NotNullWhen(true)] out IInstrumentMeasure? next)
         {
             _ = source.TryReadNext(out var _next);
             next = _next?.ProxyEditor(commandManager, notifyEntityChanged);
@@ -84,51 +132,14 @@ namespace Sinfonia.Implementations.ScoreDocument
             return ReadVoices().Select(ReadBlockChainAt).SelectMany(e => e.ReadBlocks());
         }
 
-        public void AddClefChange(ClefChange clefChange)
+        public double? GetPaddingBottom(int staffIndex)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.AddClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
+            return AuthoLayout.GetPaddingBottom(staffIndex);
         }
 
-        public void RemoveClefChange(ClefChange clefChange)
+        public bool Equals(IUniqueScoreElement? other)
         {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.RemoveClefChange(clefChange)).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
-        }
-
-        public void RequestPaddingBottom(int staffIndex, double? paddingBottom = null)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.PaddingBottom = paddingBottom).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
-        }
-
-        public void RequestCollapsed(bool collapse)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.Collapsed = collapse).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
-        }
-
-        public void RequestNumberOfStaves(int? numberOfStaves = null)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new LayoutMementoCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout, l => l.NumberOfStaves = numberOfStaves).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
-        }
-
-        public void RemoveLayout()
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new RestoreLayoutCommand<AuthorInstrumentMeasureLayout, InstrumentMeasureLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source.ProxyReader());
-            transaction.Enqueue(command);
-        }
-
-        public IInstrumentMeasureLayout ReadLayout()
-        {
-            return source.AuthorLayout;
+            return other is not null && other.Id == Id;
         }
     }
 }

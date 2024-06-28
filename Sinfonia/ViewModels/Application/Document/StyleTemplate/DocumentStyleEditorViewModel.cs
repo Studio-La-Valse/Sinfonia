@@ -1,9 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Sinfonia.ViewModels.Base;
-using System.IO;
-using ColorARGB = StudioLaValse.ScoreDocument.Layout.Templates.ColorARGB;
+using ColorARGB = StudioLaValse.ScoreDocument.Templates.ColorARGB;
 
 
 namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
@@ -182,7 +179,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
                 v => 
                 { 
                     template.PageColor = v.T(); 
-                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocumentReader, method:Method.Shallow);
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocument, method:Method.Shallow);
                     canvasViewModel.Invalidator.RenderChanges();
                 }, 
                 "Page Color"));
@@ -191,7 +188,7 @@ namespace Sinfonia.ViewModels.Application.Document.StyleTemplate
                 v => 
                 { 
                     template.ForegroundColor = v.T();
-                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocumentReader, method: Method.Deep);
+                    canvasViewModel.Invalidator.Invalidate(canvasViewModel.ScoreDocument, method: Method.Deep);
                     canvasViewModel.Invalidator.RenderChanges();
                 }, 
                 "Foreground Color"));

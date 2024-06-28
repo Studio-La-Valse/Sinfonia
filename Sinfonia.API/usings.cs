@@ -1,2 +1,1 @@
-﻿global using StudioLaValse.ScoreDocument.Reader;
-global using System.Diagnostics.CodeAnalysis;
+﻿global using System.Diagnostics.CodeAnalysis;

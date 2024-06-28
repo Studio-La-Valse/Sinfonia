@@ -53,12 +53,4 @@ namespace Sinfonia.ViewModels.Application.Document.Explorer
             queue.Enqueue(value);
         }
     }
-
-    public class ScoreDocumentTreeViewViewModel : ScoreElementViewModel
-    {
-        public ScoreDocumentTreeViewViewModel(IScoreDocumentReader scoreDocumentReader) : base(scoreDocumentReader)
-        {
-             
-        }
-    }
 }

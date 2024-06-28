@@ -1,13 +1,13 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia.Data;
+﻿using Avalonia.Data;
+using Avalonia.Data.Converters;
+using Avalonia.Media;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Avalonia.Media;
-using System.Diagnostics;
 
 namespace Sinfonia.ValueConverters;
 public class IntValueConverter : IValueConverter

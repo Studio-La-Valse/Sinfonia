@@ -1,7 +1,7 @@
 ﻿using Avalonia.Platform.Storage;
 using Sinfonia.ViewModels.Application;
 using Sinfonia.Windows;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Templates;
 using StudioLaValse.ScoreDocument.Models;
 using System.Text.Json;
 
@@ -17,6 +17,10 @@ namespace Sinfonia.Implementations
 
     public class FileSaveService : IFileSaveService
     {
+        private readonly JsonSerializerOptions serializerOptions = new()
+        {
+            
+        };
         private readonly MainWindow mainWindow;
         private readonly IDocumentViewModelFactory documentViewModelFactory;
         private readonly DocumentCollectionViewModel documentCollection;
@@ -46,7 +50,7 @@ namespace Sinfonia.Implementations
 
             var file = result[0];
             using var stream = AsyncHelper.RunSync(file.OpenReadAsync);
-            var documentModel = JsonSerializer.Deserialize<DocumentModel>(stream) ?? throw new Exception();
+            var documentModel = JsonSerializer.Deserialize<DocumentModel>(stream, options: serializerOptions) ?? throw new Exception();
             var template = documentModel.StyleTemplate;
             var documentViewModel = documentViewModelFactory.Create(documentModel.ScoreDocument);
             documentViewModel.Explorer.Rebuild();
@@ -79,7 +83,7 @@ namespace Sinfonia.Implementations
                     ScoreDocument = documentReader.ScoreDocumentCore.GetMemento(),
                     StyleTemplate = documentReader.CanvasViewModel.ScoreDocumentStyle
                 };
-                JsonSerializer.Serialize(stream, documentModel);
+                JsonSerializer.Serialize(stream, documentModel, options: serializerOptions);
             }
         }
     }

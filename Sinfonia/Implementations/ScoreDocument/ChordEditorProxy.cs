@@ -1,4 +1,5 @@
 ﻿using StudioLaValse.ScoreDocument;
+using StudioLaValse.ScoreDocument.Core;
 using StudioLaValse.ScoreDocument.Implementation.Layout;
 using StudioLaValse.ScoreDocument.Models;
 using StudioLaValse.ScoreDocument.Models.Base;
@@ -6,7 +7,7 @@ using Chord = StudioLaValse.ScoreDocument.Implementation.Chord;
 
 namespace Sinfonia.Implementations.ScoreDocument
 {
-    public class ChordEditorProxy : IChordEditor
+    public class ChordEditorProxy : IChord
     {
         private readonly Chord source;
         private readonly ICommandManager commandManager;
@@ -20,6 +21,13 @@ namespace Sinfonia.Implementations.ScoreDocument
         public Tuplet Tuplet => source.Tuplet;
 
         public int Id => source.Id;
+
+        public IChordLayout ReadLayout => source.AuthorLayout;
+
+        public TemplateProperty<double> XOffset => ReadLayout.XOffset.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+
+        public TemplateProperty<double> SpaceRight => ReadLayout.SpaceRight.UseCommandManager(commandManager).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+
 
         public ChordEditorProxy(Chord source, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
         {
@@ -43,10 +51,10 @@ namespace Sinfonia.Implementations.ScoreDocument
             var command = new MementoCommand<Chord, ChordModel>(source, s => s.Set(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
-        public void Grace(params Pitch[] pitches)
+        public void Grace(RythmicDuration rythmicDuration, params Pitch[] pitches)
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<Chord, ChordModel>(source, s => s.ApplyGrace(pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
+            var command = new MementoCommand<Chord, ChordModel>(source, s => s.ApplyGrace(rythmicDuration, pitches)).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
             transaction.Enqueue(command);
         }
         public void Clear()
@@ -56,7 +64,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             transaction.Enqueue(command);
         }
 
-        public void RemoveLayout()
+        public void Restore()
         {
             var transaction = commandManager.ThrowIfNoTransactionOpen();
             var command = new RestoreLayoutCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
@@ -64,22 +72,7 @@ namespace Sinfonia.Implementations.ScoreDocument
         }
 
 
-        public void SetXOffset(double offset)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout, s => s.XOffset = offset).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-        public void SetSpaceRight(double spaceRight)
-        {
-            var transaction = commandManager.ThrowIfNoTransactionOpen();
-            var command = new MementoCommand<AuthorChordLayout, ChordLayoutMembers>(source.AuthorLayout, s => s.SpaceRight = spaceRight).ThenInvalidate(notifyEntityChanged, source.HostMeasure);
-            transaction.Enqueue(command);
-        }
-
-
-        public IEnumerable<INoteEditor> ReadNotes()
+        public IEnumerable<INote> ReadNotes()
         {
             return source.EnumerateNotesCore().Select(n => n.ProxyEditor(commandManager, notifyEntityChanged));
         }
@@ -89,12 +82,7 @@ namespace Sinfonia.Implementations.ScoreDocument
             return ReadNotes();
         }
 
-        public IChordLayout ReadLayout()
-        {
-            return source.AuthorLayout;
-        }
-
-        public IGraceGroupEditor? ReadGraceGroup()
+        public IGraceGroup? ReadGraceGroup()
         {
             if(source.GraceGroup is null)
             {
@@ -106,12 +94,12 @@ namespace Sinfonia.Implementations.ScoreDocument
 
         public IEnumerable<KeyValuePair<PowerOfTwo, BeamType>> ReadBeamTypes()
         {
-            return source.GetBeamTypes();
+            return source.AuthorLayout.ReadBeamTypes();
         }
 
         public BeamType? ReadBeamType(PowerOfTwo i)
         {
-            return source.GetBeamType(i);
+            return source.AuthorLayout.ReadBeamType(i);
         }
 
         public bool Equals(IUniqueScoreElement? other)

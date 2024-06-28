@@ -1,12 +1,9 @@
 ﻿using Sinfonia.ViewModels.Base;
-using StudioLaValse.ScoreDocument;
-
 
 namespace Sinfonia.ViewModels.Application.Document.Inspector
 {
-    public abstract class ScoreElementPropertiesViewModel<TEntity, TEditor> : PropertyCollectionViewModel
+    public abstract class ScoreElementPropertiesViewModel<TEntity> : PropertyCollectionViewModel
             where TEntity : IUniqueScoreElement
-            where TEditor : IScoreElementEditor
     {
         private readonly IScoreBuilder scoreBuilder;
         private readonly IEnumerable<TEntity> notes;
@@ -17,7 +14,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
             this.notes = notes;
         }
 
-        protected PropertyViewModel<TProperty> Create<TProperty>(Func<TEntity, TProperty> propertyGetter, Action<TEditor, TProperty> propertySetter, string title)
+        protected PropertyViewModel<TProperty> Create<TProperty>(Func<TEntity, TProperty> propertyGetter, Action<TEntity, TProperty> propertySetter, string title)
         {
 
             return new PropertyViewModel<TProperty>(
@@ -36,7 +33,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
             (val) =>
             {
                 scoreBuilder
-                    .Edit<TEditor>(notes.Select(e => e.Id), (element) =>
+                    .Edit<TEntity>(notes.Select(e => e.Id), (element) =>
                     {
                         propertySetter(element, val);
                     })

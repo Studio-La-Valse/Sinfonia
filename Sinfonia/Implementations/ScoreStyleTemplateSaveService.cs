@@ -1,6 +1,6 @@
 ﻿using Avalonia.Platform.Storage;
 using Sinfonia.Windows;
-using StudioLaValse.ScoreDocument.Layout.Templates;
+using StudioLaValse.ScoreDocument.Templates;
 using System.IO;
 using YamlDotNet.Serialization;
 
