@@ -1,15 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sinfonia.Implementations.ScoreDocument;
 using Sinfonia.ViewModels.Application;
-using Sinfonia.ViewModels.Application.Document.StyleTemplate;
-using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
 using StudioLaValse.ScoreDocument.GlyphLibrary;
 using StudioLaValse.ScoreDocument.Implementation;
-using StudioLaValse.ScoreDocument.Implementation.Layout;
-using StudioLaValse.ScoreDocument.Templates;
+using StudioLaValse.ScoreDocument.StyleTemplates;
 using StudioLaValse.ScoreDocument.Models;
 
 namespace Sinfonia.Implementations
@@ -21,18 +17,21 @@ namespace Sinfonia.Implementations
         private readonly IScoreStyleTemplateSaveService yamlConverter;
         private readonly IUnitToPixelConverter unitToPixelConverter;
         private readonly DocumentCollectionViewModel documentCollectionViewModel;
+        private readonly ScoreDocumentStyleTemplate scoreDocumentStyleTemplate;
 
         public DocumentViewModelFactory(ICommandFactory commandFactory,
                                         IKeyGeneratorFactory<int> keyGeneratorFactory,
                                         IScoreStyleTemplateSaveService yamlConverter,
                                         IUnitToPixelConverter unitToPixelConverter,
-                                        DocumentCollectionViewModel documentCollectionViewModel)
+                                        DocumentCollectionViewModel documentCollectionViewModel,
+                                        ScoreDocumentStyleTemplate scoreDocumentStyleTemplate)
         {
             this.commandFactory = commandFactory;
             this.keyGeneratorFactory = keyGeneratorFactory;
             this.yamlConverter = yamlConverter;
             this.unitToPixelConverter = unitToPixelConverter;
             this.documentCollectionViewModel = documentCollectionViewModel;
+            this.scoreDocumentStyleTemplate = scoreDocumentStyleTemplate;
         }
 
         public DocumentViewModel Create(ScoreDocumentModel scoreDocument)
@@ -41,6 +40,7 @@ namespace Sinfonia.Implementations
             {
                 services
                     .AddSingleton(documentCollectionViewModel)
+                    .AddSingleton(scoreDocumentStyleTemplate)
                     .AddSingleton(unitToPixelConverter)
                     .AddSingleton(commandFactory)
                     .AddSingleton(yamlConverter)
@@ -79,29 +79,25 @@ namespace Sinfonia.Implementations
             
         }
 
-        public static IServiceCollection AddScoreDocument(this IServiceCollection services, ScoreDocumentModel scoreDocumentMemento)
+        public static IServiceCollection AddScoreDocument(this IServiceCollection services, ScoreDocumentModel scoreDocumentModel)
         {
             return services
-                .AddSingleton(s => ScoreDocumentStyleTemplate.Create())
-                .AddSingleton<InstrumentMeasureFactory>()
-                .AddSingleton<ScoreContentTable>()
                 .AddSingleton(services =>
                 {
-                    var contentTable = services.GetRequiredService<ScoreContentTable>();
                     var styleTemplate = services.GetRequiredService<ScoreDocumentStyleTemplate>();
-                    var keyGenerator = services.GetRequiredService<IKeyGenerator<int>>();
-
-                    var layoutMemento = scoreDocumentMemento.Layout;
-                    var primaryLayout = new AuthorScoreDocumentLayout(styleTemplate);
-                    var secondaryLayout = new UserScoreDocumentLayout(styleTemplate, layoutMemento?.Id ?? Guid.NewGuid());
-                    var scoreDocument = new ScoreDocumentCore(contentTable, styleTemplate, primaryLayout, secondaryLayout, keyGenerator, scoreDocumentMemento.Id);
-                    scoreDocument.ApplyMemento(scoreDocumentMemento);
-
+                    var commandManager = services.GetRequiredService<ICommandManager>();
+                    var notifyChanged = services.GetRequiredService<INotifyEntityChanged<IUniqueScoreElement>>();
+                    var scoreDocument = ScoreDocument.Create(styleTemplate, commandManager, notifyChanged, scoreDocumentModel);
                     return scoreDocument;
                 })
-                .AddSingleton<IScoreDocumentLayout>(services => services.GetRequiredService<ScoreDocumentCore>().UserLayout)
-                .AddSingleton<IScoreBuilder, ScoreBuilder>()
-                .AddSingleton<IScoreDocument, ScoreDocumentEditorProxy>();
+                .AddSingleton(services =>
+                {
+                    var scoreDocument = services.GetRequiredService<IScoreDocument>();
+                    var commandManager = services.GetRequiredService<ICommandManager>();
+                    var notifyChanged = services.GetRequiredService<INotifyEntityChanged<IUniqueScoreElement>>();
+                    var scoreBuilder = ScoreBuilder.Create(scoreDocument, commandManager, notifyChanged);
+                    return scoreBuilder;
+                });
         }
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
@@ -112,18 +108,6 @@ namespace Sinfonia.Implementations
                 .AddSingleton<ExplorerViewModel>()
                 .AddSingleton<InspectorViewModel>()
                 .AddSingleton<CanvasViewModel>()
-                .AddSingleton<ScoreDocumentViewModel>()
-                .AddSingleton<PageViewModel>()
-                .AddSingleton<StaffSystemViewModel>()
-                .AddSingleton<StaffGroupViewModel>()
-                .AddSingleton<StaffViewModel>()
-                .AddSingleton<ScoreMeasureViewModel>()
-                .AddSingleton<InstrumentRibbonViewModel>()
-                .AddSingleton<InstrumentMeasureViewModel>()
-                .AddSingleton<MeasureBlockViewModel>()
-                .AddSingleton<ChordViewModel>()
-                .AddSingleton<NoteViewModel>()
-                .AddSingleton<DocumentStyleEditorViewModel>()
                 .AddSingleton<DocumentViewModel>();
         }
 

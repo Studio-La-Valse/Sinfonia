@@ -6,15 +6,11 @@
 			 xmlns:vmd="using:Sinfonia.ViewModels.Application.Document"
 			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
 			 xmlns:views="using:Sinfonia.Controls"
-			 xmlns:templates="using:Sinfonia.DataTemplates"
+			 xmlns:controls="using:Sinfonia.Controls"
 			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sinfonia.Controls.MainControl"
              x:DataType="vm:MainViewModel">
-
-	<UserControl.DataTemplates>
-		<templates:DocumentDataTemplate/>
-	</UserControl.DataTemplates>
 
 	<UserControl.Styles>
 		<Style Selector="MenuItem" x:DataType="vmb:MenuItemViewModel">
@@ -26,27 +22,25 @@
 		</Style>
 	</UserControl.Styles>
 
-	<DockPanel>
+	<DockPanel LastChildFill="True">
 		<views:MenuControl DataContext="{Binding MenuViewModel}" DockPanel.Dock="Top"/>
 
-		<Grid RowDefinitions="* 25">
-			<TabControl DataContext="{Binding DocumentCollectionViewModel}" ItemsSource="{Binding Documents}" SelectedIndex="{Binding SelectedIndex}">
-				<TabControl.ItemTemplate>
-					<DataTemplate x:DataType="vmd:DocumentViewModel">
-						<Grid ColumnDefinitions="Auto, 4, 100, 4, Auto">
-							<i:MaterialIcon Kind="DocumentSign" Grid.Column="0"/>
-							<TextBlock Grid.Column="1" />
-							<TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" FontSize="14" ToolTip.Tip="{Binding Header}" Text="{Binding Header}" />
-							<TextBlock Grid.Column="3" />
-							<Button Grid.Column="4" Background="Transparent" Command="{Binding CloseCommand}" CommandParameter="{Binding}">
-								<i:MaterialIcon Kind="Close"/>
-							</Button>
-						</Grid>
-					</DataTemplate>
-				</TabControl.ItemTemplate>
-			</TabControl>
+		<Border Background="{DynamicResource SystemAccentColor}" Height="25" DockPanel.Dock="Bottom"/>
+		
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition MinWidth="60" Width="{Binding SideBarViewModel.ContentWidth, Mode=TwoWay}"/>
+				<ColumnDefinition Width="5"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
 
-			<Border Background="{DynamicResource SystemAccentColor}" Grid.Row="1"/>
+			<controls:SideBarControl DataContext="{Binding SideBarViewModel}" />
+
+			<controls:GridSplitterStyled Grid.Column="1" ResizeDirection="Columns" BorderBrush="Transparent" BorderThickness="3" MinWidth="1"/>
+			
+			<controls:DocumentCollectionControl Grid.Column="2" DataContext="{Binding DocumentCollectionViewModel}"/>
 		</Grid>
+
 	</DockPanel>
+
 </UserControl>

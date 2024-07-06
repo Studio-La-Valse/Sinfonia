@@ -4,7 +4,7 @@ using Sinfonia.Interfaces;
 using StudioLaValse.CommandManager;
 using StudioLaValse.Drawable;
 using StudioLaValse.ScoreDocument.Core;
-using StudioLaValse.ScoreDocument.Templates;
+using StudioLaValse.ScoreDocument.StyleTemplates;
 using StudioLaValse.ScoreDocument;
 using Sinfonia.API;
 
@@ -18,7 +18,12 @@ namespace Sinfonia.Tests
         public MeasureBlockChainTests()
         {
             var serviceProvider = App.CreateHostBuilder().Build().Services;
-            var memento = ScoreDocumentModel.Create();
+            var memento = new ScoreDocumentModel()
+            {
+                Id = Guid.NewGuid(),
+                InstrumentRibbons = [],
+                ScoreMeasures = [],
+            };
             var document = serviceProvider.GetRequiredService<IDocumentViewModelFactory>().Create(memento);
             builder = document.ScoreBuilder;
             scoreDocument = document.ScoreDocument;

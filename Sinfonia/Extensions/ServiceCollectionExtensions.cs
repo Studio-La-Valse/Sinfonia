@@ -6,6 +6,7 @@ using Sinfonia.ViewModels.Application;
 using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable;
+using StudioLaValse.ScoreDocument.StyleTemplates;
 
 namespace Sinfonia.Extensions
 {
@@ -15,6 +16,7 @@ namespace Sinfonia.Extensions
         public static IServiceCollection AddModels(this IServiceCollection services)
         {
             return services.AddSingleton<IShellMethods, ShellMethods>()
+                .AddSingleton(s => ScoreDocumentStyleTemplate.Create())
                 .AddSingleton<IKeyGeneratorFactory<int>, IncrementalIntGeneratorFactory>()
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
@@ -24,14 +26,33 @@ namespace Sinfonia.Extensions
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
-            return services.AddSingleton<IDocumentViewModelFactory, DocumentViewModelFactory>()
+            services.AddSingleton<IDocumentViewModelFactory, DocumentViewModelFactory>()
                 .AddSingleton<ICommandFactory, CommandFactory>()
                 .AddSingleton<ImportMenuViewModel>()
                 .AddSingleton<FileMenuViewModel>()
                 .AddSingleton<ViewMenuViewModel>()
                 .AddSingleton<MenuViewModel>()
-                .AddSingleton<DocumentCollectionViewModel>()
-                .AddSingleton<MainViewModel>();
+                .AddSingleton<DocumentCollectionViewModel>();
+
+            // Style template editor.
+            services.AddSingleton<ScoreDocumentStyleTemplateViewModel>()
+                .AddSingleton<PageStyleTemplateViewModel>()
+                .AddSingleton<StaffSystemStyleTemplateViewModel>()
+                .AddSingleton<StaffGroupStyleTemplateViewModel>()
+                .AddSingleton<StaffStyleTemplateViewModel>()
+                .AddSingleton<ScoreMeasureStyleTemplateViewModel>()
+                .AddSingleton<InstrumentRibbonStyleTemplateViewModel>()
+                .AddSingleton<InstrumentMeasureStyleTemplateViewModel>()
+                .AddSingleton<MeasureBlockStyleTemplateViewModel>()
+                .AddSingleton<ChordStyleTemplateViewModel>()
+                .AddSingleton<NoteStyleTemplateViewModel>()
+                .AddSingleton<DocumentStyleEditorViewModel>();
+
+            services.AddSingleton<MainViewModel>()
+                .AddSingleton<SideBarViewModel>()
+                .AddSingleton<UserAccountViewModel>();
+
+            return services;
         }
 
         public static IServiceCollection AddPersistence(this IServiceCollection services)

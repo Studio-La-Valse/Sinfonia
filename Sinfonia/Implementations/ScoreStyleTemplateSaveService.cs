@@ -1,6 +1,6 @@
 ﻿using Avalonia.Platform.Storage;
 using Sinfonia.Windows;
-using StudioLaValse.ScoreDocument.Templates;
+using StudioLaValse.ScoreDocument.StyleTemplates;
 using System.IO;
 using YamlDotNet.Serialization;
 
@@ -17,7 +17,7 @@ namespace Sinfonia.Implementations
             this.mainWindow = mainWindow;
         }
 
-        public ScoreDocumentStyleTemplate Open()
+        public ScoreDocumentStyleTemplate? Open()
         {
             var task = mainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
@@ -28,7 +28,7 @@ namespace Sinfonia.Implementations
             var result = AsyncHelper.RunSync(() => task);
             if (result.Count == 0)
             {
-                throw new Exception();
+                return null;
             }
 
             var file = result[0];
@@ -53,7 +53,7 @@ namespace Sinfonia.Implementations
             var result = AsyncHelper.RunSync(() => task);
             if (result is null)
             {
-                throw new Exception();
+                return;
             }
 
             using var stream = AsyncHelper.RunSync(result.OpenWriteAsync);

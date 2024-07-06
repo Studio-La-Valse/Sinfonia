@@ -10,7 +10,7 @@ internal class GenericGlyphLibrary : BaseGlyphLibrary
 {
     private readonly IScoreDocumentLayout scoreDocumentLayout;
 
-    public GenericGlyphLibrary(IScoreDocumentLayout scoreDocumentLayout)
+    public GenericGlyphLibrary(IScoreDocument scoreDocumentLayout)
     {
         this.scoreDocumentLayout = scoreDocumentLayout;
     }

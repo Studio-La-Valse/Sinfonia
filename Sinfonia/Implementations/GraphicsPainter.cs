@@ -1,13 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Sinfonia.Controls;
 using Sinfonia.Implementations.PDF;
 using StudioLaValse.Drawable.Avalonia.Controls;
 using StudioLaValse.Drawable.BitmapPainters;
 using StudioLaValse.Drawable.DrawableElements;
 
-namespace Sinfonia.Controls;
+namespace Sinfonia.Implementations;
 
-public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
+public class GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
 {
     private readonly InteractiveControl drawingContext;
 
@@ -15,7 +16,7 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
     protected override List<Action<DrawingContext>> Cache => drawingContext.DrawActions;
 
     /// <inheritdoc/>
-    public _GraphicsPainter(InteractiveControl drawingContext)
+    public GraphicsPainter(InteractiveControl drawingContext)
     {
         this.drawingContext = drawingContext;
     }
@@ -56,8 +57,8 @@ public class _GraphicsPainter : BaseCachingBitmapPainter<DrawingContext>
     protected override void DrawElement(DrawingContext drawingContext, DrawableEllipse ellipse)
     {
         var brush = ellipse.Color.ToBrush();
-        var x = ellipse.CenterX - (ellipse.Width / 2);
-        var y = ellipse.CenterY - (ellipse.Height / 2);
+        var x = ellipse.CenterX - ellipse.Width / 2;
+        var y = ellipse.CenterY - ellipse.Height / 2;
         var width = ellipse.Width;
         var height = ellipse.Height;
         var rect = new Rect(x, y, width, height);

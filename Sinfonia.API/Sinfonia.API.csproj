@@ -8,13 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="StudioLaValse.DependencyInjection.Microsoft" Version="1.0.0" />
-    <PackageReference Include="StudioLaValse.Drawable" Version="2.0.4" />
-    <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
     <PackageReference Include="StudioLaValse.Key" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable\StudioLaValse.Drawable.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.Geometry\StudioLaValse.Geometry\StudioLaValse.Geometry.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Core\StudioLaValse.ScoreDocument.Core.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />

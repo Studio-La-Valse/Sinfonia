@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Sinfonia.Implementations;
+using StudioLaValse.Drawable;
 using StudioLaValse.Drawable.BitmapPainters;
 using StudioLaValse.ScoreDocument;
 
@@ -104,7 +106,7 @@ public partial class CanvasControl : UserControl, IObserver<InvalidationRequest<
     {
         InitializeComponent();
 
-        BaseBitmapPainter = new _GraphicsPainter(canvas);
+        BaseBitmapPainter = new GraphicsPainter(canvas);
 
         PanEnabledDisposable = canvas.EnablePan();
 

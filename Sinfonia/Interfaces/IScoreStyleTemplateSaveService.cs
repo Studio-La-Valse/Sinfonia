@@ -1,10 +1,10 @@
-﻿using StudioLaValse.ScoreDocument.Templates;
+﻿using StudioLaValse.ScoreDocument.StyleTemplates;
 
 namespace Sinfonia.Interfaces
 {
     public interface IScoreStyleTemplateSaveService
     {
         void Save(ScoreDocumentStyleTemplate scoreDocumentStyleTemplate);
-        ScoreDocumentStyleTemplate Open();
+        ScoreDocumentStyleTemplate? Open();
     }
 }

@@ -15,7 +15,7 @@ namespace Sinfonia.ViewModels.Application
         }
 
 
-        public DocumentCollectionViewModel(ICommandFactory commandFactory)
+        public DocumentCollectionViewModel()
         {
             Documents = [];
         }

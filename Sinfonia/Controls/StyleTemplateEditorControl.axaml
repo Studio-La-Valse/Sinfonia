@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="using:Sinfonia.ViewModels.Application"
+			 xmlns:vmb="using:Sinfonia.ViewModels.Base"
+			 xmlns:controls="using:Sinfonia.Controls"
+			 xmlns:i="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="Sinfonia.Controls.StyleTemplateEditorControl"
+			 x:DataType="vm:DocumentStyleEditorViewModel">
+	
+	<ItemsControl ItemsSource="{Binding Templates}" HorizontalAlignment="Stretch">
+		<ItemsControl.ItemsPanel>
+			<ItemsPanelTemplate>
+				<StackPanel/>
+			</ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+		<ItemsControl.ItemTemplate>
+			<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
+				<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
+					<controls:PropertyCollectionControl/>
+				</Expander>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
+	
+</UserControl>

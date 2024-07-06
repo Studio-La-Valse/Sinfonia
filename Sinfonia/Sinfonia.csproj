@@ -77,8 +77,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PDFsharp" Version="6.0.0" />
     <PackageReference Include="StudioLaValse.CommandManager" Version="2.0.0" />
-    <PackageReference Include="StudioLaValse.Drawable.Avalonia" Version="2.1.1" />
-    <PackageReference Include="StudioLaValse.Drawable.Skia" Version="2.1.1" />
+    <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>
 
@@ -86,6 +85,7 @@
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Avalonia\StudioLaValse.Drawable.Avalonia.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable.Interaction\StudioLaValse.Drawable.Interaction.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.Drawable\StudioLaValse.Drawable\StudioLaValse.Drawable.csproj" />
+    <ProjectReference Include="..\..\StudioLaValse.Geometry\StudioLaValse.Geometry\StudioLaValse.Geometry.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Drawable\StudioLaValse.ScoreDocument.Drawable.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Implementation\StudioLaValse.ScoreDocument.Implementation.csproj" />
     <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Models\StudioLaValse.ScoreDocument.Models.csproj" />
@@ -94,6 +94,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\DocumentCollectionControl.axaml.cs">
+      <DependentUpon>DocumentCollectionControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\MainControl.axaml.cs">
       <DependentUpon>MainControl.axaml</DependentUpon>
     </Compile>
