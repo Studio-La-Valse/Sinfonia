@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Sinfonia.Implementations;
 using Sinfonia.Implementations.Addin;
 using Sinfonia.Implementations.PDF;
@@ -10,7 +11,6 @@ using StudioLaValse.ScoreDocument.StyleTemplates;
 
 namespace Sinfonia.Extensions
 {
-
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddModels(this IServiceCollection services)
@@ -21,6 +21,15 @@ namespace Sinfonia.Extensions
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
                 .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>()
+                .AddSingleton<IFileSyncService, FileSyncService>()  
+                .AddSingleton<IConfiguration>(services =>
+                {
+                    return new ConfigurationBuilder()
+                    .AddUserSecrets<AccountService>()
+                    .Build();
+
+                })
+                .AddSingleton<IAccountService, AccountService>()    
                 .AddSingleton<IPdfExportService, PdfExportService>();
         }
 

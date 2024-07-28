@@ -14,6 +14,9 @@
 		<DataTemplate DataType="vma:DocumentStyleEditorViewModel">
 			<controls:StyleTemplateEditorControl/>
 		</DataTemplate>
+		<DataTemplate DataType="vma:UserAccountViewModel">
+			<controls:UserAccountControl/>
+		</DataTemplate>
 	</UserControl.DataTemplates>
 	
 	<TabControl Name="tabs" SelectedItem="{Binding ActiveSideBar}" ItemsSource="{Binding SideBars}" TabStripPlacement="Left">
