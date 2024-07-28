@@ -24,7 +24,7 @@
 			<Setter Property="Background" Value="Transparent"/>
 		</Style>
 	</Window.Styles>
-
+	
 	<Panel>
 		<ExperimentalAcrylicBorder IsHitTestVisible="False" x:Name="Border">
 			<ExperimentalAcrylicBorder.Material>

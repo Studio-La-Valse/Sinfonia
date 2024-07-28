@@ -1,8 +1,7 @@
 ﻿using Sinfonia.ViewModels.Base;
-using StudioLaValse.ScoreDocument;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.Drawable.Scenes;
-using StudioLaValse.ScoreDocument.Templates;
+using StudioLaValse.ScoreDocument.StyleTemplates;
 
 namespace Sinfonia.ViewModels.Application.Document
 {
@@ -105,7 +104,7 @@ namespace Sinfonia.ViewModels.Application.Document
                 .ThenHandleSelectionBorder(SceneManager.VisualParents, _selectionManager, SelectionBorder, Invalidator)
                 .ThenHandleTransformations(_selectionManager, SceneManager.VisualParents, Invalidator)
                 .ThenRender(Invalidator)
-                .UndoRedo(commandManager);
+                .UndoRedo(commandManager, observable);
 
             Zoom = 1;
         }

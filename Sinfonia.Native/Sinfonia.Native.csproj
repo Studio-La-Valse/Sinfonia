@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="2.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.Core\StudioLaValse.ScoreDocument.Core.csproj" />
-    <ProjectReference Include="..\..\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument\StudioLaValse.ScoreDocument.csproj" />
     <ProjectReference Include="..\Sinfonia.API\Sinfonia.API.csproj" />
   </ItemGroup>
 

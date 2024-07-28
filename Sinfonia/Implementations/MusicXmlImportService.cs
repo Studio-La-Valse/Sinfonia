@@ -31,13 +31,18 @@ namespace Sinfonia.Implementations
             var result = AsyncHelper.RunSync(() => task);
             if (result.Count == 0)
             {
-                throw new Exception();
+                return;
             }
 
             var file = result[0];
             using var fileStream = AsyncHelper.RunSync(file.OpenReadAsync);
             var document = XDocument.Load(fileStream);
-            var memento = ScoreDocumentModel.Create();
+            var memento = new ScoreDocumentModel()
+            {
+                Id = Guid.NewGuid(),
+                InstrumentRibbons = [],
+                ScoreMeasures = [],
+            };
             var documentViewModel = documentViewModelFactory.Create(memento);
             _ = documentViewModel.ScoreBuilder.Edit(e =>
             {

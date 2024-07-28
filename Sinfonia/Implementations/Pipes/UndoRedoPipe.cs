@@ -9,12 +9,14 @@ internal class UndoRedoPipe : IPipe
 {
     private readonly IPipe next;
     private readonly ICommandManager commandManager;
+    private readonly INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged;
     private bool controlDown = false;
 
-    public UndoRedoPipe(IPipe next, ICommandManager commandManager)
+    public UndoRedoPipe(IPipe next, ICommandManager commandManager, INotifyEntityChanged<IUniqueScoreElement> notifyEntityChanged)
     {
         this.next = next;
         this.commandManager = commandManager;
+        this.notifyEntityChanged = notifyEntityChanged;
     }
 
     public void HandleLeftMouseButtonDown()
@@ -69,6 +71,7 @@ internal class UndoRedoPipe : IPipe
             try
             {
                 commandManager.Undo();
+                notifyEntityChanged.RenderChanges();
             }
             catch
             {
@@ -81,6 +84,7 @@ internal class UndoRedoPipe : IPipe
             try
             {
                 commandManager.Redo();
+                notifyEntityChanged.RenderChanges();
             }
             catch
             {

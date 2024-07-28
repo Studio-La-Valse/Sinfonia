@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vma="using:Sinfonia.ViewModels.Application"
+             x:Class="Sinfonia.Controls.UserAccountControl"
+			 x:DataType="vma:UserAccountViewModel">
+	<StackPanel>
+		<Button Command="{Binding LoginCommand}" IsVisible="{Binding !UserIsLoggedIn}">Login</Button>
+		<Button Command="{Binding LogoutCommand}" IsVisible="{Binding UserIsLoggedIn}">Logout</Button>
+		<Button Command="{Binding RefreshCommand}" IsVisible="{Binding UserIsLoggedIn}">Refresh</Button>
+		<Button Command="{Binding SyncCommand}" IsVisible="{Binding UserIsLoggedIn}">Sync</Button>
+	</StackPanel>
+
+</UserControl>

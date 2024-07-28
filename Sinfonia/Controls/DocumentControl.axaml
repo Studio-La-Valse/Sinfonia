@@ -16,49 +16,12 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="400" MinWidth="120"/>
-			<ColumnDefinition Width="5"/>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="5"/>
 			<ColumnDefinition Width="400" MinWidth="120"/>
 		</Grid.ColumnDefinitions>
 		
-		<DockPanel DataContext="{Binding DocumentStyleEditorViewModel}">
-			<DockPanel DockPanel.Dock="Top">
-				<Button Content="{i:MaterialIconExt Kind=Menu}" DockPanel.Dock="Left" Width="40">
-					<Button.Flyout>
-						<MenuFlyout Placement="BottomEdgeAlignedLeft">
-							<MenuItem Command="{Binding LoadYaml}" Header="Load Yaml"/>
-							<MenuItem Command="{Binding SaveYaml}" Header="Save Yaml"/>
-						</MenuFlyout>
-					</Button.Flyout>
-				</Button>
-				<Button Content="{i:MaterialIconExt Kind=CollapseVertical}" DockPanel.Dock="Right" Width="40"/>
-				<Button Content="{i:MaterialIconExt Kind=CollapseHorizontal}" DockPanel.Dock="Right" Width="40" Command="{Binding ToggleExpandAllCommand}"/>
-				<TextBlock Text="Style Template" VerticalAlignment="Center"/>
-			</DockPanel>
-
-			<ScrollViewer>
-				<ItemsControl ItemsSource="{Binding Templates}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<StackPanel/>
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-					<ItemsControl.ItemTemplate>
-						<DataTemplate x:DataType="vmb:PropertyCollectionViewModel">
-							<Expander Header="{Binding Header}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
-								<controls:PropertyCollectionControl/>
-							</Expander>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-		</DockPanel>		
-
-		<GridSplitter Grid.Column="1"/>
-
-		<local:CanvasControl Grid.Column="2"
+		<local:CanvasControl Grid.Column="0"
 							 x:DataType="vm:CanvasViewModel"
 							 DataContext="{Binding CanvasViewModel}"
 							 SceneManager="{Binding SceneManager}"
@@ -68,9 +31,9 @@
 							 Pipe="{Binding Pipe}"
 							 Bounds="{Binding Bounds, Mode=OneWayToSource}"/>
 
-		<GridSplitter Grid.Column="3"/>
+		<controls:GridSplitterStyled Grid.Column="1" ResizeDirection="Columns" BorderBrush="Transparent" BorderThickness="3" MinWidth="1"/>
 
-		<Grid Grid.Column="4" RowDefinitions="* 5 *">
+		<Grid Grid.Column="2" RowDefinitions="* 5 *">
 
 			<DockPanel Grid.Row="0" DataContext="{Binding Explorer}" x:DataType="vme:ExplorerViewModel">
 
@@ -96,7 +59,7 @@
 				</TreeView>
 			</DockPanel>
 
-			<GridSplitter Grid.Row="1"/>
+			<controls:GridSplitterStyled Grid.Row="1" ResizeDirection="Rows" BorderBrush="Transparent" BorderThickness="3" MinWidth="1"/>
 
 			<DockPanel Grid.Row="2" DataContext="{Binding Inspector}">
 				<DockPanel DockPanel.Dock="Top" x:DataType="vmi:InspectorViewModel">

@@ -6,10 +6,10 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         internal NotePropertiesViewModel(IEnumerable<INote> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.StaffIndex, (l, v) => l.StaffIndex.Value = v, "Staff Index"));
-            Properties.Add(Create(l => l.XOffset, (l, v) => l.XOffset.Value = v, "X Offset"));
-            Properties.Add(Create(l => l.ForceAccidental, (l, v) => l.ForceAccidental.Value = v, "Accidental"));
-            Properties.Add(Create(l => l.Scale, (l, v) => l.Scale.Value = v, "Scale"));
+            Properties.Add(Create(l => l.StaffIndex.Value, (l, v) => l.StaffIndex.Value = v, "Staff Index"));
+            Properties.Add(Create(l => l.XOffset.Value, (l, v) => l.XOffset.Value = v, "X Offset"));
+            Properties.Add(Create(l => l.ForceAccidental.Value, (l, v) => l.ForceAccidental.Value = v, "Accidental"));
+            Properties.Add(Create(l => l.Scale.Value, (l, v) => l.Scale.Value = v, "Scale"));
         }
 
         public override string Header => "Note Properties";
@@ -19,8 +19,8 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         internal ChordPropertiesViewModel(IEnumerable<IChord> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.XOffset, (l, v) => l.XOffset.Value = v, "X Offset"));
-            Properties.Add(Create(l => l.SpaceRight, (l, v) => l.SpaceRight.Value = v, "Space Right"));
+            Properties.Add(Create(l => l.XOffset.Value, (l, v) => l.XOffset.Value = v, "X Offset"));
+            Properties.Add(Create(l => l.SpaceRight.Value, (l, v) => l.SpaceRight.Value = v, "Space Right"));
         }
 
         public override string Header => "Chord Properties";
@@ -30,8 +30,8 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         internal MeasureBlockPropertiesViewModel(IEnumerable<IMeasureBlock> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.StemLength, (l, v) => l.StemLength.Value = v, "Stem Length"));
-            Properties.Add(Create(l => l.BeamAngle, (l, v) => l.BeamAngle.Value = v, "Beam Angle"));
+            Properties.Add(Create(l => l.StemLength.Value, (l, v) => l.StemLength.Value = v, "Stem Length"));
+            Properties.Add(Create(l => l.BeamAngle.Value, (l, v) => l.BeamAngle.Value = v, "Beam Angle"));
         }
 
         public override string Header => "Measure Block Properties";
@@ -51,7 +51,7 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         internal ScoreMeasurePropertiesViewModel(IEnumerable<IScoreMeasure> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.KeySignature, (l, v) => l.KeySignature.Value = v, "Key Signature"));
+            Properties.Add(Create(l => l.KeySignature.Value, (l, v) => l.KeySignature.Value = v, "Key Signature"));
         }
 
         public override string Header => "Score Measure Properties";
@@ -61,10 +61,10 @@ namespace Sinfonia.ViewModels.Application.Document.Inspector
     {
         internal InstrumentRibbonPropertiesViewModel(IEnumerable<IInstrumentRibbon> notes, IScoreBuilder scoreBuilder) : base(scoreBuilder, notes)
         {
-            Properties.Add(Create(l => l.AbbreviatedName, (l, v) => l.AbbreviatedName.Value = v, "Nick Name"));
-            Properties.Add(Create(l => l.DisplayName, (l, v) => l.DisplayName.Value = v, "Instrument Name"));
-            Properties.Add(Create(l => l.NumberOfStaves, (l, v) => l.NumberOfStaves.Value = v, "Number of Staves"));
-            Properties.Add(Create(l => l.Collapsed, (l, v) => l.Collapsed.Value = v, "Collapsed"));
+            Properties.Add(Create(l => l.AbbreviatedName.Value, (l, v) => l.AbbreviatedName.Value = v, "Nick Name"));
+            Properties.Add(Create(l => l.DisplayName.Value, (l, v) => l.DisplayName.Value = v, "Instrument Name"));
+            Properties.Add(Create(l => l.NumberOfStaves.Value, (l, v) => l.NumberOfStaves.Value = v, "Number of Staves"));
+            Properties.Add(Create(l => l.Collapsed.Value, (l, v) => l.Collapsed.Value = v, "Collapsed"));
         }
 
         public override string Header => "Instrument Ribbon Properties";

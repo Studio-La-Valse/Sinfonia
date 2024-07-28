@@ -1,4 +1,6 @@
-﻿namespace Sinfonia.Interfaces;
+﻿using System.Threading.Tasks;
+
+namespace Sinfonia.Interfaces;
 
 public interface ICommandFactory
 {

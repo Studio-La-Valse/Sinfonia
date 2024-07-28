@@ -1,8 +1,5 @@
 ﻿using ReactiveUI;
-using Sinfonia.ViewModels.Application.Document.StyleTemplate;
 using Sinfonia.ViewModels.Base;
-using StudioLaValse.ScoreDocument;
-using StudioLaValse.ScoreDocument.Implementation;
 
 namespace Sinfonia.ViewModels.Application.Document
 {
@@ -23,15 +20,11 @@ namespace Sinfonia.ViewModels.Application.Document
         public CanvasViewModel CanvasViewModel { get; }
         public ExplorerViewModel Explorer { get; }
         public InspectorViewModel Inspector { get; }
-        public DocumentStyleEditorViewModel DocumentStyleEditorViewModel { get; }
-        public ScoreDocumentCore ScoreDocumentCore { get; }
 
         public DocumentViewModel(DocumentCollectionViewModel documentCollectionViewModel,
                                  CanvasViewModel canvasViewModel,
                                  ExplorerViewModel explorerViewModel,
                                  InspectorViewModel inspectorViewModel,
-                                 DocumentStyleEditorViewModel documentStyleEditorViewModel,
-                                 ScoreDocumentCore scoreDocumentCore,
                                  ISelection<IUniqueScoreElement> selection,
                                  IScoreBuilder scoreDocumentEditor,
                                  IScoreDocument scoreDocument,
@@ -44,8 +37,6 @@ namespace Sinfonia.ViewModels.Application.Document
             ScoreDocument = scoreDocument;
             Explorer = explorerViewModel;
             Inspector = inspectorViewModel;
-            DocumentStyleEditorViewModel = documentStyleEditorViewModel;
-            ScoreDocumentCore = scoreDocumentCore;
             KeyGenerator = keyGenerator;
 
             CloseCommand = ReactiveCommand.Create<DocumentViewModel>(documentCollectionViewModel.Close);
