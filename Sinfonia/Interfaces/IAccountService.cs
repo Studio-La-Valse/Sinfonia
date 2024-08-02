@@ -1,15 +1,8 @@
-﻿using Avalonia.Controls;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.IO.IsolatedStorage;
+﻿using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Threading;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Sinfonia.Interfaces;
@@ -17,88 +10,112 @@ namespace Sinfonia.Interfaces;
 public interface IAccountService
 {
     bool UserIsLoggedIn { get; }
-    string? AccessToken { get; }
 
     Task Login();
-    bool ShouldRefresh();
-    Task Refresh();
     Task Logout();
+    Task<UserNameResponse> Name();
 }
 
 
 internal class AccountService : IAccountService
 {
-    private readonly AuthorizationCodeInstalledApp authCode;
+    private readonly CookieContainer cookieContainer;
 
-    private UserCredential? userCredential;
-
-    public AccountService(IConfiguration configuration)
+    public AccountService(CookieContainer cookieContainer)
     {
-        var clientSecrets = new ClientSecrets()
-        {
-            ClientId = configuration.GetValue<string>("GoogleAuth:client_id"),
-            ClientSecret = configuration.GetValue<string>("GoogleAuth:client_secret")
-        };
-        var scope = new string[] { "https://www.googleapis.com/auth/userinfo.email", "openid" };
-        var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
-        {
-            DataStore = new FileDataStore(AppDomain.CurrentDomain.BaseDirectory),
-            Scopes = scope,
-            ClientSecrets = clientSecrets
-        });
-
-        var codeReceiver = new LocalServerCodeReceiver();
-        authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
+        this.cookieContainer = cookieContainer;
     }
 
-    public bool UserIsLoggedIn => userCredential != null;
+    public bool UserIsLoggedIn => cookieContainer.Count > 0;
 
-    public string? AccessToken => userCredential?.Token?.IdToken;
 
     public async Task Login()
     {
-        userCredential = await authCode.AuthorizeAsync("SinfoniaUser", CancellationToken.None);
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        var url = new Uri(@"https://localhost:8081/login?useCookies=true&useSessionCookies=true");
+        using var client = new HttpClient(httpHandler);
+        var email = "admin@admin.com";
+        var password = "admin";
+        var request = JsonContent.Create(new { email, password });
+       
+        var response = await client.PostAsync(url, request);
+        response.EnsureSuccessStatusCode();
 
-        if (ShouldRefresh())
+        await WriteCookies();
+    }
+
+    public async Task WriteCookies()
+    {
+        try
         {
-            await Refresh();
+            var directory = Directory.GetCurrentDirectory();
+            var path = Path.Combine(directory, "cookies.json");
+            await using var fs = File.Create(path);
+            JsonSerializer.Serialize(fs, cookieContainer.GetAllCookies());
+        }
+        catch 
+        { 
+        
+        }
+        finally
+        {
+
         }
     }
 
-    public async Task Refresh()
+    public async Task RestoreCookies()
     {
-        if (userCredential is null)
+        try
         {
-            await Login();
-            return;
+            var directory = Directory.GetCurrentDirectory();
+            var path = Path.Combine(directory, "cookies.json");
+            await using var fs = File.OpenRead(path);
+            var cookieCollection = JsonSerializer.Deserialize<CookieCollection>(fs)!;
+            cookieContainer.Add(cookieCollection);
         }
+        catch 
+        { 
+        
+        }
+        finally
+        {
 
-        await userCredential.RefreshTokenAsync(CancellationToken.None);
+        }
+    }
+
+    public void ExpireAllCookies()
+    {
+        foreach (var cookie in cookieContainer.GetAllCookies().OfType<Cookie>())
+        {
+            cookie.Expired = true;
+        }
     }
 
     public async Task Logout()
     {
-        if (userCredential is null)
-        {
-            throw new InvalidOperationException("User not loggin in.");
-        }
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        var url = new Uri(@"https://localhost:8081/logout");
+        using var client = new HttpClient(httpHandler);
+        var request = JsonContent.Create(new {});
+        var response = await client.PostAsync(url, request);
+        response.EnsureSuccessStatusCode();
 
-        if (ShouldRefresh())
-        {
-            await Refresh();
-        }
-
-        await userCredential.RevokeTokenAsync(new CancellationToken());
-        userCredential = null;
+        ExpireAllCookies();
+        await WriteCookies();
     }
 
-    public bool ShouldRefresh()
+    public async Task<UserNameResponse> Name()
     {
-        if(userCredential is null)
-        {
-            throw new InvalidOperationException("User not loggin in.");
-        }
+        var uri = new Uri(@"https://localhost:8081/me");
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        using var client = new HttpClient(httpHandler);
+        var response = await client.GetAsync(uri);
+        response.EnsureSuccessStatusCode();
 
-        return authCode.ShouldRequestAuthorizationCode(userCredential.Token);
+        var content = await response.Content.ReadFromJsonAsync<UserNameResponse>()
+            ?? throw new Exception("Invalid response.");
+        return content;
     }
 }
+
+public record UserNameResponse(string Email, Guid Id);

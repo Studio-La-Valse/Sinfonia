@@ -8,6 +8,7 @@ using Sinfonia.ViewModels.Application.Menu;
 using Sinfonia.Windows;
 using StudioLaValse.ScoreDocument.Drawable;
 using StudioLaValse.ScoreDocument.StyleTemplates;
+using System.Net;
 
 namespace Sinfonia.Extensions
 {
@@ -21,14 +22,9 @@ namespace Sinfonia.Extensions
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
                 .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>()
-                .AddSingleton<IFileSyncService, FileSyncService>()  
-                .AddSingleton<IConfiguration>(services =>
-                {
-                    return new ConfigurationBuilder()
-                    .AddUserSecrets<AccountService>()
-                    .Build();
-
-                })
+                .AddSingleton<IFileSyncService, FileSyncService>()
+                .AddSingleton<CookieContainer>()
+                .AddSingleton<IRegisterService, RegisterService>()  
                 .AddSingleton<IAccountService, AccountService>()    
                 .AddSingleton<IPdfExportService, PdfExportService>();
         }

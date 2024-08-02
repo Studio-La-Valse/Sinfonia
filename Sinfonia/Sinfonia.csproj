@@ -72,7 +72,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
@@ -82,9 +81,10 @@
     <PackageReference Include="StudioLaValse.Drawable" Version="3.0.0" />
     <PackageReference Include="StudioLaValse.Drawable.Avalonia" Version="3.0.0" />
     <PackageReference Include="StudioLaValse.Drawable.Interaction" Version="3.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Drawable" Version="3.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.Implementation" Version="3.0.0" />
-    <PackageReference Include="StudioLaValse.ScoreDocument.MusicXml" Version="3.0.0" />
+    <PackageReference Include="StudioLaValse.ScoreDocument.Drawable" Version="4.0.2" />
+    <PackageReference Include="StudioLaValse.ScoreDocument.Implementation" Version="4.0.2" />
+    <PackageReference Include="StudioLaValse.ScoreDocument.Models" Version="4.0.5" />
+    <PackageReference Include="StudioLaValse.ScoreDocument.MusicXml" Version="4.0.2" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>

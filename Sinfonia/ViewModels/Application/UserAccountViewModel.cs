@@ -20,6 +20,12 @@ public class UserAccountViewModel : SideBarContentViewModel
         set => SetValue(() => LoginCommand, value);
     }
 
+    public ICommand CreateCommand
+    {
+        get => GetValue(() => CreateCommand);
+        set => SetValue(() => CreateCommand, value);
+    }
+
     public ICommand RefreshCommand
     {
         get => GetValue(() => RefreshCommand);
@@ -32,18 +38,32 @@ public class UserAccountViewModel : SideBarContentViewModel
         set => SetValue(() => LogoutCommand, value);
     }
 
+    public ICommand RegisterCommand
+    {
+        get => GetValue(() => RegisterCommand);
+        set => SetValue(() => RegisterCommand, value);
+    }
+
     public bool UserIsLoggedIn
     {
         get => GetValue(() => UserIsLoggedIn);
         set => SetValue(() => UserIsLoggedIn, value);
     }
 
-    public UserAccountViewModel(ICommandFactory commandFactory, IFileSyncService fileSyncService, IAccountService accountService)
+    public string HelloText
     {
+        get => GetValue(() => HelloText);
+        set => SetValue(() => HelloText, value);
+    }
+
+    public UserAccountViewModel(ICommandFactory commandFactory, IFileSyncService fileSyncService, IAccountService accountService, IRegisterService registerService)
+    {
+        CreateCommand = ReactiveCommand.CreateFromTask(fileSyncService.CreateNew);
         SyncCommand = ReactiveCommand.CreateFromTask(Sync);
         LoginCommand = ReactiveCommand.CreateFromTask(Login);
         LogoutCommand = ReactiveCommand.CreateFromTask(Logout);
         RefreshCommand = ReactiveCommand.CreateFromTask(Refresh);
+        RegisterCommand = ReactiveCommand.CreateFromTask(registerService.Register);
         this.fileSyncService = fileSyncService;
         this.accountService = accountService;
     }
@@ -59,6 +79,9 @@ public class UserAccountViewModel : SideBarContentViewModel
     {
         await accountService.Login();
         UserIsLoggedIn = true;
+
+        var name = await accountService.Name();
+        HelloText = $"Hello, {name.Email}";
     }
 
     public async Task Refresh()
