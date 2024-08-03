@@ -3,9 +3,7 @@ using StudioLaValse.ScoreDocument.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 using System.Net;
-using System.Runtime.InteropServices;
 using StudioLaValse.ScoreDocument.Models.EndToEnd;
 
 namespace Sinfonia.Interfaces;
@@ -14,7 +12,9 @@ public interface IFileSyncService
 {
     Task CreateNew();
     Task<IEnumerable<ScoreDocumentMetaDataModel>> Get();
+    Task<ScoreDocumentModel> Get(ScoreDocumentMetaDataModel model);
     Task Sync();
+    Task Delete(ScoreDocumentMetaDataModel model);
 }
 
 internal class FileSyncService : IFileSyncService
@@ -38,27 +38,12 @@ internal class FileSyncService : IFileSyncService
             return;
         }
 
-        var me = await accountService.Name();
-
         var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
         using var client = new HttpClient(httpHandler);
-        var scoreDocument = activeDocument!.ScoreDocument.Freeze();
-        var metaData = new ScoreDocumentMetaDataModel()
-        {
-            ScoreDocumentId = scoreDocument.Id,
-            IsPublic = false,
-            CreationDate = DateTime.Now,
-            ComposerFullName = me.Email,
-            CompositionMonth = DateTime.Now.Month,
-            CompositionYear = DateTime.Now.Year,
-            CompositionYearStart = DateTime.Now.Year,
-            LastEditDate = DateTime.Now,
-            Subtitle = "Hello, ",
-            Title = "mom!",
-        };
+        var scoreDocument = activeDocument.ScoreDocument.Freeze();
         var requestBody = new CreateScoreDocumentRequest()
         {
-            MetaData = metaData,
+            MetaData = activeDocument.MetaData,
             ScoreDocument = scoreDocument
         };
         var content = JsonContent.Create(requestBody);
@@ -77,8 +62,28 @@ internal class FileSyncService : IFileSyncService
         return responseContent;
     }
 
+    public async Task<ScoreDocumentModel> Get(ScoreDocumentMetaDataModel model)
+    {
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        using var client = new HttpClient(httpHandler);
+        var response = await client.GetAsync($@"https://localhost:8081/api/scoredocument/{model.ScoreDocumentId}");
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadFromJsonAsync<ScoreDocumentResponse>() ?? throw new Exception("Invalid reponse.");
+        return responseContent.ScoreDocument;
+    }
+
     public async Task Sync()
     {
         throw new NotImplementedException();
+    }
+
+    public async Task Delete(ScoreDocumentMetaDataModel model)
+    {
+        var uri = new Uri($@"https://localhost:8081/api/scoredocument/{model.ScoreDocumentId}");
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        using var client = new HttpClient(httpHandler);
+        var response = await client.DeleteAsync(uri);
+        response.EnsureSuccessStatusCode();
     }
 }

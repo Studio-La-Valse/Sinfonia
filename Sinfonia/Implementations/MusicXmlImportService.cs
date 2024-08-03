@@ -43,7 +43,20 @@ namespace Sinfonia.Implementations
                 InstrumentRibbons = [],
                 ScoreMeasures = [],
             };
-            var documentViewModel = documentViewModelFactory.Create(memento);
+            var metaData = new ScoreDocumentMetaDataModel()
+            {
+                CreationDate = DateTime.Now,
+                LastEditDate = DateTime.Now,
+                ScoreDocumentId = memento.Id,
+                ComposerFullName = "",
+                CompositionMonth = DateTime.Now.Month,
+                CompositionYear = DateTime.Now.Year,
+                CompositionYearStart = DateTime.Now.Year,
+                IsPublic = false,
+                Subtitle = "",
+                Title = "Music Xml Document",
+            };
+            var documentViewModel = documentViewModelFactory.Create(memento, metaData);
             _ = documentViewModel.ScoreBuilder.Edit(e =>
             {
                 e.BuildFromXml(document);

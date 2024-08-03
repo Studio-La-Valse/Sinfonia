@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vma="using:Sinfonia.ViewModels.Application"
+			 xmlns:m="using:StudioLaValse.ScoreDocument.Models"
              x:Class="Sinfonia.Controls.UserAccountControl"
 			 x:DataType="vma:UserAccountViewModel">
 	<StackPanel>
@@ -17,6 +18,17 @@
 			<Button Command="{Binding LogoutCommand}">Logout</Button>
 			<Button Command="{Binding CreateCommand}">Create</Button>
 			<Button Command="{Binding RefreshCommand}">Refresh</Button>
+			<ListBox ItemsSource="{Binding ScoreDocuments}" x:Name="items">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="m:ScoreDocumentMetaDataModel">
+						<Grid ColumnDefinitions="* 40 40">
+							<TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
+							<Button Content="V" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding #items.((vma:UserAccountViewModel)DataContext).Restore}}" CommandParameter="{Binding}" Grid.Column="1"/>
+							<Button Content="X" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding #items.((vma:UserAccountViewModel)DataContext).Delete}}" CommandParameter="{Binding}" Grid.Column="2"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 		</StackPanel>
 	</StackPanel>
 

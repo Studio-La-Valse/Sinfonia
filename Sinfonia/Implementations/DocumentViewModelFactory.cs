@@ -34,11 +34,12 @@ namespace Sinfonia.Implementations
             this.scoreDocumentStyleTemplate = scoreDocumentStyleTemplate;
         }
 
-        public DocumentViewModel Create(ScoreDocumentModel scoreDocument)
+        public DocumentViewModel Create(ScoreDocumentModel scoreDocument, ScoreDocumentMetaDataModel metaData)
         {
             var hostBuilder = Host.CreateDefaultBuilder().ConfigureServices(services =>
             {
                 services
+                    .AddSingleton(metaData)
                     .AddSingleton(documentCollectionViewModel)
                     .AddSingleton(scoreDocumentStyleTemplate)
                     .AddSingleton(unitToPixelConverter)

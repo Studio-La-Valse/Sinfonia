@@ -4,6 +4,6 @@ namespace Sinfonia.Interfaces
 {
     public interface IDocumentViewModelFactory
     {
-        DocumentViewModel Create(ScoreDocumentModel scoreDocument);
+        DocumentViewModel Create(ScoreDocumentModel scoreDocument, ScoreDocumentMetaDataModel metaData);
     }
 }

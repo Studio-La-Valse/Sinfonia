@@ -22,9 +22,8 @@ namespace Sinfonia.Extensions
                 .AddTransient<IScoreStyleTemplateSaveService, ScoreStyleTemplateSaveService>()
                 .AddTransient<IMusicXmlImportService, MusicXmlImportService>()
                 .AddSingleton<IUnitToPixelConverter, MmToPixelConverter>()
-                .AddSingleton<IFileSyncService, FileSyncService>()
                 .AddSingleton<CookieContainer>()
-                .AddSingleton<IRegisterService, RegisterService>()  
+                .AddSingleton<IFileSyncService, FileSyncService>()
                 .AddSingleton<IAccountService, AccountService>()    
                 .AddSingleton<IPdfExportService, PdfExportService>();
         }

@@ -1,5 +1,8 @@
-﻿using ReactiveUI;
+﻿using Microsoft.CodeAnalysis;
+using ReactiveUI;
+using Sinfonia.Implementations;
 using Sinfonia.ViewModels.Base;
+using StudioLaValse.ScoreDocument.Models;
 using System.Threading.Tasks;
 
 namespace Sinfonia.ViewModels.Application;
@@ -7,6 +10,10 @@ public class UserAccountViewModel : SideBarContentViewModel
 {
     private readonly IFileSyncService fileSyncService;
     private readonly IAccountService accountService;
+    private readonly IDocumentViewModelFactory documentViewModelFactory;
+    private readonly DocumentCollectionViewModel documentCollectionViewModel;
+
+    public ObservableCollection<ScoreDocumentMetaDataModel> ScoreDocuments { get; } = [];
 
     public ICommand SyncCommand
     {
@@ -56,42 +63,152 @@ public class UserAccountViewModel : SideBarContentViewModel
         set => SetValue(() => HelloText, value);
     }
 
-    public UserAccountViewModel(ICommandFactory commandFactory, IFileSyncService fileSyncService, IAccountService accountService, IRegisterService registerService)
+    public UserAccountViewModel(ICommandFactory commandFactory, IFileSyncService fileSyncService, IAccountService accountService, IDocumentViewModelFactory documentViewModelFactory, DocumentCollectionViewModel documentCollectionViewModel)
     {
-        CreateCommand = ReactiveCommand.CreateFromTask(fileSyncService.CreateNew);
+        CreateCommand = ReactiveCommand.CreateFromTask(CreateNew);
+        RegisterCommand = ReactiveCommand.CreateFromTask(accountService.Register); 
+
         SyncCommand = ReactiveCommand.CreateFromTask(Sync);
         LoginCommand = ReactiveCommand.CreateFromTask(Login);
         LogoutCommand = ReactiveCommand.CreateFromTask(Logout);
         RefreshCommand = ReactiveCommand.CreateFromTask(Refresh);
-        RegisterCommand = ReactiveCommand.CreateFromTask(registerService.Register);
+
         this.fileSyncService = fileSyncService;
         this.accountService = accountService;
+        this.documentViewModelFactory = documentViewModelFactory;
+        this.documentCollectionViewModel = documentCollectionViewModel;
     }
 
     public override string Header => "User Account";
 
-    public async Task Sync()
-    {
-        await fileSyncService.Sync();
-    }
 
     public async Task Login()
     {
-        await accountService.Login();
-        UserIsLoggedIn = true;
+        try
+        {
+            var name = await accountService.Login();
+            UserIsLoggedIn = true;
+            HelloText = $"Hello, {name.Email}";
+        }
+        catch
+        {
 
-        var name = await accountService.Name();
-        HelloText = $"Hello, {name.Email}";
+        }
+        finally
+        {
+
+        }
     }
 
-    public async Task Refresh()
-    {
-        await fileSyncService.Get();
-    }
 
     public async Task Logout()
     {
-        await accountService.Logout();
-        UserIsLoggedIn = false;
+        try
+        {
+            await accountService.Logout();
+        }
+        catch
+        {
+
+        }
+        finally
+        {
+            UserIsLoggedIn = false;
+        }
+    }
+
+    public async Task CreateNew()
+    {
+        try
+        {
+            await fileSyncService.CreateNew();
+            await Refresh();    
+        }
+        catch
+        {
+            await Logout();
+        }
+        finally
+        {
+
+        }
+    }
+
+    public async Task Sync()
+    {
+        try
+        {
+            await fileSyncService.Sync();
+        }
+        catch 
+        {
+            await Logout();
+        }
+        finally
+        {
+
+        }
+    }
+
+
+    public async Task Refresh()
+    {
+        try
+        {
+            ScoreDocuments.Clear();
+
+            var files = await fileSyncService.Get();
+            foreach (var file in files)
+            {
+                ScoreDocuments.Add(file);
+            }
+        }
+        catch
+        {
+            await Logout();
+        }
+        finally
+        {
+
+        }
+    }
+
+    public async Task Restore(ScoreDocumentMetaDataModel metaData)
+    {
+        ScoreDocumentModel? documentModel = null;
+
+        try
+        {
+            documentModel = await fileSyncService.Get(metaData);
+        }
+        catch
+        {
+            await Logout();
+            return;
+        }
+        finally
+        {
+
+        }
+
+        var viewModel = documentViewModelFactory.Create(documentModel, metaData);
+        documentCollectionViewModel.Add(viewModel);
+    }
+
+    public async Task Delete(ScoreDocumentMetaDataModel scoreDocumentMetaDataModel)
+    {
+        try
+        {
+            await fileSyncService.Delete(scoreDocumentMetaDataModel);
+            await Refresh();
+        }
+        catch 
+        {
+            await Logout();
+        }
+        finally
+        {
+
+        }
     }
 }

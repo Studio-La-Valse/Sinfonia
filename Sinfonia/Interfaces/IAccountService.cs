@@ -9,11 +9,11 @@ namespace Sinfonia.Interfaces;
 
 public interface IAccountService
 {
-    bool UserIsLoggedIn { get; }
-
-    Task Login();
+    Task Register();
+    Task<UserNameResponse?> UserIsLoggedIn();
+    Task<UserNameResponse> Login();
     Task Logout();
-    Task<UserNameResponse> Name();
+    Task<UserNameResponse> User();
 }
 
 
@@ -26,13 +26,35 @@ internal class AccountService : IAccountService
         this.cookieContainer = cookieContainer;
     }
 
-    public bool UserIsLoggedIn => cookieContainer.Count > 0;
 
-
-    public async Task Login()
+    public async Task Register()
     {
-        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
-        var url = new Uri(@"https://localhost:8081/login?useCookies=true&useSessionCookies=true");
+        using var client = new HttpClient();
+
+        var email = "admin@admin.com";
+        var password = "admin";
+        var request = JsonContent.Create(new { email, password });
+        var url = @"https://localhost:8081/register";
+        var response = await client.PostAsync(url, request);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+    }
+
+    public async Task<UserNameResponse> Login()
+    {
+        await RestoreCookies();
+
+        var userIsLoggedIn = await UserIsLoggedIn();
+        if (userIsLoggedIn is not null)
+        {
+            return userIsLoggedIn;
+        }
+
+        ExpireAllCookies();
+
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer };
+        var url = new Uri(@"https://localhost:8081/login?useCookies=true");
         using var client = new HttpClient(httpHandler);
         var email = "admin@admin.com";
         var password = "admin";
@@ -42,6 +64,68 @@ internal class AccountService : IAccountService
         response.EnsureSuccessStatusCode();
 
         await WriteCookies();
+
+        return await User();
+    }
+
+    public void ExpireAllCookies()
+    {
+        foreach (var cookie in cookieContainer.GetAllCookies().OfType<Cookie>())
+        {
+            cookie.Expired = true;
+        }
+    }
+
+    public async Task Logout()
+    {
+        try
+        {
+            var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+            var url = new Uri(@"https://localhost:8081/logout");
+            using var client = new HttpClient(httpHandler);
+            var request = JsonContent.Create(new { });
+            var response = await client.PostAsync(url, request);
+            response.EnsureSuccessStatusCode();
+        }
+        catch
+        {
+
+        }
+        finally
+        {
+            ExpireAllCookies();
+            await WriteCookies();
+        }
+    }
+
+    public async Task<UserNameResponse?> UserIsLoggedIn()
+    {
+        var uri = new Uri(@"https://localhost:8081/me");
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        using var client = new HttpClient(httpHandler);
+        var response = await client.GetAsync(uri);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var content = await response.Content.ReadFromJsonAsync<UserNameResponse>()
+            ?? throw new Exception("Invalid response.");
+        return content;
+    }
+
+    public async Task<UserNameResponse> User()
+    {
+        var uri = new Uri(@"https://localhost:8081/me");
+        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
+        using var client = new HttpClient(httpHandler);
+        var response = await client.GetAsync(uri);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadFromJsonAsync<UserNameResponse>()
+            ?? throw new Exception("Invalid response.");
+        return content;
     }
 
     public async Task WriteCookies()
@@ -53,9 +137,9 @@ internal class AccountService : IAccountService
             await using var fs = File.Create(path);
             JsonSerializer.Serialize(fs, cookieContainer.GetAllCookies());
         }
-        catch 
-        { 
-        
+        catch
+        {
+
         }
         finally
         {
@@ -73,9 +157,9 @@ internal class AccountService : IAccountService
             var cookieCollection = JsonSerializer.Deserialize<CookieCollection>(fs)!;
             cookieContainer.Add(cookieCollection);
         }
-        catch 
-        { 
-        
+        catch
+        {
+
         }
         finally
         {
@@ -83,39 +167,6 @@ internal class AccountService : IAccountService
         }
     }
 
-    public void ExpireAllCookies()
-    {
-        foreach (var cookie in cookieContainer.GetAllCookies().OfType<Cookie>())
-        {
-            cookie.Expired = true;
-        }
-    }
-
-    public async Task Logout()
-    {
-        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
-        var url = new Uri(@"https://localhost:8081/logout");
-        using var client = new HttpClient(httpHandler);
-        var request = JsonContent.Create(new {});
-        var response = await client.PostAsync(url, request);
-        response.EnsureSuccessStatusCode();
-
-        ExpireAllCookies();
-        await WriteCookies();
-    }
-
-    public async Task<UserNameResponse> Name()
-    {
-        var uri = new Uri(@"https://localhost:8081/me");
-        var httpHandler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true };
-        using var client = new HttpClient(httpHandler);
-        var response = await client.GetAsync(uri);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadFromJsonAsync<UserNameResponse>()
-            ?? throw new Exception("Invalid response.");
-        return content;
-    }
 }
 
 public record UserNameResponse(string Email, Guid Id);

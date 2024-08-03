@@ -7,13 +7,12 @@ using System.Text.Json;
 
 namespace Sinfonia.Implementations
 {
-#nullable disable
     public class DocumentModel
     {
-        public ScoreDocumentModel ScoreDocument { get; set; }
-        public ScoreDocumentLayoutDictionary Layout { get; set; }
+        public required ScoreDocumentModel ScoreDocument { get; set; }
+        public required ScoreDocumentMetaDataModel MetaData { get; set; }
+        public required ScoreDocumentLayoutDictionary Layout { get; set; }
     }
-#nullable enable
 
     public class FileSaveService : IFileSaveService
     {
@@ -51,7 +50,7 @@ namespace Sinfonia.Implementations
             var file = result[0];
             using var stream = AsyncHelper.RunSync(file.OpenReadAsync);
             var documentModel = JsonSerializer.Deserialize<DocumentModel>(stream, options: serializerOptions) ?? throw new Exception();
-            var documentViewModel = documentViewModelFactory.Create(documentModel.ScoreDocument);
+            var documentViewModel = documentViewModelFactory.Create(documentModel.ScoreDocument, documentModel.MetaData);
             documentViewModel.Explorer.Rebuild();
             documentCollection.Add(documentViewModel);
         }
@@ -82,7 +81,8 @@ namespace Sinfonia.Implementations
             var documentModel = new DocumentModel()
             {
                 ScoreDocument = documentReader.ScoreDocument.Freeze(),
-                Layout = documentReader.ScoreDocument.FreezeLayout()
+                Layout = documentReader.ScoreDocument.FreezeLayout(),
+                MetaData = documentReader.MetaData
             };
             JsonSerializer.Serialize(stream, documentModel, options: serializerOptions);
         }
